@@ -4,27 +4,3 @@ spring:
     url: jdbc:mysql://localhost:3376/neighborSolver
     username: root
     password: 12
-
-  jpa:
-    show-sql: true
-    database: mysql
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
-    hibernate:
-      ddl-auto: create-drop
-
-cloud:
-  aws:
-    credentials:
-      accessKey:
-      secretKey:
-    region:
-      static: ap-northeast-2
-    stack:
-      auto: false
-
-application:
-  bucket:
-    name: my-neighbor-solver
