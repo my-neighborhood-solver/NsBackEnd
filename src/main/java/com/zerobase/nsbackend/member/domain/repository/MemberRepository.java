@@ -1,4 +1,4 @@
-package com.zerobase.nsbackend.member.repository;
+package com.zerobase.nsbackend.member.domain.repository;
 
 import com.zerobase.nsbackend.member.domain.Members;
 import java.util.Optional;
@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Members,Long> {
-    Optional<Members> findByEmail(String email);
+    boolean existsByEmail(String email);
+    Optional<Members> findById(Long id);
 }
