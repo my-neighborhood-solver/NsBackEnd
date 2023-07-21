@@ -24,7 +24,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> createMember(@RequestBody SignUp request){
+    public ResponseEntity<SignUpResponse> createMember(@RequestBody SignUp request){
         Member member = this.authService.register(request);
         SignUpResponse response = SignUpResponse.builder()
             .id(member.getId())
@@ -32,18 +32,18 @@ public class AuthController {
             .name(member.getName())
             .password(member.getPassword())
             .build();
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> logInMember(@RequestBody SignIn request){
+    public ResponseEntity<SignInResponse> logInMember(@RequestBody SignIn request){
         Member member = this.authService.authenticate(request);
         SignInResponse response = SignInResponse.builder()
             .id(member.getId())
             .email(member.getEmail())
             .name(member.getName())
             .build();
-        return new ResponseEntity<>(response,HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
 }
