@@ -1,9 +1,11 @@
 package com.zerobase.nsbackend.member.domain;
 
+import com.zerobase.nsbackend.global.BaseTimeEntity;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,7 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Getter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class Member implements UserDetails {
+public class Member extends BaseTimeEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,11 +38,6 @@ public class Member implements UserDetails {
     private String profileImage;
     private String hashTag;
     private boolean isDeleted;
-
-    @CreatedDate
-    private LocalDateTime createdAt;
-    @LastModifiedDate
-    private LocalDateTime modifiedAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
