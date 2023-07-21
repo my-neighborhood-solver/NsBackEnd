@@ -30,9 +30,7 @@ class AuthServiceTest {
         Auth.SignUp signupRequest = Auth.SignUp.builder()
                 .name("wnstj")
                 .email("sfds@naver.com")
-                .password("sdf123")
-                .phoneNumber("12345678901")
-                .nickname("nike").build();
+                .password("sdf123").build();
 
         //when
         Member register = authService.register(signupRequest);
@@ -48,9 +46,7 @@ class AuthServiceTest {
         Auth.SignUp signupRequest = Auth.SignUp.builder()
                 .name("wnstj")
                 .email("sfds@naver.com")
-                .password("sdf123")
-                .phoneNumber("12345678901")
-                .nickname("nike").build();
+                .password("sdf123").build();
 
         //when
         Member register = authService.register(signupRequest);

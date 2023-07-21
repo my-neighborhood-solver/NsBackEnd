@@ -1,6 +1,7 @@
 package com.zerobase.nsbackend.member.web;
 
 import com.zerobase.nsbackend.member.domain.Member;
+import com.zerobase.nsbackend.member.security.TokenProvider;
 import com.zerobase.nsbackend.member.service.AuthService;
 import com.zerobase.nsbackend.member.dto.Auth.SignIn;
 import com.zerobase.nsbackend.member.dto.Auth.SignInResponse;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final TokenProvider tokenProvider;
 
     @PostMapping("/signup")
     public ResponseEntity<SignUpResponse> createMember(@RequestBody SignUp request){
@@ -37,10 +39,12 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<SignInResponse> logInMember(@RequestBody SignIn request){
         Member member = this.authService.authenticate(request);
+        String token = this.tokenProvider.generateToken(member.getEmail());
         SignInResponse response = SignInResponse.builder()
             .id(member.getId())
             .email(member.getEmail())
             .name(member.getName())
+            .token(token)
             .build();
         return ResponseEntity.ok(response);
     }
