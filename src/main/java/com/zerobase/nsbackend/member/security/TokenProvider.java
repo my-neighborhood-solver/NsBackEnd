@@ -22,8 +22,8 @@ public class TokenProvider {
 
   @Value("${spring.jwt.secret}")
   private String secretKey;
-  public String generateToken(String userId){
-    Claims claims = Jwts.claims().setSubject(userId);
+  public String generateToken(String email){
+    Claims claims = Jwts.claims().setSubject(email);
 
     var now = new Date();
     var expiredDate = new Date(now.getTime() + TOKEN_EXPIRE_TIME);

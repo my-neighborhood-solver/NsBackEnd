@@ -18,10 +18,6 @@ public class Auth {
         private String email;
         @NotNull
         private String password;
-        @NotNull
-        private String phoneNumber;
-        @NotNull
-        private String nickname;
 
         public Member toEntity(){
             return Member.builder()
@@ -59,6 +55,7 @@ public class Auth {
         private Long id;
         private String name;
         private String email;
+        private String token;
     }
 
 }
