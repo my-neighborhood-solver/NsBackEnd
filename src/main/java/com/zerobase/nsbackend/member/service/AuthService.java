@@ -39,7 +39,7 @@ public class AuthService implements UserDetailsService {
 
     public Member authenticate(SignIn signinRequest){
         Member members = this.memberRepository.findByEmail(signinRequest.getEmail())
-            .orElseThrow(() -> new IllegalArgumentException());
+            .orElseThrow(IllegalArgumentException::new);
         if(!this.passwordEncoder.matches(signinRequest.getPassword(), members.getPassword())){
             throw new IllegalArgumentException();
         }
