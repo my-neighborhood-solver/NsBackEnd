@@ -46,6 +46,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     if((ObjectUtils.isEmpty(token) || token.startsWith(TOKEN_PREFIX)) && token != null){
       return token.substring(TOKEN_PREFIX.length());
     }
-    return null;
+    return "";
   }
 }

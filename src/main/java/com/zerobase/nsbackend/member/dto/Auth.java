@@ -4,9 +4,12 @@ import com.sun.istack.NotNull;
 import com.zerobase.nsbackend.member.domain.Member;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Auth {
-    @Data
+    @Getter
+    @Setter
     @Builder
     public static class SignUp{
         @NotNull
@@ -16,7 +19,7 @@ public class Auth {
         @NotNull
         private String password;
         @NotNull
-        private String phone_number;
+        private String phoneNumber;
         @NotNull
         private String nickname;
 
@@ -29,7 +32,8 @@ public class Auth {
         }
     }
 
-    @Data
+    @Getter
+    @Setter
     @Builder
     public static class SignUpResponse{
         private Long id;
@@ -38,7 +42,8 @@ public class Auth {
         private String password;
     }
 
-    @Data
+    @Getter
+    @Setter
     @Builder
     public static class SignIn{
         @NotNull
@@ -47,7 +52,8 @@ public class Auth {
         private String password;
     }
 
-    @Data
+    @Getter
+    @Setter
     @Builder
     public static class SignInResponse{
         private Long id;
