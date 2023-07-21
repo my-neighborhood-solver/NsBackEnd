@@ -2,13 +2,12 @@ package com.zerobase.nsbackend.member.exception;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 @Builder
 public class ErrorResponse {
     private final String message;

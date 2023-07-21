@@ -49,13 +49,62 @@ class AuthServiceTest {
                 .password("sdf123").build();
 
         //when
-        Member register = authService.register(signupRequest);
+        authService.register(signupRequest);
 
         //then
         assertThrows(IllegalArgumentException.class, () -> authService.register(signupRequest));
     }
 
     @Test
-    void authenticate() {
+    @DisplayName("로그인 성공")
+    void SuccessAuthenticate() {
+        //given
+        Auth.SignUp signupRequest = Auth.SignUp.builder()
+            .name("wnstj")
+            .email("sfds@naver.com")
+            .password("sdf123").build();
+
+        Member member = authService.register(signupRequest);
+
+        Auth.SignIn signInRequest = Auth.SignIn.builder()
+            .email(member.getEmail())
+            .password(member.getPassword())
+            .build();
+
+        //when
+        Member authenticate = authService.authenticate(signInRequest);
+
+        assertEquals(authenticate.getId(), member.getId());
+    }
+
+    @Test
+    @DisplayName("회원정보가 없음 - 로그인 실패")
+    void FailAuthenticateNoExistData() {
+        //given
+        Auth.SignIn signInRequest = Auth.SignIn.builder()
+            .email("sfdsdf@naver.com")
+            .password("sdfsdf123")
+            .build();
+
+        assertThrows(IllegalArgumentException.class, () -> authService.authenticate(signInRequest));
+    }
+
+    @Test
+    @DisplayName("비밀번호 매칭 실패 - 로그인 실패")
+    void FailAuthenticateNoMatchPassword() {
+        //given
+        Auth.SignUp signupRequest = Auth.SignUp.builder()
+            .name("wnstj")
+            .email("sfds@naver.com")
+            .password("sdf123").build();
+
+        Member member = authService.register(signupRequest);
+
+        Auth.SignIn signInRequest = Auth.SignIn.builder()
+            .email(member.getEmail())
+            .password("111222333")
+            .build();
+
+        assertThrows(IllegalArgumentException.class, () -> authService.authenticate(signInRequest));
     }
 }
