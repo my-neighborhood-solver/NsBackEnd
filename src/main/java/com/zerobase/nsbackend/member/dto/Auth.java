@@ -1,7 +1,7 @@
 package com.zerobase.nsbackend.member.dto;
 
 import com.sun.istack.NotNull;
-import com.zerobase.nsbackend.member.domain.Members;
+import com.zerobase.nsbackend.member.domain.Member;
 import lombok.Builder;
 import lombok.Data;
 
@@ -20,8 +20,8 @@ public class Auth {
         @NotNull
         private String nickname;
 
-        public Members toEntity(){
-            return Members.builder()
+        public Member toEntity(){
+            return Member.builder()
                 .name(this.name)
                 .email(this.email)
                 .password(this.password)
@@ -45,6 +45,14 @@ public class Auth {
         private String email;
         @NotNull
         private String password;
+    }
+
+    @Data
+    @Builder
+    public static class SignInResponse{
+        private Long id;
+        private String name;
+        private String email;
     }
 
 }
