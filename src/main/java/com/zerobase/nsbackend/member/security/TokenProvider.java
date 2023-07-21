@@ -1,6 +1,6 @@
 package com.zerobase.nsbackend.member.security;
 
-import com.zerobase.nsbackend.member.domain.service.AuthService;
+import com.zerobase.nsbackend.member.service.AuthService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

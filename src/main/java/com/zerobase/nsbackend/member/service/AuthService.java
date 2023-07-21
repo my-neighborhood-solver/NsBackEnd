@@ -1,4 +1,4 @@
-package com.zerobase.nsbackend.member.domain.service;
+package com.zerobase.nsbackend.member.service;
 
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.domain.repository.MemberRepository;
@@ -29,21 +29,21 @@ public class AuthService implements UserDetailsService {
             .orElseThrow(() -> new UsernameNotFoundException("couldn't find user ->" + id));
     }
 
-    public Member register(SignUp signupReqest){
-        boolean exists =  this.memberRepository.existsByEmail(signupReqest.getEmail());
+    public Member register(SignUp signupRequest){
+        boolean exists =  this.memberRepository.existsByEmail(signupRequest.getEmail());
         if(exists){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new IllegalArgumentException();
         }
-        signupReqest.setPassword(this.passwordEncoder.encode(signupReqest.getPassword()));
-        Member mem = this.memberRepository.save(signupReqest.toEntity());
+        signupRequest.setPassword(this.passwordEncoder.encode(signupRequest.getPassword()));
+        Member mem = this.memberRepository.save(signupRequest.toEntity());
         return mem;
     }
 
-    public Member authenticate(SignIn signinReqest){
-        Member members = this.memberRepository.findByEmail(signinReqest.getEmail())
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
-        if(!this.passwordEncoder.matches(signinReqest.getPassword(), members.getPassword())){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+    public Member authenticate(SignIn signinRequest){
+        Member members = this.memberRepository.findByEmail(signinRequest.getEmail())
+            .orElseThrow(() -> new IllegalArgumentException());
+        if(!this.passwordEncoder.matches(signinRequest.getPassword(), members.getPassword())){
+            throw new IllegalArgumentException();
         }
         return members;
     }
