@@ -1,9 +1,10 @@
 package com.zerobase.nsbackend.member.domain.service;
 
-import com.zerobase.nsbackend.member.domain.Members;
+import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.domain.repository.MemberRepository;
-import com.zerobase.nsbackend.member.dto.Auth;
-import lombok.AllArgsConstructor;
+import com.zerobase.nsbackend.member.dto.Auth.SignIn;
+import com.zerobase.nsbackend.member.dto.Auth.SignUp;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
@@ -28,13 +29,22 @@ public class AuthService implements UserDetailsService {
             .orElseThrow(() -> new UsernameNotFoundException("couldn't find user ->" + id));
     }
 
-    public Members register(Auth.SignUp member){
-        boolean exists =  this.memberRepository.existsByEmail(member.getEmail());
+    public Member register(SignUp signupReqest){
+        boolean exists =  this.memberRepository.existsByEmail(signupReqest.getEmail());
         if(exists){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"email is exists");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        member.setPassword(this.passwordEncoder.encode(member.getPassword()));
-        Members mem = this.memberRepository.save(member.toEntity());
+        signupReqest.setPassword(this.passwordEncoder.encode(signupReqest.getPassword()));
+        Member mem = this.memberRepository.save(signupReqest.toEntity());
         return mem;
+    }
+
+    public Member authenticate(SignIn signinReqest){
+        Member members = this.memberRepository.findByEmail(signinReqest.getEmail())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
+        if(!this.passwordEncoder.matches(signinReqest.getPassword(), members.getPassword())){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return members;
     }
 }

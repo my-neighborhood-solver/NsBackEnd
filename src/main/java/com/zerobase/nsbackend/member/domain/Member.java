@@ -1,6 +1,5 @@
 package com.zerobase.nsbackend.member.domain;
 
-import com.sun.istack.NotNull;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import javax.persistence.Entity;
@@ -12,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -23,27 +21,26 @@ import org.springframework.security.core.userdetails.UserDetails;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class Members implements UserDetails {
+public class Member implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String email;
-    private String social_login_id;
+    private String socialLoginId;
     private String password;
-    private String phone_number;
+    private String phoneNumber;
     private String nickname;
-    private String profile_image;
-    private String interests_hashtag;
-    private boolean is_deleted;
+    private String profileImage;
+    private String hashTag;
+    private boolean isDeleted;
 
     @CreatedDate
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
     @LastModifiedDate
-    private LocalDateTime modified_at;
+    private LocalDateTime modifiedAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -52,7 +49,7 @@ public class Members implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return null;
     }
 
     @Override
@@ -72,6 +69,6 @@ public class Members implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return !is_deleted;
+        return !isDeleted;
     }
 }
