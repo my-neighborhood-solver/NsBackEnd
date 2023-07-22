@@ -2,11 +2,14 @@ package chat.domain.Service;
 
 
 import chat.domain.entity.ChattingRoom;
+import chat.domain.entity.ChattingRoomMember;
 import chat.domain.repository.ChattingContentRepository;
 import chat.domain.repository.ChattingRoomRepository;
 import chat.dto.ChattingRoomRequestDTO;
 import chat.exception.CustomException;
 import chat.exception.ErrorCode;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +29,10 @@ public class ChattingRoomService {
 
   @Transactional
   public ChattingRoom createChattingRoom(ChattingRoomRequestDTO dto) {
-    Long errandId = dto.getErrandsId();
-    Long membersId = dto.getMembersId();
-    String title = dto.getTitle();
+    ChattingRoomRequestDTO extractedDto = ChattingRoomRequestDTO.toCreateDto(dto);
+    Long errandId = extractedDto.getErrandsId();
+    Long membersId = extractedDto.getMembersId();
+    String title = extractedDto.getTitle();
 
     Optional<ChattingRoom> room = chattingRoomRepository
         .findByErrandAndMembersAndTitle(dto.getErrandsId(), dto.getMembersId(), dto.getTitle());
@@ -48,6 +52,26 @@ public class ChattingRoomService {
         .title(title)
         .status("USE")
         .build());
-    ;
+  }
+
+
+  private ChattingRoom createChattingRoom(Errand errand, Members members, String title) {
+    ChattingRoom chattingRoom = ChattingRoom.builder()
+        .errand(errand)
+        .title(title)
+        .status("USE")
+        .build();
+
+    // ChattingRoomMember 생성 및 리스트에 추가
+    ChattingRoomMember roomMember = ChattingRoomMember.builder()
+        .chattingRoom(chattingRoom)
+        .members(members)
+        .build();
+
+    List<ChattingRoomMember> roomMemberList = new ArrayList<>();
+    roomMemberList.add(roomMember);
+    chattingRoom.setRoomMemberList(roomMemberList);
+
+    return chattingRoomRepository.save(chattingRoom);
   }
 }
