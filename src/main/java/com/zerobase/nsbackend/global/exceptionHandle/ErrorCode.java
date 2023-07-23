@@ -8,7 +8,32 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
-  MEMBER_NOT_FOUND("10001", "회원을 찾지 못했습니다.");
+
+  /**
+   * 공통 에러 메세지
+   * 규칙 : 1000 ~ 19999
+   */
+  INTERNAL_SERVER_ERROR("1000", "일시적인 장애 입니다."),
+  /**
+   * 회원 도메인 에러 메세지
+   * 규칙 : 2000 ~ 2999
+   */
+  MEMBER_NOT_FOUND("2000", "회원을 찾지 못했습니다."),
+
+  /**
+   * 의뢰 도메인 에러 메세지
+   * 규칙 : 3000 ~ 3999
+   */
+  ERRAND_NOT_FOUND("3000", "의뢰를 찾지 못했습니다."),
+  /**
+   * 채팅 도메인 에러 메세지
+   * 규칙 : 4000 ~ 4999
+   */
+  CHATTING_NOT_FOUND("4000", "채팅을 찾지 못했습니다.");
+
+
+
+
   private final String code;
   private final String description;
 
