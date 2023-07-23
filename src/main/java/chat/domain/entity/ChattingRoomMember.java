@@ -32,5 +32,5 @@ public class ChattingRoomMember {
 
   @ManyToOne
   @JoinColumn(name = "member_id")
-  private Members members;
+  private Member member;
 }

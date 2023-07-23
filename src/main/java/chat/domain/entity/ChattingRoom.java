@@ -38,14 +38,11 @@ public class ChattingRoom {
   private Errand errand;
 
   @Column(nullable = false)
-  private String title;
-
-  @Column(nullable = false)
   private String status;
 
   @OneToMany(mappedBy = "chattingRoom")
   @Column(nullable = false)
-  private List<ChattingRoomMember> roomMemberList = new ArrayList<>();
+  private List<ChattingRoomMember> roomMember = new ArrayList<>();
 
   @Column(nullable = false)
   private LocalDateTime createAt;

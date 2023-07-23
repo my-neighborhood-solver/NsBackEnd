@@ -12,14 +12,13 @@ public class ChattingRoomRequestDTO {
   private String type;
   private Long errandsId;
   private Long membersId;
-  private String title;
 
 
   public static ChattingRoomRequestDTO toCreateDto(ChattingRoomRequestDTO dto) {
     ChattingRoomRequestDTO newDto = new ChattingRoomRequestDTO();
+    newDto.type = dto.getType();
     newDto.errandsId = dto.getErrandsId();
     newDto.membersId = dto.getMembersId();
-    newDto.title = dto.getTitle();
     return newDto;
   }
 }

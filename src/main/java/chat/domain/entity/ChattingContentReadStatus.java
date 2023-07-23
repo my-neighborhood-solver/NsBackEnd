@@ -30,8 +30,8 @@ public class ChattingContentReadStatus {
   private ChattingContent chattingContent;
 
   @ManyToOne
-  @JoinColumn(name= "members_id")
-  private Members members;
+  @JoinColumn(name= "member_id")
+  private Member member;
 
   @Column(nullable = false)
   private boolean isRead;

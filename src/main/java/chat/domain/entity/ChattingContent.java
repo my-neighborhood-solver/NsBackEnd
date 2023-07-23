@@ -6,14 +6,15 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,8 +37,9 @@ public class ChattingContent {
   @JoinColumn(name = "chattingRoom_id")
   private ChattingRoom chattingRoom;
 
-  @Column(nullable = false)
-  private Long senderId;
+  @ManyToOne
+  @JoinColumn(name ="sender_id")
+  private Member sender;
 
   @Column(nullable = false)
   private String content;
@@ -54,5 +56,10 @@ public class ChattingContent {
   @PrePersist
   protected void onCreate() {
     this.createAt = LocalDateTime.now();
+  }
+
+  @Transient
+  public String getSenderNickName() {
+    return sender.getNickName();
   }
 }
