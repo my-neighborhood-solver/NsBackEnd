@@ -4,7 +4,6 @@ import com.zerobase.nsbackend.errand.domain.repository.ErrandRepository;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,5 +24,10 @@ public class ErrandService {
             .status(ErrandStatus.REQUEST)
             .viewCount(0)
             .build());
+  }
+
+  public Errand getErrand(Long id) {
+    return errandRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException(ErrorCode.ERRAND_NOT_FOUND.getDescription()));
   }
 }
