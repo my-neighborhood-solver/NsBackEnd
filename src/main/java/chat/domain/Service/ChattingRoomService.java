@@ -1,11 +1,15 @@
 package chat.domain.Service;
 
 
+import chat.domain.entity.ChattingContent;
 import chat.domain.entity.ChattingRoom;
 import chat.domain.entity.ChattingRoomMember;
+import chat.domain.repository.ChattingContentReadStatusRepository;
 import chat.domain.repository.ChattingContentRepository;
 import chat.domain.repository.ChattingRoomRepository;
+import chat.dto.ChattingRoomContentResponseDTO;
 import chat.dto.ChattingRoomRequestDTO;
+import chat.dto.ChattingRoomResponseDTO;
 import chat.exception.CustomException;
 import chat.exception.ErrorCode;
 import java.util.ArrayList;
@@ -23,19 +27,21 @@ public class ChattingRoomService {
 
   private final ChattingRoomRepository chattingRoomRepository;
   private final ChattingContentRepository chattingContentRepository;
+  private final ChattingContentReadStatusRepository chattingContentReadStatusRepository;
   private final ErrandRepository errandRepository;
-  private final MembersRepository membersRepository;
+  private final MemberRepository memberRepository;
 
 
   @Transactional
   public ChattingRoom createChattingRoom(ChattingRoomRequestDTO dto) {
     ChattingRoomRequestDTO extractedDto = ChattingRoomRequestDTO.toCreateDto(dto);
+    String type = extractedDto.getType();
     Long errandId = extractedDto.getErrandsId();
-    Long membersId = extractedDto.getMembersId();
-    String title = extractedDto.getTitle();
+    Long memberId = extractedDto.getMemberId();
 
     Optional<ChattingRoom> room = chattingRoomRepository
-        .findByErrandAndMembersAndTitle(dto.getErrandsId(), dto.getMembersId(), dto.getTitle());
+        .findByTypeAndErrand_IdAndRoomMember_Member_Id(type, errandId, memberId);
+
 
     if (room.isPresent()) {
       return room.get();
@@ -43,35 +49,71 @@ public class ChattingRoomService {
 
     Errand errand = errandRepository.findById(errandId)
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERRAND));
-    Members members = membersRepository.findById(membersId)
+    Member member = memberRepository.findById(memberId)
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBERS));
 
-    return chattingRoomRepository.save(ChattingRoom.builder()
+    List<ChattingRoomMember> roomMemberList = new ArrayList<>();
+    addChattingRoomMember(roomMemberList, member);
+    addChattingRoomMember(roomMemberList, errand.getMember());
+
+// 채팅방 엔티티 생성 및 저장
+    ChattingRoom newChattingRoom = ChattingRoom.builder()
+        .type(type)
         .errand(errand)
-        .members(members)
-        .title(title)
         .status("USE")
-        .build());
+        .roomMember(roomMemberList)
+        .build();
+
+    ChattingRoom savedChattingRoom = chattingRoomRepository.save(newChattingRoom);
+
+    return savedChattingRoom;
   }
 
+  public List<ChattingRoomResponseDTO> getAllChattingRoom(Long memberId) {
+    List<ChattingRoom> chattingRooms = chattingRoomRepository.findByRoomMemberListMemberId(memberId);
+    if (chattingRooms.isEmpty()) {
+      throw new RuntimeException("Chatting rooms not found");
+    }
 
-  private ChattingRoom createChattingRoom(Errand errand, Members members, String title) {
-    ChattingRoom chattingRoom = ChattingRoom.builder()
-        .errand(errand)
-        .title(title)
-        .status("USE")
-        .build();
+    List<ChattingRoomResponseDTO> responseDTO = new ArrayList<>();
+    for (ChattingRoom chattingRoom: chattingRooms) {
+      ChattingContent chattingContent = chattingContentRepository.
+          findTopByChattingRoomOrderByCreatedAtDesc(chattingRoom);
+      int unreadMessageCount = chattingContentReadStatusRepository
+          .countByChattingContent_ChattingRoomAndMember_IdAndIsReadFalse(chattingRoom, memberId);
+      responseDTO.add(ChattingRoomResponseDTO
+          .fromChattingRoom(chattingRoom, chattingContent, unreadMessageCount));
+    }
 
-    // ChattingRoomMember 생성 및 리스트에 추가
+
+
+    return responseDTO;
+  }
+
+  // 채팅방 멤버 추가
+  private void addChattingRoomMember(List<ChattingRoomMember> roomMemberList, Member member) {
     ChattingRoomMember roomMember = ChattingRoomMember.builder()
-        .chattingRoom(chattingRoom)
-        .members(members)
+        .chattingRoom(null) // 채팅방이 아직 생성되지 않았으므로 null로 설정
+        .member(member) // 멤버 설정
         .build();
-
-    List<ChattingRoomMember> roomMemberList = new ArrayList<>();
     roomMemberList.add(roomMember);
-    chattingRoom.setRoomMemberList(roomMemberList);
+  }
 
-    return chattingRoomRepository.save(chattingRoom);
+  //단건 조회
+  public List<ChattingRoomContentResponseDTO> getAllChattingContent(Long chattingRoomId) {
+    List<ChattingContent> chattingContents = chattingContentRepository.findByChattingRoomIdOrderByCreatedAtDesc(chattingRoomId);
+    if (chattingContents.isEmpty()) {
+      throw new RuntimeException("Chatting rooms not found");
+    }
+
+    List<ChattingRoomContentResponseDTO> responseDTO = new ArrayList<>();
+    for (ChattingContent chattingContent:chattingContents) {
+      int unReadCount = chattingContentReadStatusRepository
+          .countByChattingContentAndIsRead(chattingContent, false);
+      responseDTO.add(ChattingRoomContentResponseDTO.fromChattingContent(
+          chattingContent, unReadCount));
+    }
+
+    return responseDTO;
   }
 }

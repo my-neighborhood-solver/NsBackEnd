@@ -10,4 +10,9 @@ import org.springframework.stereotype.Repository;
 public interface ChattingContentRepository extends JpaRepository<ChattingContent, Long> {
 
 
+  ChattingContent findTopByChattingRoomOrderByCreatedAtDesc(ChattingRoom chattingRoom);
+
+  List<ChattingContent> findByChattingRoomIdOrderByCreatedAtDesc(Long chattingRoomId);
+
+  List<ChattingContent> findByChattingRoom(ChattingRoom chattingRoom);
 }

@@ -19,21 +19,27 @@ public class ChattingService {
 
   private final ChattingContentRepository chattingContentRepository;
   private final ChattingRoomRepository chattingRoomRepository;
+  private final ChattingContentReadStatusService chattingContentReadStatusService;
 
   @Transactional
-  public void saveContent(ChattingContent content,Long roomId) {
-    Optional<ChattingRoom> room = chattingRoomRepository.findById(roomId);
-    if(room.isPresent()) {
-      chattingContentRepository.save(ChattingContent.builder()
-          .chattingRoom(room.get())
-          .senderId(content.getSenderId())
-          .content(content.getContent())
-          .isRead(content.getIsRead())
-          .build());
-    }
-    else{
+  public void saveContent(ChattingContent content) {
+    Optional<ChattingRoom> room = chattingRoomRepository.findById(content.getId());
+    if (room.isPresent()) {
+      chattingContentRepository.save(content);
+      chattingContentReadStatusService.saveChattingContentReadStatus(content);
+
+    } else {
       new CustomException(ErrorCode.NOT_FOUNT_CHATTINGROOM);
     }
-
   }
+
+  public ChattingRoom getChattingRoomById(Long roomId) {
+    Optional<ChattingRoom> room = chattingRoomRepository.findById(roomId);
+    if (room.isPresent()) {
+      return room.get();
+    } else {
+      throw new RuntimeException("ChattingRoom not found");
+    }
+  }
+
 }
