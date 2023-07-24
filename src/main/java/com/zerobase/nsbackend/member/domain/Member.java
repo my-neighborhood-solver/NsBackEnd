@@ -31,7 +31,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
     private Long id;
     private String name;
     private String email;
-    private String socialLoginId;
+    private Boolean isSocialLogin;
     private String password;
     private String phoneNumber;
     private String nickname;

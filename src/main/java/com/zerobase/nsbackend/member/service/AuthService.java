@@ -7,7 +7,8 @@ import com.zerobase.nsbackend.member.dto.Auth.SignIn;
 import com.zerobase.nsbackend.member.dto.Auth.SignUp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,11 +17,16 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@PropertySource("classpath:application-oauth.yml")
 @RequiredArgsConstructor
 public class AuthService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+    private String secretKey;
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
+    private String redirectUri;
 
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
@@ -46,5 +52,26 @@ public class AuthService implements UserDetailsService {
             throw new IllegalArgumentException(ErrorCode.NO_MATCH_PASSWORD.getDescription());
         }
         return members;
+    }
+    public String kakaoLogin(){
+        return "https://kauth.kakao.com/oauth/authorize?client_id="
+            + secretKey
+            + "&redirect_uri="
+            + redirectUri
+            + "&response_type=code";
+    }
+
+    public Member kakaoRegister(String email, String name){
+        boolean exists =  this.memberRepository.existsByEmail(email);
+        if(exists){
+            throw new IllegalArgumentException(ErrorCode.EMAIL_EXIST.getDescription());
+        }
+        Member member = this.memberRepository.save(Member.builder()
+            .name(name)
+            .email(email)
+            .isSocialLogin(true)
+            .isDeleted(false)
+            .build());
+        return member;
     }
 }

@@ -24,6 +24,8 @@ public class Auth {
                 .name(this.name)
                 .email(this.email)
                 .password(this.password)
+                .isSocialLogin(false)
+                .isDeleted(false)
                 .build();
         }
     }
@@ -35,7 +37,6 @@ public class Auth {
         private Long id;
         private String name;
         private String email;
-        private String password;
     }
 
     @Getter
