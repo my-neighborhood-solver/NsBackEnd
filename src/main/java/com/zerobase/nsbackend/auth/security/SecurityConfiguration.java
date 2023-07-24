@@ -1,4 +1,4 @@
-package com.zerobase.nsbackend.member.security;
+package com.zerobase.nsbackend.auth.security;
 
 
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.zerobase.nsbackend.member.dto;
+package com.zerobase.nsbackend.auth.dto;
 
 import com.sun.istack.NotNull;
 import com.zerobase.nsbackend.member.domain.Member;

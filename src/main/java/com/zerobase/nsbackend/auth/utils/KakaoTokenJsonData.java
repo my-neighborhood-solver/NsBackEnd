@@ -1,13 +1,10 @@
-package com.zerobase.nsbackend.member.utils;
+package com.zerobase.nsbackend.auth.utils;
 
-import com.zerobase.nsbackend.member.dto.KakaoTokenResponse;
+import com.zerobase.nsbackend.auth.dto.KakaoTokenResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 

@@ -1,4 +1,4 @@
-package com.zerobase.nsbackend.member.dto;
+package com.zerobase.nsbackend.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

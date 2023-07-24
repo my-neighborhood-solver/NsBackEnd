@@ -1,4 +1,4 @@
-package com.zerobase.nsbackend.member.config;
+package com.zerobase.nsbackend.auth.config;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
