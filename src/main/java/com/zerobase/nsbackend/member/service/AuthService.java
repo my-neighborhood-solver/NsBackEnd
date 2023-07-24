@@ -48,6 +48,9 @@ public class AuthService implements UserDetailsService {
     public Member authenticate(SignIn signinRequest){
         Member members = this.memberRepository.findByEmail(signinRequest.getEmail())
             .orElseThrow(() -> new IllegalArgumentException(ErrorCode.NO_EXIST_EMAIL.getDescription()));
+        if(members.getIsSocialLogin()){
+            throw new IllegalArgumentException(ErrorCode.IS_SOCIAL_LOGIN.getDescription());
+        }
         if(!this.passwordEncoder.matches(signinRequest.getPassword(), members.getPassword())){
             throw new IllegalArgumentException(ErrorCode.NO_MATCH_PASSWORD.getDescription());
         }
