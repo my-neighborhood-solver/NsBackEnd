@@ -1,11 +1,13 @@
 package com.zerobase.nsbackend.member.service;
 
+import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.domain.repository.MemberRepository;
 import com.zerobase.nsbackend.member.dto.Auth.SignIn;
 import com.zerobase.nsbackend.member.dto.Auth.SignUp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,7 +32,7 @@ public class AuthService implements UserDetailsService {
     public Member register(SignUp signupRequest){
         boolean exists =  this.memberRepository.existsByEmail(signupRequest.getEmail());
         if(exists){
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(ErrorCode.EMAIL_EXIST.getDescription());
         }
         signupRequest.setPassword(this.passwordEncoder.encode(signupRequest.getPassword()));
         Member mem = this.memberRepository.save(signupRequest.toEntity());
@@ -39,9 +41,9 @@ public class AuthService implements UserDetailsService {
 
     public Member authenticate(SignIn signinRequest){
         Member members = this.memberRepository.findByEmail(signinRequest.getEmail())
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new IllegalArgumentException(ErrorCode.NO_EXIST_EMAIL.getDescription()));
         if(!this.passwordEncoder.matches(signinRequest.getPassword(), members.getPassword())){
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(ErrorCode.NO_MATCH_PASSWORD.getDescription());
         }
         return members;
     }
