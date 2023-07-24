@@ -1,16 +1,16 @@
-package com.zerobase.nsbackend.member.web;
+package com.zerobase.nsbackend.auth.web;
 
 import com.zerobase.nsbackend.member.domain.Member;
-import com.zerobase.nsbackend.member.dto.Auth.SignIn;
-import com.zerobase.nsbackend.member.dto.Auth.SignInResponse;
-import com.zerobase.nsbackend.member.dto.Auth.SignUp;
-import com.zerobase.nsbackend.member.dto.Auth.SignUpResponse;
-import com.zerobase.nsbackend.member.dto.KakaoTokenResponse;
-import com.zerobase.nsbackend.member.dto.KakaoUserInfoResponse;
-import com.zerobase.nsbackend.member.security.TokenProvider;
-import com.zerobase.nsbackend.member.service.AuthService;
-import com.zerobase.nsbackend.member.utils.KakaoTokenJsonData;
-import com.zerobase.nsbackend.member.utils.KakaoUserInfo;
+import com.zerobase.nsbackend.auth.dto.Auth.SignIn;
+import com.zerobase.nsbackend.auth.dto.Auth.SignInResponse;
+import com.zerobase.nsbackend.auth.dto.Auth.SignUp;
+import com.zerobase.nsbackend.auth.dto.Auth.SignUpResponse;
+import com.zerobase.nsbackend.auth.dto.KakaoTokenResponse;
+import com.zerobase.nsbackend.auth.dto.KakaoUserInfoResponse;
+import com.zerobase.nsbackend.auth.security.TokenProvider;
+import com.zerobase.nsbackend.auth.service.AuthService;
+import com.zerobase.nsbackend.auth.utils.KakaoTokenJsonData;
+import com.zerobase.nsbackend.auth.utils.KakaoUserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

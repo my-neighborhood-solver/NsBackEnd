@@ -1,6 +1,6 @@
-package com.zerobase.nsbackend.member.utils;
+package com.zerobase.nsbackend.auth.utils;
 
-import com.zerobase.nsbackend.member.dto.KakaoUserInfoResponse;
+import com.zerobase.nsbackend.auth.dto.KakaoUserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

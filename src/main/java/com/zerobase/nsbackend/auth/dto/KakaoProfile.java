@@ -1,4 +1,4 @@
-package com.zerobase.nsbackend.member.dto;
+package com.zerobase.nsbackend.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,8 +13,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class KakaoUserInfoResponse {
-    private Long id;
-    private String connected_at;
-    private KakaoAccount kakao_account;
+public class KakaoProfile {
+    private String nickname;
 }
