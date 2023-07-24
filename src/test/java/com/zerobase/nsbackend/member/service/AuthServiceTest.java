@@ -1,18 +1,26 @@
 package com.zerobase.nsbackend.member.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
+
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.domain.repository.MemberRepository;
 import com.zerobase.nsbackend.member.dto.Auth;
+import com.zerobase.nsbackend.member.dto.Auth.SignUp;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import javax.transaction.Transactional;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
@@ -28,9 +36,9 @@ class AuthServiceTest {
     void successRegister() {
         //given
         Auth.SignUp signupRequest = Auth.SignUp.builder()
-                .name("wnstj")
-                .email("sfds@naver.com")
-                .password("sdf123").build();
+            .name("wnstj")
+            .email("sfds@naver.com")
+            .password("sdf123").build();
 
         //when
         Member register = authService.register(signupRequest);
