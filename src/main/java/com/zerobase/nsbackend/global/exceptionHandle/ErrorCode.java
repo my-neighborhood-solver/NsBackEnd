@@ -23,6 +23,7 @@ public enum ErrorCode {
   EMAIL_EXIST("2001","해당하는 이메일이 존재합니다."),
   NO_EXIST_EMAIL("2002","존재하지 않는 사용자입니다."),
   NO_MATCH_PASSWORD("2002","비밀번호가 일치하지 않습니다."),
+  IS_SOCIAL_LOGIN("2003","소셜 로그인으로 가입한 이메일입니다."),
 
   /**
    * 의뢰 도메인 에러 메세지
