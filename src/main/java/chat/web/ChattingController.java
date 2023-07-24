@@ -25,6 +25,7 @@ public class ChattingController {
 
   private final ChattingService chattingService;
   private final ChattingContentReadStatusService chattingContentReadStatusService;
+  private final MemberService memberService;
 
   private final ChannelTopic topic;
 
@@ -37,6 +38,8 @@ public class ChattingController {
       ChattingContentRequestDTO chattingContentRequestDTO) {
     ChattingContentRequestDTO dto = ChattingContentRequestDTO
         .fromChattingRoomRequestDTO(chattingContentRequestDTO);
+
+    // 멤버값 가져오기
     Member sender = memberService.getmemberById(dto.getSenderId());
     if (sender == null) {
       throw new RuntimeException("Member not found");
