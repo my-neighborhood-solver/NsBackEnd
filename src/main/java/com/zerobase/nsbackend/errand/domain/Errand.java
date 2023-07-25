@@ -30,5 +30,16 @@ public class Errand {
   private ErrandStatus status;
   private Integer viewCount;
   private LocalDateTime createdAt;
+
+  public void edit(String title, String content, PayDivision payDivision, Integer pay) {
+    this.title = title;
+    this.content = content;
+    this.payDivision = payDivision;
+    this.pay = pay;
+  }
+
+  public void changeStatus(ErrandStatus status) {
+    this.status = status;
+  }
 }
 
