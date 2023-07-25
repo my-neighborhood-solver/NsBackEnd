@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Disabled
 @Transactional
 @AutoConfigureMockMvc
-@ActiveProfiles("dev")
 @SpringBootTest
 public class IntegrationTest {
   @Autowired
