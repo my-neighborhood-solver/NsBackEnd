@@ -1,5 +1,7 @@
-package com.zerobase.nsbackend.errand.domain;
+package com.zerobase.nsbackend.errand.web;
 
+import com.zerobase.nsbackend.errand.domain.Errand;
+import com.zerobase.nsbackend.errand.domain.ErrandService;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandDto;
 import java.net.URI;
