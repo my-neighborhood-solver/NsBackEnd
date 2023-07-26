@@ -36,8 +36,6 @@ dependencies {
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.3'
     implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
 
-    testImplementation 'junit:junit:4.13.1'
-
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 

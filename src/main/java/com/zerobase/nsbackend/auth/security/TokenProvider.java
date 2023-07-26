@@ -17,7 +17,7 @@ import org.springframework.util.StringUtils;
 @Component
 @RequiredArgsConstructor
 public class TokenProvider {
-  private static final long TOKEN_EXPIRE_TIME = 1000*60*60*24; // token 기간 24시간
+  private static final long TOKEN_EXPIRE_TIME = 1000*60*60*6; // token 기간 6시간
   private final AuthService authService;
 
   @Value("${spring.jwt.secret}")
@@ -32,7 +32,7 @@ public class TokenProvider {
         .setClaims(claims)
         .setIssuedAt(now)
         .setExpiration(expiredDate)
-        .signWith(SignatureAlgorithm.RS256, this.secretKey)
+        .signWith(SignatureAlgorithm.HS256, this.secretKey)
         .compact();
   }
   public Authentication getAuthentication(String jwt){

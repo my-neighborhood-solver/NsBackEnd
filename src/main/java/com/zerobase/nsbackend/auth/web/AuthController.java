@@ -40,7 +40,7 @@ public class AuthController {
         SignUpResponse response = SignUpResponse.builder()
             .id(member.getId())
             .email(member.getEmail())
-            .name(member.getName())
+            .nickname(member.getNickname())
             .build();
         return ResponseEntity.ok(response);
     }
@@ -52,7 +52,7 @@ public class AuthController {
         SignInResponse response = SignInResponse.builder()
             .id(member.getId())
             .email(member.getEmail())
-            .name(member.getName())
+            .nickname(member.getNickname())
             .token(token)
             .build();
         return ResponseEntity.ok(response);
@@ -68,19 +68,18 @@ public class AuthController {
 
     @GetMapping("/kakao/callback")
     @ResponseBody
-    public ResponseEntity<SignUpResponse> kakaoOauth(@RequestParam("code") String code) {
-        log.info("인가 코드를 이용하여 토큰을 받습니다. : "+code);
+    public ResponseEntity<SignInResponse> kakaoOauth(@RequestParam("code") String code) {
         KakaoTokenResponse kakaoTokenResponse = kakaoTokenJsonData.getToken(code);
-        log.info("토큰에 대한 정보입니다. : {}",kakaoTokenResponse);
         KakaoUserInfoResponse userInfo = kakaoUserInfo.getUserInfo(kakaoTokenResponse.getAccess_token());
-        log.info("회원 정보 입니다.{}",userInfo);
         String name = userInfo.getKakao_account().getProfile().getNickname();
         Member member = this.authService.kakaoRegister(userInfo.getKakao_account().getEmail(),
             name);
-        SignUpResponse response = SignUpResponse.builder()
+        String token = this.tokenProvider.generateToken(member.getEmail());
+        SignInResponse response = SignInResponse.builder()
             .id(member.getId())
             .email(member.getEmail())
-            .name(member.getName())
+            .nickname(member.getNickname())
+            .token(token)
             .build();
         return ResponseEntity.ok(response);
     }

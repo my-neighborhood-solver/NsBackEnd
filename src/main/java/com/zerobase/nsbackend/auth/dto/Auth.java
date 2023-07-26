@@ -13,7 +13,7 @@ public class Auth {
     @Builder
     public static class SignUp{
         @NotNull
-        private String name;
+        private String nickname;
         @NotNull
         private String email;
         @NotNull
@@ -21,7 +21,7 @@ public class Auth {
 
         public Member toEntity(){
             return Member.builder()
-                .name(this.name)
+                .nickname(this.nickname)
                 .email(this.email)
                 .password(this.password)
                 .isSocialLogin(false)
@@ -35,7 +35,7 @@ public class Auth {
     @Builder
     public static class SignUpResponse{
         private Long id;
-        private String name;
+        private String nickname;
         private String email;
     }
 
@@ -54,7 +54,7 @@ public class Auth {
     @Builder
     public static class SignInResponse{
         private Long id;
-        private String name;
+        private String nickname;
         private String email;
         private String token;
     }
