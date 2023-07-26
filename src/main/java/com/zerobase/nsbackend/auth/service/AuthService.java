@@ -5,6 +5,7 @@ import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.domain.repository.MemberRepository;
 import com.zerobase.nsbackend.auth.dto.Auth.SignIn;
 import com.zerobase.nsbackend.auth.dto.Auth.SignUp;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,13 +65,19 @@ public class AuthService implements UserDetailsService {
             + "&response_type=code";
     }
 
-    public Member kakaoRegister(String email, String name){
+    public Member kakaoRegister(String email, String nickname){
         boolean exists =  this.memberRepository.existsByEmail(email);
         if(exists){
-            throw new IllegalArgumentException(ErrorCode.EMAIL_EXIST.getDescription());
+            Member byEmail = this.memberRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(ErrorCode.NOT_FOUND_USER.getDescription()));
+            if(byEmail.getIsSocialLogin()){
+                return byEmail;
+            }else{
+                throw new IllegalArgumentException(ErrorCode.IS_NOT_SOCAIL_USER.getDescription());
+            }
         }
         Member member = this.memberRepository.save(Member.builder()
-            .name(name)
+            .nickname(nickname)
             .email(email)
             .isSocialLogin(true)
             .isDeleted(false)

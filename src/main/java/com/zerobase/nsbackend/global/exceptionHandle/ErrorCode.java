@@ -24,6 +24,8 @@ public enum ErrorCode {
   NO_EXIST_EMAIL("2002","존재하지 않는 사용자입니다."),
   NO_MATCH_PASSWORD("2002","비밀번호가 일치하지 않습니다."),
   IS_SOCIAL_LOGIN("2003","소셜 로그인으로 가입한 이메일입니다."),
+  NOT_FOUND_USER("2004","사용자 정보를 찾을 수 없습니다."),
+  IS_NOT_SOCAIL_USER("2005","소셜 로그인으로 가입한 계정이 아닙니다."),
 
   /**
    * 의뢰 도메인 에러 메세지

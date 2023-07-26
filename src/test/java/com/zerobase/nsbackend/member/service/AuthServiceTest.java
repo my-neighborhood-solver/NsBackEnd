@@ -29,7 +29,7 @@ class AuthServiceTest {
     void successRegister() {
         //given
         Auth.SignUp signupRequest = Auth.SignUp.builder()
-            .name("wnstj")
+            .nickname("wnstj")
             .email("sfds@naver.com")
             .password("sdf123").build();
 
@@ -38,14 +38,14 @@ class AuthServiceTest {
 
         //then
         Optional<Member> member = memberRepository.findByEmail("sfds@naver.com");
-        assertEquals(member.get().getName(),signupRequest.getName());
+        assertEquals(member.get().getNickname(),signupRequest.getNickname());
     }
     @Test
     @DisplayName("이메일 중복 - 회원가입 실패")
     void duplicationEmailRegister() {
         //given
         Auth.SignUp signupRequest = Auth.SignUp.builder()
-                .name("wnstj")
+                .nickname("wnstj")
                 .email("sfds@naver.com")
                 .password("sdf123").build();
 
@@ -61,7 +61,7 @@ class AuthServiceTest {
     void SuccessAuthenticate() {
         //given
         Auth.SignUp signupRequest = Auth.SignUp.builder()
-            .name("wnstj")
+            .nickname("wnstj")
             .email("sfds@naver.com")
             .password("sdf123").build();
 
@@ -95,7 +95,7 @@ class AuthServiceTest {
     void FailAuthenticateNoMatchPassword() {
         //given
         Auth.SignUp signupRequest = Auth.SignUp.builder()
-            .name("wnstj")
+            .nickname("wnstj")
             .email("sfds@naver.com")
             .password("sdf123").build();
 
