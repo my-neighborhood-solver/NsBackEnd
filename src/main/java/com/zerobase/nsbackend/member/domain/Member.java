@@ -1,6 +1,7 @@
 package com.zerobase.nsbackend.member.domain;
 
 import com.zerobase.nsbackend.global.BaseTimeEntity;
+import com.zerobase.nsbackend.member.type.Role;
 import java.util.Collection;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -32,6 +33,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
     private String nickname;
     private String profileImage;
     private String hashTag;
+    private Role role;
     private boolean isDeleted;
 
     @Override

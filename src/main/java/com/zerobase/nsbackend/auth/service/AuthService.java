@@ -5,6 +5,7 @@ import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
 import com.zerobase.nsbackend.auth.dto.Auth.SignIn;
 import com.zerobase.nsbackend.auth.dto.Auth.SignUp;
+import com.zerobase.nsbackend.member.type.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,6 +79,7 @@ public class AuthService implements UserDetailsService {
         Member member = this.memberRepository.save(Member.builder()
             .nickname(nickname)
             .email(email)
+            .role(Role.ROLE_USER)
             .isSocialLogin(true)
             .isDeleted(false)
             .build());
