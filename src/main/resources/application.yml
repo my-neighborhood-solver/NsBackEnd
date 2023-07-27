@@ -14,3 +14,17 @@ spring:
         show_sql: true
     hibernate:
       ddl-auto: create-drop
+
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIA2XCLNRPKPE447634
+      secretKey: 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
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+application:
+  bucket:
+    name: my-neighbor-solver
