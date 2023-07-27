@@ -1,4 +1,4 @@
-package com.zerobase.nsbackend.member.domain.repository;
+package com.zerobase.nsbackend.member.repository;
 
 import java.util.Optional;
 

@@ -6,7 +6,7 @@ import static org.mockito.Mockito.doReturn;
 
 import com.zerobase.nsbackend.auth.service.AuthService;
 import com.zerobase.nsbackend.member.domain.Member;
-import com.zerobase.nsbackend.member.domain.repository.MemberRepository;
+import com.zerobase.nsbackend.member.repository.MemberRepository;
 import com.zerobase.nsbackend.auth.dto.Auth;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;

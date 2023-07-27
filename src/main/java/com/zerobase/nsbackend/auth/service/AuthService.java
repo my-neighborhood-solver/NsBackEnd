@@ -2,10 +2,9 @@ package com.zerobase.nsbackend.auth.service;
 
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import com.zerobase.nsbackend.member.domain.Member;
-import com.zerobase.nsbackend.member.domain.repository.MemberRepository;
+import com.zerobase.nsbackend.member.repository.MemberRepository;
 import com.zerobase.nsbackend.auth.dto.Auth.SignIn;
 import com.zerobase.nsbackend.auth.dto.Auth.SignUp;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
