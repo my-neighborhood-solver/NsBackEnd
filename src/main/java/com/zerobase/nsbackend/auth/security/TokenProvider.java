@@ -1,6 +1,7 @@
 package com.zerobase.nsbackend.auth.security;
 
 import com.zerobase.nsbackend.auth.service.AuthService;
+import com.zerobase.nsbackend.member.type.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -19,11 +20,13 @@ import org.springframework.util.StringUtils;
 public class TokenProvider {
   private static final long TOKEN_EXPIRE_TIME = 1000*60*60*6; // token 기간 6시간
   private final AuthService authService;
+  private static final String KEY_ROLE = "role";
 
   @Value("${spring.jwt.secret}")
   private String secretKey;
-  public String generateToken(String email){
+  public String generateToken(String email, Role role){
     Claims claims = Jwts.claims().setSubject(email);
+    claims.put(KEY_ROLE,role);
 
     var now = new Date();
     var expiredDate = new Date(now.getTime() + TOKEN_EXPIRE_TIME);
