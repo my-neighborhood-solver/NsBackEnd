@@ -14,6 +14,7 @@ public enum ErrorCode {
    * 규칙 : 1000 ~ 19999
    */
   INTERNAL_SERVER_ERROR("1000", "일시적인 장애 입니다."),
+  FAIL_TO_UPLOAD_FILE("1001", "파일 업로드에 실패했습니다."),
   /**
    * 회원 도메인 에러 메세지
    * 규칙 : 2000 ~ 2999
