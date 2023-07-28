@@ -5,7 +5,7 @@ import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
 import com.zerobase.nsbackend.auth.dto.Auth.SignIn;
 import com.zerobase.nsbackend.auth.dto.Auth.SignUp;
-import com.zerobase.nsbackend.member.type.Role;
+import com.zerobase.nsbackend.member.type.Authority;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,10 +30,9 @@ public class AuthService implements UserDetailsService {
     private String redirectUri;
 
     @Override
-    public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-        Long userId = Long.parseLong(id);
-        return this.memberRepository.findById(userId)
-            .orElseThrow(() -> new UsernameNotFoundException("couldn't find user ->" + id));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return this.memberRepository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("couldn't find user ->" + email));
     }
 
     public Member register(SignUp signupRequest){
@@ -79,7 +78,7 @@ public class AuthService implements UserDetailsService {
         Member member = this.memberRepository.save(Member.builder()
             .nickname(nickname)
             .email(email)
-            .role(Role.ROLE_USER)
+            .authority(Authority.ROLE_USER)
             .isSocialLogin(true)
             .isDeleted(false)
             .build());

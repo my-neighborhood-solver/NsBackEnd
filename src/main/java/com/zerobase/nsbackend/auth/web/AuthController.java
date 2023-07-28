@@ -48,7 +48,7 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<SignInResponse> logInMember(@RequestBody SignIn request){
         Member member = this.authService.authenticate(request);
-        String token = this.tokenProvider.generateToken(member.getEmail(), member.getRole());
+        String token = this.tokenProvider.generateToken(member.getEmail(), member.getAuthority());
         SignInResponse response = SignInResponse.builder()
             .id(member.getId())
             .email(member.getEmail())
@@ -74,7 +74,7 @@ public class AuthController {
         String name = userInfo.getKakao_account().getProfile().getNickname();
         Member member = this.authService.kakaoRegister(userInfo.getKakao_account().getEmail(),
             name);
-        String token = this.tokenProvider.generateToken(member.getEmail(),member.getRole());
+        String token = this.tokenProvider.generateToken(member.getEmail(),member.getAuthority());
         SignInResponse response = SignInResponse.builder()
             .id(member.getId())
             .email(member.getEmail())

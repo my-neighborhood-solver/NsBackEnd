@@ -2,9 +2,8 @@ package com.zerobase.nsbackend.auth.dto;
 
 import com.sun.istack.NotNull;
 import com.zerobase.nsbackend.member.domain.Member;
-import com.zerobase.nsbackend.member.type.Role;
+import com.zerobase.nsbackend.member.type.Authority;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,7 +26,7 @@ public class Auth {
                 .password(this.password)
                 .isSocialLogin(false)
                 .isDeleted(false)
-                .role(Role.ROLE_USER)
+                .authority(Authority.ROLE_USER)
                 .build();
         }
     }

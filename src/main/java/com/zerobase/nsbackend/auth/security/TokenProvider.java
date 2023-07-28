@@ -1,7 +1,7 @@
 package com.zerobase.nsbackend.auth.security;
 
 import com.zerobase.nsbackend.auth.service.AuthService;
-import com.zerobase.nsbackend.member.type.Role;
+import com.zerobase.nsbackend.member.type.Authority;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -24,9 +24,9 @@ public class TokenProvider {
 
   @Value("${spring.jwt.secret}")
   private String secretKey;
-  public String generateToken(String email, Role role){
+  public String generateToken(String email, Authority authority){
     Claims claims = Jwts.claims().setSubject(email);
-    claims.put(KEY_ROLE,role);
+    claims.put(KEY_ROLE, authority);
 
     var now = new Date();
     var expiredDate = new Date(now.getTime() + TOKEN_EXPIRE_TIME);

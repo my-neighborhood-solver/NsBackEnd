@@ -1,5 +1,6 @@
 package com.zerobase.nsbackend.global.exceptionHandle;
 
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,14 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(UsernameNotFoundException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ErrorResponse handleIllegalArgumentException(UsernameNotFoundException ex) {
+    UUID uuid = generateLogId(ex);
+    log.error("## error : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
+    return ErrorResponse.of(generateLogId(ex), ex);
+  }
+
+  @ExceptionHandler(NoSuchElementException.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  public ErrorResponse handleIllegalArgumentException(NoSuchElementException ex) {
     UUID uuid = generateLogId(ex);
     log.error("## error : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
     return ErrorResponse.of(generateLogId(ex), ex);
