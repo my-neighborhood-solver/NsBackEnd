@@ -4,6 +4,7 @@ import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,9 +26,9 @@ public class FileController {
   }
 
   @PostMapping("/images")
-  public ResponseEntity<Void> uploadImage(@RequestParam("file") MultipartFile file) {
+  public ResponseEntity<UploadFile> uploadImage(@RequestParam("file") MultipartFile file) {
     UploadFile uploadFile = storeFile.storeFile(file);
-    return ResponseEntity.created(URI.create("/images/" + uploadFile.getStoreFileName())).build();
+    return ResponseEntity.status(HttpStatus.CREATED).body(uploadFile);
   }
 
   @DeleteMapping("/images/{filename}")
