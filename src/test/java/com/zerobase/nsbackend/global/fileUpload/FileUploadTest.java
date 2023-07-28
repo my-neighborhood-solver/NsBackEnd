@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.zerobase.nsbackend.integrationTest.IntegrationTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -50,11 +51,10 @@ class FileUploadTest extends IntegrationTest {
         "Hello, World!".getBytes()
     );
     ResultActions createAction = mvc.perform(multipart("/images").file(file));
-    String newFileUri = createAction.andReturn().getResponse().getHeader("Location");
-    String filename = newFileUri.replace("/images/", "");
+    String newFileName = getNewFileName(createAction);
 
     // when
-    ResultActions resultActions = mvc.perform(get("/images/{filename}", filename))
+    ResultActions resultActions = mvc.perform(get("/images/{filename}", newFileName))
         .andDo(print());
 
     // then
@@ -65,13 +65,23 @@ class FileUploadTest extends IntegrationTest {
   }
 
   /**
+   * 저장된 파일 이름을 반환합니다.
+   * @param resultActions
+   * @return
+   * @throws Exception
+   */
+  private String getNewFileName(ResultActions resultActions) throws Exception {
+    String bodyString = resultActions.andReturn().getResponse().getContentAsString();
+    return objectMapper.readValue(bodyString, UploadFile.class).getStoreFileName();
+  }
+
+  /**
    * 테스트로 생성된 데이터를 삭제합니다.
    * @param resultActions
    * @throws Exception
    */
   private void removeFileAfterTest(ResultActions resultActions) throws Exception {
-    String newFileUri = resultActions.andReturn().getResponse().getHeader("Location");
-    String filename = newFileUri.replace("/images/", "");
-    mvc.perform(delete("/images/{filename}", filename));
+    String newFileName = getNewFileName(resultActions);
+    mvc.perform(delete("/images/{filename}", newFileName));
   }
 }
