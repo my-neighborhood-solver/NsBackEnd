@@ -25,7 +25,6 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-/src/main/resources/application-oauth.yml
 
 ### NetBeans ###
 /nbproject/private/
@@ -36,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### application ###
+/src/main/resources/application-oauth.yml
+/src/main/resources/application-s3.yml
