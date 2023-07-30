@@ -5,6 +5,8 @@ import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
 import com.zerobase.nsbackend.global.BaseTimeEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import lombok.AccessLevel;
@@ -25,8 +27,10 @@ public class Errand extends BaseTimeEntity {
   private String title;
   @Column(columnDefinition = "TEXT")
   private String content;
+  @Enumerated(EnumType.STRING)
   private PayDivision payDivision;
   private Integer pay;
+  @Enumerated(EnumType.STRING)
   private ErrandStatus status;
   private Integer viewCount;
 
