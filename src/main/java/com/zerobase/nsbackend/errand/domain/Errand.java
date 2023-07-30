@@ -2,7 +2,7 @@ package com.zerobase.nsbackend.errand.domain;
 
 import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
 import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
-import java.time.LocalDateTime;
+import com.zerobase.nsbackend.global.BaseTimeEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
-public class Errand {
+public class Errand extends BaseTimeEntity {
   @Id @GeneratedValue
   private Long id;
   @Column(length = 500)
@@ -29,7 +29,6 @@ public class Errand {
   private Integer pay;
   private ErrandStatus status;
   private Integer viewCount;
-  private LocalDateTime createdAt;
 
   public void edit(String title, String content, PayDivision payDivision, Integer pay) {
     this.title = title;
