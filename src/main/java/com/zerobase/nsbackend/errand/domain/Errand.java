@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,8 +22,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 public class Errand extends BaseTimeEntity {
-  @Id @GeneratedValue
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
   @Column(length = 500)
   private String title;
   @Column(columnDefinition = "TEXT")
