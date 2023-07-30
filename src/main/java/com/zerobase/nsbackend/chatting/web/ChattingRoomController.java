@@ -34,14 +34,14 @@ public class ChattingRoomController {
   }
 
   //채팅방 전체조회
-  @GetMapping("/memberId={memberId}")
+  @GetMapping("/{memberId}")
   public ResponseEntity<List<ChattingRoomAllResponse>> getChattingRooms(@PathVariable Long memberId) {
     List<ChattingRoomAllResponse> chattingRooms = chattingRoomService.getChattingRoomsByMemberId(memberId);
     return ResponseEntity.ok(chattingRooms);
   }
 
   // 채팅방 단건 조회
-  @GetMapping("/{roomId}/memberId={memberId}")
+  @GetMapping("/{roomId}/members/{memberId}")
   public ResponseEntity<List<ChattingContent>> getChattingRoom(@PathVariable Long roomId, @PathVariable Long memberId) {
     List<ChattingContent> chattingRoom = chattingRoomService.getChattingRoomByIdAndMemberId(roomId, memberId);
     return ResponseEntity.ok().body(chattingRoom);
