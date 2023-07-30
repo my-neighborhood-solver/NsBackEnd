@@ -1,25 +1,36 @@
 package com.zerobase.nsbackend.errand.domain;
 
+import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY_TO_DELETE;
+import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY_TO_EDIT;
+
 import com.zerobase.nsbackend.errand.domain.repository.ErrandRepository;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
+import com.zerobase.nsbackend.global.auth.AuthManager;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
+import com.zerobase.nsbackend.member.domain.Member;
+import com.zerobase.nsbackend.member.repository.MemberRepository;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
 public class ErrandService {
+  private final MemberRepository memberRepository;
   private final ErrandRepository errandRepository;
+  private final AuthManager authManager;
 
   @Transactional
   public Errand createErrand(ErrandCreateRequest request) {
-    // TODO: 회원 유효성 체크 필요
+    Member member = getMemberFromAuth();
 
     return errandRepository.save(
         Errand.builder()
+            .errander(member)
             .title(request.getTitle())
             .content(request.getContent())
             .payDivision(request.getPayDivision())
@@ -37,15 +48,30 @@ public class ErrandService {
   @Transactional
   public void editErrand(ErrandUpdateRequest request, Long id) {
     Errand errand = getErrand(id);
-    errand.edit(request.getTitle(), request.getContent()
-        , request.getPayDivision(), request.getPay());
+    if (!isErrander(errand.getErrander().getId())) {
+      throw new IllegalStateException(DONT_HAVE_AUTHORITY_TO_EDIT.getDescription());
+    }
+    errand.edit(request.getTitle(), request.getContent(),
+          request.getPayDivision(), request.getPay());
   }
 
   @Transactional
   public void cancelErrand(Long id) {
-    //TODO: 인증, 인가 도입 후 의뢰자만 삭제 가능하도록 수정
-
     Errand errand = getErrand(id);
+    if (!isErrander(errand.getErrander().getId())) {
+      throw new IllegalStateException(DONT_HAVE_AUTHORITY_TO_DELETE.getDescription());
+    }
     errand.changeStatus(ErrandStatus.CANCEL);
+  }
+
+  private boolean isErrander(Long erranderId) {
+    Member member = getMemberFromAuth();
+    return Objects.equals(erranderId, member.getId());
+  }
+
+  private Member getMemberFromAuth() {
+    String email = authManager.getUsername();
+    return memberRepository.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
   }
 }
