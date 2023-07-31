@@ -25,14 +25,6 @@ public class GlobalExceptionHandler {
     return ErrorResponse.of(generateLogId(ex), ex);
   }
 
-  @ExceptionHandler(Exception.class)
-  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  public ErrorResponse handleIllegalArgumentException(Exception ex) {
-    UUID uuid = generateLogId(ex);
-    log.error("## error : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
-    return ErrorResponse.of(generateLogId(ex), ex);
-  }
-
   @ExceptionHandler(UsernameNotFoundException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ErrorResponse handleIllegalArgumentException(UsernameNotFoundException ex) {
@@ -44,6 +36,14 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(NoSuchElementException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ErrorResponse handleIllegalArgumentException(NoSuchElementException ex) {
+    UUID uuid = generateLogId(ex);
+    log.error("## error : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
+    return ErrorResponse.of(generateLogId(ex), ex);
+  }
+
+  @ExceptionHandler(Exception.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  public ErrorResponse handleIllegalArgumentException(Exception ex) {
     UUID uuid = generateLogId(ex);
     log.error("## error : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
     return ErrorResponse.of(generateLogId(ex), ex);

@@ -24,20 +24,16 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     public GetUserResponse getUserInfo(Member member){
-        boolean exist = memberAddressRepository.existsByMember(member);
         GetUserResponse build = GetUserResponse.builder()
             .email(member.getEmail())
             .nickname(member.getNickname())
             .profileImage(member.getProfileImage())
             .build();
-        if(exist){
-            MemberAddress memberAddress = memberAddressRepository.findAllByMember(member)
-                .orElseThrow(() -> new NoSuchElementException(ErrorCode.NO_EXIST_DATA.getDescription()));
-            build.setLongitude(memberAddress.getLongitude());
-            build.setLatitude(memberAddress.getLatitude());
-            build.setStreetNameAddress(memberAddress.getStreetNameAddress());
-            return build;
-        }
+        MemberAddress memberAddress = memberAddressRepository.findAllByMember(member)
+            .orElseThrow(() -> new NoSuchElementException(ErrorCode.NO_EXIST_DATA.getDescription()));
+        build.setLongitude(memberAddress.getLongitude());
+        build.setLatitude(memberAddress.getLatitude());
+        build.setStreetNameAddress(memberAddress.getStreetNameAddress());
         return build;
     }
 
@@ -58,7 +54,8 @@ public class MemberService {
         if(exists){
             MemberAddress memberAddress = memberAddressRepository.findAllByMember(member)
                 .orElseThrow(() -> new NoSuchElementException(ErrorCode.NO_EXIST_DATA.getDescription()));
-            memberAddress.updateUserAddress(request);
+            memberAddress.updateUserAddress(request.getLatitude(),
+                request.getLongitude(), request.getStreetNameAddress());
             memberAddressRepository.save(memberAddress);
             return memberAddress;
         }else{

@@ -2,6 +2,8 @@ package com.zerobase.nsbackend.auth.service;
 
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import com.zerobase.nsbackend.member.domain.Member;
+import com.zerobase.nsbackend.member.domain.MemberAddress;
+import com.zerobase.nsbackend.member.repository.MemberAddressRepository;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
 import com.zerobase.nsbackend.auth.dto.Auth.SignIn;
 import com.zerobase.nsbackend.auth.dto.Auth.SignUp;
@@ -24,6 +26,7 @@ public class AuthService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MemberAddressRepository memberAddressRepository;
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String secretKey;
     @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
@@ -42,6 +45,7 @@ public class AuthService implements UserDetailsService {
         }
         signupRequest.setPassword(this.passwordEncoder.encode(signupRequest.getPassword()));
         Member mem = this.memberRepository.save(signupRequest.toEntity());
+        this.memberAddressRepository.save(MemberAddress.builder().member(mem).build());
         return mem;
     }
 

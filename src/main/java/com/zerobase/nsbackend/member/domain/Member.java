@@ -4,9 +4,7 @@ import com.zerobase.nsbackend.global.BaseTimeEntity;
 import com.zerobase.nsbackend.member.type.Authority;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -18,7 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,7 +25,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Builder
-@EntityListeners(AuditingEntityListener.class)
 public class Member extends BaseTimeEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,7 +53,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority memberAuthority = new SimpleGrantedAuthority(authority.toString());
+        SimpleGrantedAuthority memberAuthority = new SimpleGrantedAuthority(authority.name());
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(memberAuthority);
         return authorities;
