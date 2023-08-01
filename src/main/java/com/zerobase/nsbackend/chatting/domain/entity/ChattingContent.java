@@ -24,15 +24,15 @@ import lombok.NoArgsConstructor;
 public class ChattingContent {
 
   @Id
-  @GeneratedValue( strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @ManyToOne
-  @JoinColumn(name = "chatting_room_id", referencedColumnName = "id")
+  @JoinColumn(name = "chatting_room_id")
   private ChattingRoom chattingRoom;
 
   @ManyToOne
-  @JoinColumn(name = "sender_id", referencedColumnName = "id")
+  @JoinColumn(name = "sender_id")
   private Member sender;
 
   @Column
@@ -52,7 +52,7 @@ public class ChattingContent {
     contentTime = LocalDateTime.now();
   }
 
-  public void setNickname(){
+  public void setNickname() {
     nickName = sender.getNickname();
   }
 }
