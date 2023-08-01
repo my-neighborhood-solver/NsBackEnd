@@ -9,6 +9,7 @@ import com.zerobase.nsbackend.global.customException.FileUploadException;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +28,11 @@ public class StoreFileToAWS implements StoreFile {
 
   private final AmazonS3 s3Client;
 
+  /**
+   * 파일 이름으로 파일을 조회합니다.
+   * @param filename
+   * @return Resource 타입의 파일
+   */
   @Override
   public Resource getFile(String filename) {
     S3Object s3Object = s3Client.getObject(bucketName, filename);
@@ -34,6 +40,11 @@ public class StoreFileToAWS implements StoreFile {
     return new InputStreamResource(inputStream);
   }
 
+  /**
+   * 하나의 파일을 AWS S3에 저장합니다.
+   * @param multipartFile
+   * @return 저장된 파일 이름(UUID), 원래 파일 이름
+   */
   @Override
   public UploadFile storeFile(MultipartFile multipartFile) {
     log.info("### bucketName : " + bucketName);
@@ -51,8 +62,34 @@ public class StoreFileToAWS implements StoreFile {
     return UploadFile.of(multipartFile.getOriginalFilename(), storeFileName);
   }
 
+  /**
+   * 파일 이름으로 파일을 삭제합니다.
+   * @param filename
+   */
   @Override
   public void deleteFile(String filename) {
     s3Client.deleteObject(bucketName, filename);
+  }
+
+  /**
+   * 저장할 파일 이름을 생성합니다.
+   * UUID 에 기존 파일의 확장자를 붙혀서 만듭니다.
+   * @param originalFilename
+   * @return
+   */
+  private String createStoreFileName(String originalFilename) {
+    String ext = extractExt(originalFilename);
+    String uuid = UUID.randomUUID().toString();
+    return uuid + "." + ext;
+  }
+
+  /**
+   * 파일의 확장자를 반환합니다.
+   * @param originalFilename
+   * @return
+   */
+  private String extractExt(String originalFilename) {
+    int pos = originalFilename.lastIndexOf(".");
+    return originalFilename.substring(pos + 1);
   }
 }
