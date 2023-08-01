@@ -14,7 +14,6 @@ import com.zerobase.nsbackend.member.repository.MemberRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -144,7 +143,7 @@ public class ChattingRoomService {
 
 
   // member 있는지 유효성 검사
-  private Member memberFindById(Long memberId) {
+  public Member memberFindById(Long memberId) {
     Optional<Member> member = memberRepository.findById(memberId);
     if (member.isPresent()) {
       return member.get();
@@ -153,7 +152,7 @@ public class ChattingRoomService {
   }
 
   // 채팅방이 존재하는지 유효성 검사
-  private ChattingRoom chattingRoomFindById(Long roomId) {
+  public ChattingRoom chattingRoomFindById(Long roomId) {
     Optional<ChattingRoom> chattingRoom = chattingRoomRepository.findById(roomId);
     if (chattingRoom.isPresent()) {
       return chattingRoom.get();

@@ -51,8 +51,4 @@ public class ChattingContent {
   public void prePersist() {
     contentTime = LocalDateTime.now();
   }
-
-  public void setNickname(){
-    nickName = sender.getNickname();
-  }
 }

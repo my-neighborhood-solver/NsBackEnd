@@ -26,4 +26,6 @@ public interface ChattingContentRepository extends JpaRepository<ChattingContent
       "AND c.chattingRoom.id = :chattingRoomId " +
       "AND c.sender.id <> :memberId")
   void markAsReadInChattingRoomExceptSender(Long chattingRoomId, Long memberId);
+
+  List<ChattingContent> findByChattingRoomId(Long chattingRoomId);
 }
