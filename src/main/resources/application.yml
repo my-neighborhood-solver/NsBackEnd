@@ -14,7 +14,12 @@ spring:
         show_sql: true
     hibernate:
       ddl-auto: create-drop
+
   jwt:
     secret: cc40a3791cf94e649344be45eb1292a2
   profiles:
-    include: oauth
+    include: oauth, s3
+
+
+
+

@@ -14,7 +14,7 @@ public enum ErrorCode {
    * 규칙 : 1000 ~ 19999
    */
   INTERNAL_SERVER_ERROR("1000", "일시적인 장애 입니다."),
-  INVALID_INPUT_ERROR("1001","올바르지 않은 입력입니다."),
+  FAIL_TO_UPLOAD_FILE("1001", "파일 업로드에 실패했습니다."),
   /**
    * 회원 도메인 에러 메세지
    * 규칙 : 2000 ~ 2999
@@ -33,6 +33,8 @@ public enum ErrorCode {
    * 규칙 : 3000 ~ 3999
    */
   ERRAND_NOT_FOUND("3000", "의뢰를 찾지 못했습니다."),
+  DONT_HAVE_AUTHORITY_TO_EDIT("3001", "수정할 권한이 없습니다."),
+  DONT_HAVE_AUTHORITY_TO_DELETE("3002", "삭제할 권한이 없습니다."),
   /**
    * 채팅 도메인 에러 메세지
    * 규칙 : 4000 ~ 4999

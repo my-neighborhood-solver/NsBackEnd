@@ -38,7 +38,13 @@ public class GlobalExceptionHandler {
         .logId(generateLogId(ex))
         .build();
   }
-
+  @ExceptionHandler(IllegalStateException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ErrorResponse handleIllegalStateException(IllegalStateException ex) {
+    UUID uuid = generateLogId(ex);
+    log.info("## info : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
+    return ErrorResponse.of(generateLogId(ex), ex);
+  }
   @ExceptionHandler(UsernameNotFoundException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ErrorResponse handleIllegalArgumentException(UsernameNotFoundException ex) {
