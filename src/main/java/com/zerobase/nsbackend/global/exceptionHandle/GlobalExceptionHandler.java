@@ -1,9 +1,12 @@
 package com.zerobase.nsbackend.global.exceptionHandle;
 
+import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -23,7 +26,18 @@ public class GlobalExceptionHandler {
     log.info("## info : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
     return ErrorResponse.of(generateLogId(ex), ex);
   }
-
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ErrorResponse handleIllegalArgumentException(MethodArgumentNotValidException ex) {
+    UUID uuid = generateLogId(ex);
+    log.info("## info : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
+    return ErrorResponse.builder()
+        .errorCode(ErrorCode.INVALID_INPUT_ERROR.getCode())
+        .description(ErrorCode.INVALID_INPUT_ERROR.getDescription())
+        .dateTime(LocalDateTime.now())
+        .logId(generateLogId(ex))
+        .build();
+  }
   @ExceptionHandler(IllegalStateException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ErrorResponse handleIllegalStateException(IllegalStateException ex) {
@@ -31,18 +45,25 @@ public class GlobalExceptionHandler {
     log.info("## info : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
     return ErrorResponse.of(generateLogId(ex), ex);
   }
-
-  @ExceptionHandler(Exception.class)
+  @ExceptionHandler(UsernameNotFoundException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  public ErrorResponse handleIllegalArgumentException(Exception ex) {
+  public ErrorResponse handleIllegalArgumentException(UsernameNotFoundException ex) {
     UUID uuid = generateLogId(ex);
     log.error("## error : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
     return ErrorResponse.of(generateLogId(ex), ex);
   }
 
-  @ExceptionHandler(UsernameNotFoundException.class)
+  @ExceptionHandler(NoSuchElementException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  public ErrorResponse handleIllegalArgumentException(UsernameNotFoundException ex) {
+  public ErrorResponse handleIllegalArgumentException(NoSuchElementException ex) {
+    UUID uuid = generateLogId(ex);
+    log.error("## error : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
+    return ErrorResponse.of(generateLogId(ex), ex);
+  }
+
+  @ExceptionHandler(Exception.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  public ErrorResponse handleIllegalArgumentException(Exception ex) {
     UUID uuid = generateLogId(ex);
     log.error("## error : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
     return ErrorResponse.of(generateLogId(ex), ex);

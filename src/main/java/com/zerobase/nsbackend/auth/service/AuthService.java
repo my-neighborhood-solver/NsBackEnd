@@ -2,10 +2,12 @@ package com.zerobase.nsbackend.auth.service;
 
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import com.zerobase.nsbackend.member.domain.Member;
+import com.zerobase.nsbackend.member.domain.MemberAddress;
+import com.zerobase.nsbackend.member.repository.MemberAddressRepository;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
 import com.zerobase.nsbackend.auth.dto.Auth.SignIn;
 import com.zerobase.nsbackend.auth.dto.Auth.SignUp;
-import com.zerobase.nsbackend.member.type.Role;
+import com.zerobase.nsbackend.member.type.Authority;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,16 +26,16 @@ public class AuthService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MemberAddressRepository memberAddressRepository;
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String secretKey;
     @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private String redirectUri;
 
     @Override
-    public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-        Long userId = Long.parseLong(id);
-        return this.memberRepository.findById(userId)
-            .orElseThrow(() -> new UsernameNotFoundException("couldn't find user ->" + id));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return this.memberRepository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("couldn't find user ->" + email));
     }
 
     public Member register(SignUp signupRequest){
@@ -42,7 +44,12 @@ public class AuthService implements UserDetailsService {
             throw new IllegalArgumentException(ErrorCode.EMAIL_EXIST.getDescription());
         }
         signupRequest.setPassword(this.passwordEncoder.encode(signupRequest.getPassword()));
-        Member mem = this.memberRepository.save(signupRequest.toEntity());
+        MemberAddress memberAddress = MemberAddress.builder()
+            .longitude(0f)
+            .latitude(0f)
+            .streetNameAddress("").build();
+        Member mem = this.memberRepository.save(signupRequest.toEntity(memberAddress));
+        this.memberAddressRepository.save(memberAddress);
         return mem;
     }
 
@@ -76,13 +83,17 @@ public class AuthService implements UserDetailsService {
                 throw new IllegalArgumentException(ErrorCode.IS_NOT_SOCAIL_USER.getDescription());
             }
         }
-        Member member = this.memberRepository.save(Member.builder()
+        MemberAddress memberAddress = MemberAddress.builder()
+            .longitude(0f)
+            .latitude(0f)
+            .streetNameAddress("").build();
+        return this.memberRepository.save(Member.builder()
             .nickname(nickname)
             .email(email)
-            .role(Role.ROLE_USER)
+            .memberAddress(memberAddress)
+            .authority(Authority.ROLE_USER)
             .isSocialLogin(true)
             .isDeleted(false)
             .build());
-        return member;
     }
 }

@@ -1,10 +1,11 @@
 package com.zerobase.nsbackend.auth.dto;
 
-import com.sun.istack.NotNull;
 import com.zerobase.nsbackend.member.domain.Member;
-import com.zerobase.nsbackend.member.type.Role;
+import com.zerobase.nsbackend.member.domain.MemberAddress;
+import com.zerobase.nsbackend.member.type.Authority;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,21 +14,22 @@ public class Auth {
     @Setter
     @Builder
     public static class SignUp{
-        @NotNull
+        @NotBlank
         private String nickname;
-        @NotNull
+        @NotBlank
         private String email;
-        @NotNull
+        @NotBlank
         private String password;
 
-        public Member toEntity(){
+        public Member toEntity(MemberAddress memberAddress){
             return Member.builder()
                 .nickname(this.nickname)
                 .email(this.email)
                 .password(this.password)
                 .isSocialLogin(false)
                 .isDeleted(false)
-                .role(Role.ROLE_USER)
+                .authority(Authority.ROLE_USER)
+                .memberAddress(memberAddress)
                 .build();
         }
     }
@@ -45,9 +47,9 @@ public class Auth {
     @Setter
     @Builder
     public static class SignIn{
-        @NotNull
+        @Email
         private String email;
-        @NotNull
+        @NotBlank
         private String password;
     }
 
