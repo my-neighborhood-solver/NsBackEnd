@@ -7,14 +7,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.zerobase.nsbackend.integrationTest.IntegrationTest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
 
 class FileUploadTest extends IntegrationTest {
+  @WithMockUser("USER")
   @Test
   @DisplayName("파일 업르드 테스트")
   public void whenFileUploaded_thenVerifyStatus()
@@ -39,6 +40,7 @@ class FileUploadTest extends IntegrationTest {
     removeFileAfterTest(resultActions);
   }
 
+  @WithMockUser("USER")
   @Test
   @DisplayName("파일 조회 테스트")
   void getFile_success() throws Exception {
