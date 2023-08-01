@@ -15,11 +15,11 @@ public class ChattingRoomAllResponse {
   private String ChattingContent;
   private String nickName;
   private LocalDateTime time;
-  private Long readCount;
+  private int readCount;
 
 
   public static ChattingRoomAllResponse from(ChattingRoom chattingRoom, String content,
-      LocalDateTime time, Long readCount) {
+      LocalDateTime time, int readCount) {
     return ChattingRoomAllResponse.builder()
         .ChattingRoom_Id(chattingRoom.getId())
         .ChattingContent(content)

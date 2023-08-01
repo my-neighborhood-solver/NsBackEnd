@@ -86,8 +86,8 @@ public class ChattingRoomService {
       String content = null;
       LocalDateTime time = null;
 
-      // 읽지않은 갯수 인데 메서드 따로 뺄 예정
-      Long isRead = chattingContentRepository.countBySenderNotAndIsRead(sender, false);
+      // 읽지 않은 개수
+      int isRead = chattingContentRepository.countBySenderNotAndIsRead(sender, false);
 
       if (!chattingContent.isEmpty()) {
         content = chattingContent.get(chattingContent.size() - 1).getContent();
@@ -97,12 +97,7 @@ public class ChattingRoomService {
       chattingRoomResponses.add(ChattingRoomAllResponse.from(chattingRoom, content, time, isRead));
     }   // for each 문 끝
 
-    Collections.sort(chattingRoomResponses, new Comparator<ChattingRoomAllResponse>() {
-      @Override
-      public int compare(ChattingRoomAllResponse o1, ChattingRoomAllResponse o2) {
-        return o2.getTime().compareTo(o1.getTime());
-      }
-    });
+    Collections.sort(chattingRoomResponses, (o1, o2) -> o2.getTime().compareTo(o1.getTime()));
 
     return chattingRoomResponses;
   }
@@ -117,13 +112,38 @@ public class ChattingRoomService {
       //채팅방 안에 멤버가 존재하지않는다.
       throw new IllegalArgumentException(ErrorCode.CHATTING_NOT_FOUND.getDescription());
     }
-
+    // 채팅방 읽음 처리
+    chattingContentRepository.markAsReadInChattingRoomExceptSender(roomId, memberId);
     return chattingContentRepository
         .findByChattingRoomIdOrderByContentTimeDesc(roomId);
-
   }
 
-  // member가 있는지 유효성 검사
+  // 채팅방 전체 읽지 않음 개수 조회
+  @Transactional
+  public int getAllNotIsRead(Long memberId) {
+    // 유효성 검사 memberId가 있는지
+    Member sender = memberFindById(memberId);
+
+    int getAllNotIsRead = 0;
+
+    List<ChattingRoom> chattingRooms = chattingRoomRepository
+        .findByErrandMemberIdAndSenderMemberId(memberId, memberId);
+
+    for (ChattingRoom chattingRoom : chattingRooms) {
+      if ((chattingRoom.getExitTimeErrand() != null && sender == chattingRoom.getErrand()
+          .getErrander())
+          || (sender == chattingRoom.getSender() && chattingRoom.getExitTimeMember() != null)) {
+        continue;
+      }
+
+      int isRead = chattingContentRepository.countBySenderNotAndIsRead(sender, false);
+      getAllNotIsRead += isRead;
+    }   // for each 문 끝
+    return getAllNotIsRead;
+  }
+
+
+  // member 있는지 유효성 검사
   private Member memberFindById(Long memberId) {
     Optional<Member> member = memberRepository.findById(memberId);
     if (member.isPresent()) {
