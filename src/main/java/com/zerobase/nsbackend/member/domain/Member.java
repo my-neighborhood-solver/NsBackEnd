@@ -4,12 +4,15 @@ import com.zerobase.nsbackend.global.BaseTimeEntity;
 import com.zerobase.nsbackend.member.type.Authority;
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -26,7 +29,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Getter
 @Builder
 public class Member extends BaseTimeEntity implements UserDetails {
-    @Id
+    @Id @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String email;
@@ -37,7 +40,8 @@ public class Member extends BaseTimeEntity implements UserDetails {
     private String hashTag;
     @Enumerated(EnumType.STRING)
     private Authority authority;
-    @OneToOne(mappedBy = "member")
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "memberAddress_id")
     private MemberAddress memberAddress;
     private boolean isDeleted;
 

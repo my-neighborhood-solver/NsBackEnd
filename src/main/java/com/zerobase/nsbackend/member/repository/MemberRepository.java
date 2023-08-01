@@ -1,5 +1,6 @@
 package com.zerobase.nsbackend.member.repository;
 
+import com.zerobase.nsbackend.member.domain.MemberAddress;
 import java.util.Optional;
 
 import com.zerobase.nsbackend.member.domain.Member;

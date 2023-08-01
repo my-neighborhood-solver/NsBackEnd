@@ -44,8 +44,12 @@ public class AuthService implements UserDetailsService {
             throw new IllegalArgumentException(ErrorCode.EMAIL_EXIST.getDescription());
         }
         signupRequest.setPassword(this.passwordEncoder.encode(signupRequest.getPassword()));
-        Member mem = this.memberRepository.save(signupRequest.toEntity());
-        this.memberAddressRepository.save(MemberAddress.builder().member(mem).build());
+        MemberAddress memberAddress = MemberAddress.builder()
+            .longitude(0f)
+            .latitude(0f)
+            .streetNameAddress("").build();
+        Member mem = this.memberRepository.save(signupRequest.toEntity(memberAddress));
+        this.memberAddressRepository.save(memberAddress);
         return mem;
     }
 
@@ -79,13 +83,17 @@ public class AuthService implements UserDetailsService {
                 throw new IllegalArgumentException(ErrorCode.IS_NOT_SOCAIL_USER.getDescription());
             }
         }
-        Member member = this.memberRepository.save(Member.builder()
+        MemberAddress memberAddress = MemberAddress.builder()
+            .longitude(0f)
+            .latitude(0f)
+            .streetNameAddress("").build();
+        return this.memberRepository.save(Member.builder()
             .nickname(nickname)
             .email(email)
+            .memberAddress(memberAddress)
             .authority(Authority.ROLE_USER)
             .isSocialLogin(true)
             .isDeleted(false)
             .build());
-        return member;
     }
 }

@@ -2,6 +2,7 @@ package com.zerobase.nsbackend.member.domain;
 
 import com.zerobase.nsbackend.global.BaseTimeEntity;
 import com.zerobase.nsbackend.member.dto.PutUserAddressRequest;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,11 +21,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 public class MemberAddress extends BaseTimeEntity {
-    @Id
+    @Id @Column(name = "memberAddress_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne
-    @JoinColumn(name = "member_id")
+    @OneToOne(mappedBy = "memberAddress")
     private Member member;
     private String streetNameAddress;
     private Float latitude;//위도

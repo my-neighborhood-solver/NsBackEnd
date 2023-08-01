@@ -1,6 +1,8 @@
 package com.zerobase.nsbackend.member.dto;
 
-import com.sun.istack.NotNull;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +11,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class PutUserAddressRequest {
-    @NotNull
+    @NotBlank
     private String streetNameAddress;
     @NotNull
     private Float latitude;//위도

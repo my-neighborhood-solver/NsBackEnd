@@ -9,8 +9,9 @@ import com.zerobase.nsbackend.auth.dto.KakaoTokenResponse;
 import com.zerobase.nsbackend.auth.dto.KakaoUserInfoResponse;
 import com.zerobase.nsbackend.auth.security.TokenProvider;
 import com.zerobase.nsbackend.auth.service.AuthService;
-import com.zerobase.nsbackend.auth.utils.KakaoTokenJsonData;
-import com.zerobase.nsbackend.auth.utils.KakaoUserInfo;
+import com.zerobase.nsbackend.auth.external.KakaoTokenJsonData;
+import com.zerobase.nsbackend.auth.external.KakaoUserInfo;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class AuthController {
     private final KakaoUserInfo kakaoUserInfo;
 
     @PostMapping("/signup")
-    public ResponseEntity<SignUpResponse> createMember(@RequestBody SignUp request){
+    public ResponseEntity<SignUpResponse> createMember(@RequestBody @Valid SignUp request){
         Member member = this.authService.register(request);
         SignUpResponse response = SignUpResponse.builder()
             .id(member.getId())
@@ -46,7 +47,7 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<SignInResponse> logInMember(@RequestBody SignIn request){
+    public ResponseEntity<SignInResponse> logInMember(@RequestBody @Valid SignIn request){
         Member member = this.authService.authenticate(request);
         String token = this.tokenProvider.generateToken(member.getEmail(), member.getAuthority());
         SignInResponse response = SignInResponse.builder()

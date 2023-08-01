@@ -6,6 +6,7 @@ import com.zerobase.nsbackend.member.dto.PutProfileImgRequest;
 import com.zerobase.nsbackend.member.dto.PutUserAddressRequest;
 import com.zerobase.nsbackend.member.dto.PutUserNicknameRequest;
 import com.zerobase.nsbackend.member.service.MemberService;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -32,19 +33,19 @@ public class MemberController {
         return ResponseEntity.ok(userInfo);
     }
     @PutMapping("/profileimg")
-    public ResponseEntity<GetUserResponse> putProfileImg(@RequestBody PutProfileImgRequest request
+    public ResponseEntity<GetUserResponse> putProfileImg(@RequestBody @Valid PutProfileImgRequest request
         , @AuthenticationPrincipal Member member){
         memberService.updateUserImg(request, member);
         return ResponseEntity.ok().build();
     }
     @PutMapping("/nickname")
-    public ResponseEntity<GetUserResponse> putUserNickname(@RequestBody PutUserNicknameRequest request
+    public ResponseEntity<GetUserResponse> putUserNickname(@RequestBody @Valid PutUserNicknameRequest request
     , @AuthenticationPrincipal Member member){
         memberService.updateUserNickname(request, member);
         return ResponseEntity.ok().build();
     }
     @PutMapping("/address")
-    public ResponseEntity<GetUserResponse> putUserAddress(@RequestBody PutUserAddressRequest request
+    public ResponseEntity<GetUserResponse> putUserAddress(@RequestBody @Valid PutUserAddressRequest request
     , @AuthenticationPrincipal Member member){
         memberService.updateUserAddress(request, member);
         return ResponseEntity.ok().build();

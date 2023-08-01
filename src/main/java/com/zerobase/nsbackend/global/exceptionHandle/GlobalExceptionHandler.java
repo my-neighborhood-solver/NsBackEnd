@@ -1,10 +1,12 @@
 package com.zerobase.nsbackend.global.exceptionHandle;
 
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -23,6 +25,18 @@ public class GlobalExceptionHandler {
     UUID uuid = generateLogId(ex);
     log.info("## info : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
     return ErrorResponse.of(generateLogId(ex), ex);
+  }
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ErrorResponse handleIllegalArgumentException(MethodArgumentNotValidException ex) {
+    UUID uuid = generateLogId(ex);
+    log.info("## info : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
+    return ErrorResponse.builder()
+        .errorCode(ErrorCode.INVALID_INPUT_ERROR.getCode())
+        .description(ErrorCode.INVALID_INPUT_ERROR.getDescription())
+        .dateTime(LocalDateTime.now())
+        .logId(generateLogId(ex))
+        .build();
   }
 
   @ExceptionHandler(UsernameNotFoundException.class)

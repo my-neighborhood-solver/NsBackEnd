@@ -14,6 +14,7 @@ public enum ErrorCode {
    * 규칙 : 1000 ~ 19999
    */
   INTERNAL_SERVER_ERROR("1000", "일시적인 장애 입니다."),
+  INVALID_INPUT_ERROR("1001","올바르지 않은 입력입니다."),
   /**
    * 회원 도메인 에러 메세지
    * 규칙 : 2000 ~ 2999

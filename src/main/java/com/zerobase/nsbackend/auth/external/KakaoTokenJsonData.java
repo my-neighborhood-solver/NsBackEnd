@@ -1,4 +1,4 @@
-package com.zerobase.nsbackend.auth.utils;
+package com.zerobase.nsbackend.auth.external;
 
 import com.zerobase.nsbackend.auth.dto.KakaoTokenResponse;
 import lombok.RequiredArgsConstructor;
