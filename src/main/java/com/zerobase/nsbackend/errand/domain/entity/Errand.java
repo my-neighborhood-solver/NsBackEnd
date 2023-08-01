@@ -1,4 +1,4 @@
-package com.zerobase.nsbackend.errand.domain;
+package com.zerobase.nsbackend.errand.domain.entity;
 
 import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
 import com.zerobase.nsbackend.errand.domain.vo.PayDivision;

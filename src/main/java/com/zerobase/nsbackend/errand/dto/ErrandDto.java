@@ -1,6 +1,6 @@
 package com.zerobase.nsbackend.errand.dto;
 
-import com.zerobase.nsbackend.errand.domain.Errand;
+import com.zerobase.nsbackend.errand.domain.entity.Errand;
 import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
