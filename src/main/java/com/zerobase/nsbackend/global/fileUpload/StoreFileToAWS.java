@@ -9,6 +9,8 @@ import com.zerobase.nsbackend.global.customException.FileUploadException;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,8 +49,6 @@ public class StoreFileToAWS implements StoreFile {
    */
   @Override
   public UploadFile storeFile(MultipartFile multipartFile) {
-    log.info("### bucketName : " + bucketName);
-
     String storeFileName = createStoreFileName(multipartFile.getOriginalFilename());
     ObjectMetadata objectMetadata = new ObjectMetadata();
     objectMetadata.setContentType(multipartFile.getContentType());
@@ -60,6 +60,19 @@ public class StoreFileToAWS implements StoreFile {
     }
 
     return UploadFile.of(multipartFile.getOriginalFilename(), storeFileName);
+  }
+
+  @Override
+  public List<UploadFile> storeFiles(List<MultipartFile> multipartFiles) {
+    if (multipartFiles == null || multipartFiles.isEmpty()) {
+      return new ArrayList<>();
+    }
+
+    List<UploadFile> uploadFiles = new ArrayList<>();
+    for (MultipartFile file: multipartFiles) {
+      uploadFiles.add(storeFile(file));
+    }
+    return uploadFiles;
   }
 
   /**
