@@ -4,7 +4,9 @@ import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
 import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
 import com.zerobase.nsbackend.global.BaseTimeEntity;
 import com.zerobase.nsbackend.member.domain.Member;
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,6 +14,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import lombok.AccessLevel;
@@ -22,8 +25,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Errand extends BaseTimeEntity {
   @Id
@@ -35,8 +38,10 @@ public class Errand extends BaseTimeEntity {
   private String title;
   @Column(columnDefinition = "TEXT")
   private String content;
-  @OneToMany(mappedBy = "errand")
-  private List<ErrandImage> images;
+  @Builder.Default
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "ERRAND_ID")
+  private List<ErrandImage> images = new ArrayList<>();
   @Enumerated(EnumType.STRING)
   private PayDivision payDivision;
   private Integer pay;

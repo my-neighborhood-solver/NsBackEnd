@@ -4,9 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -16,24 +16,19 @@ public class ErrandImage {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   @ManyToOne
+  @JoinColumn(name = "ERRAND_ID")
   private Errand errand;
   private String imageUrl;
 
-  @Builder
-  public ErrandImage(Errand errand, String imageUrl) {
-    changeErrand(errand);
+  private ErrandImage(String imageUrl) {
     this.imageUrl = imageUrl;
   }
 
-  /**
-   * 연관관계 편의 메서드
-   */
-  public void changeErrand(Errand errand) {
-    if (this.errand != null) {
-      this.errand.getImages().remove(this);
-    }
-    this.errand = errand;
-    errand.getImages().add(this);
+  public static ErrandImage of(String imageUrl) {
+    return new ErrandImage(imageUrl);
   }
 
+  public String getImageUrl() {
+    return imageUrl;
+  }
 }
