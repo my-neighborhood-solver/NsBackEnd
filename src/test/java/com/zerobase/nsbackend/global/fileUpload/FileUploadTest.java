@@ -18,16 +18,11 @@ class FileUploadTest extends IntegrationTest {
   @WithMockUser("USER")
   @Test
   @DisplayName("파일 업르드 테스트")
-  public void whenFileUploaded_thenVerifyStatus()
+  public void storeFile_success()
       throws Exception {
     // given
     MockMultipartFile file
-        = new MockMultipartFile(
-        "file",
-        "hello.txt",
-        MediaType.TEXT_PLAIN_VALUE,
-        "Hello, World!".getBytes()
-    );
+        = makeMultipartFile();
 
     // when
     ResultActions resultActions = mvc.perform(multipart("/images").file(file))
@@ -40,18 +35,22 @@ class FileUploadTest extends IntegrationTest {
     removeFileAfterTest(resultActions);
   }
 
+  private static MockMultipartFile makeMultipartFile() {
+    return new MockMultipartFile(
+        "file",
+        "hello.txt",
+        MediaType.TEXT_PLAIN_VALUE,
+        "Hello, World!".getBytes()
+    );
+  }
+
   @WithMockUser("USER")
   @Test
   @DisplayName("파일 조회 테스트")
   void getFile_success() throws Exception {
     // given
     MockMultipartFile file
-        = new MockMultipartFile(
-        "file",
-        "hello.txt",
-        MediaType.TEXT_PLAIN_VALUE,
-        "Hello, World!".getBytes()
-    );
+        = makeMultipartFile();
     ResultActions createAction = mvc.perform(multipart("/images").file(file));
     String newFileName = getNewFileName(createAction);
 
@@ -67,7 +66,7 @@ class FileUploadTest extends IntegrationTest {
   }
 
   /**
-   * 저장된 파일 이름을 반환합니다.
+   * ResultActions 에 있는 저장된 파일 이름을 반환합니다.
    * @param resultActions
    * @return
    * @throws Exception
