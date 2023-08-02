@@ -56,7 +56,7 @@ class ErrandIntegrationTest extends IntegrationTest {
   @DisplayName("의뢰 생성에 성공합니다.")
   void createErrand_success() throws Exception {
     // given
-    ErrandCreateRequest createRequest = ErrandCreateRequest.builder()
+    ErrandCreateRequest request = ErrandCreateRequest.builder()
         .title("testTitle")
         .content("testContent")
         .payDivision(PayDivision.HOURLY)
@@ -64,13 +64,8 @@ class ErrandIntegrationTest extends IntegrationTest {
         .build();
 
     // when
-    ResultActions resultActions = mvc.perform(
-        post("/errands")
-            .with(user(member01.getEmail()))
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(asJsonString(createRequest))
-            .accept(MediaType.APPLICATION_JSON))
-        .andDo(print());
+    ResultActions resultActions = requestCreateErrand(request.getTitle(), request.getContent(),
+        request.getPayDivision(), request.getPay());
 
     // then
     resultActions
@@ -209,12 +204,15 @@ class ErrandIntegrationTest extends IntegrationTest {
         .pay(pay)
         .build();
 
+    MockMultipartFile jsonRequest = new MockMultipartFile("errand", "",
+        "application/json", asJsonString(createRequest).getBytes());
+
     return mvc.perform(
-            post("/errands")
-                .with(user(member01.getEmail()))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(createRequest))
-                .accept(MediaType.APPLICATION_JSON));
+        multipart("/errands")
+            .file(jsonRequest)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .with(user(member01.getEmail()))
+    );
   }
 
   /**
