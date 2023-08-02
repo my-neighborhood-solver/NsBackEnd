@@ -25,7 +25,7 @@ public class IntegrationTest {
 
   protected String asJsonString(final Object obj) {
     try {
-      return new ObjectMapper().writeValueAsString(obj);
+      return objectMapper.writeValueAsString(obj);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
