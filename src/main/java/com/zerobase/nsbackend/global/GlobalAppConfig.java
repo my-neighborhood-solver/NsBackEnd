@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class GlobalAppConfig {
-  @Bean
-  public ObjectMapper objectMapper() {
-    ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY); // 팔드접근
-    return objectMapper;
-  }
+//  @Bean
+//  public ObjectMapper objectMapper() {
+//    ObjectMapper objectMapper = new ObjectMapper();
+//    objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY); // 팔드접근
+//    return objectMapper;
+//  }
 }
