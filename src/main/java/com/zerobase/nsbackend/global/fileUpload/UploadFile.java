@@ -1,5 +1,6 @@
 package com.zerobase.nsbackend.global.fileUpload;
 
+import com.zerobase.nsbackend.errand.domain.entity.ErrandImage;
 import lombok.Getter;
 
 @Getter
@@ -14,5 +15,9 @@ public class UploadFile {
 
   public static UploadFile of(String uploadFileName, String storeFileName) {
     return new UploadFile(uploadFileName, storeFileName);
+  }
+
+  public ErrandImage toErrandImage() {
+    return ErrandImage.of(storeFileName);
   }
 }
