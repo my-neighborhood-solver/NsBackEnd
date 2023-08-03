@@ -40,7 +40,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
     private String hashTag;
     @Enumerated(EnumType.STRING)
     private Authority authority;
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "memberAddress_id")
     private MemberAddress memberAddress;
     private boolean isDeleted;
