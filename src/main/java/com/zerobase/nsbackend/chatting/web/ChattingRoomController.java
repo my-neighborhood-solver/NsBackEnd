@@ -25,7 +25,7 @@ public class ChattingRoomController {
 
     //conflict 충돌로 뜨면 이미 생성되어 있는 채팅방  success 생성된 채팅방
 
-    return chattingRoomService
-        .createChattingRoom(request.getErrand_Id(), request.getSender_Id());
+    return ResponseEntity.ok().body(chattingRoomService
+        .createChattingRoom(request.getErrandId(), request.getSenderId()));
   }
 }

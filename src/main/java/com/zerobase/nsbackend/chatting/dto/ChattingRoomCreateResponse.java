@@ -10,15 +10,15 @@ import lombok.Getter;
 @Builder
 public class ChattingRoomCreateResponse {
 
-  private Long ChattingRoom_Id;
-  private Long Errand_Id;
-  private Long sender_Id;
+  private Long chattingRoomId;
+  private Long errandId;
+  private Long senderId;
 
   public static ChattingRoomCreateResponse from(ChattingRoom chattingRoom) {
     return ChattingRoomCreateResponse.builder()
-        .ChattingRoom_Id(chattingRoom.getId())
-        .Errand_Id(chattingRoom.getErrand().getId())
-        .sender_Id(chattingRoom.getSender().getId())
+        .chattingRoomId(chattingRoom.getId())
+        .errandId(chattingRoom.getErrand().getId())
+        .senderId(chattingRoom.getSender().getId())
         .build();
   }
 }

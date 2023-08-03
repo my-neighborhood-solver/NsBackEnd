@@ -1,7 +1,7 @@
 package com.zerobase.nsbackend.chatting.domain.entity;
 
+import com.zerobase.nsbackend.global.BaseTimeEntity;
 import com.zerobase.nsbackend.member.domain.Member;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class ChattingContent {
+public class ChattingContent extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,20 +34,10 @@ public class ChattingContent {
   @JoinColumn(name = "sender_id")
   private Member sender;
 
-  @Column
-  private String nickName;
-
   @Column(nullable = false, columnDefinition = "TEXT")
   private String content;
 
   @Column(nullable = false)
   private boolean isRead;
 
-  @Column(nullable = false)
-  private LocalDateTime contentTime;
-
-  @PrePersist
-  public void prePersist() {
-    contentTime = LocalDateTime.now();
-  }
 }

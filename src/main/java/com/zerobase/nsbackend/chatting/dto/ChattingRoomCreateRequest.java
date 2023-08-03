@@ -9,6 +9,6 @@ import lombok.Getter;
 @Builder
 public class ChattingRoomCreateRequest {
 
-  private Long errand_Id;
-  private Long sender_Id;
+  private Long errandId;
+  private Long senderId;
 }
