@@ -20,12 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class IntegrationTest {
   @Autowired
   protected MockMvc mvc;
-  @Autowired
-  protected ObjectMapper objectMapper;
+  protected ObjectMapper objectMapper = new ObjectMapper();
 
   protected String asJsonString(final Object obj) {
     try {
-      return new ObjectMapper().writeValueAsString(obj);
+      return objectMapper.writeValueAsString(obj);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

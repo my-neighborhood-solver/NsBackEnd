@@ -4,7 +4,11 @@ import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Setter
+@NoArgsConstructor
 @Getter
 @AllArgsConstructor
 @Builder
