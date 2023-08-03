@@ -7,26 +7,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.zerobase.nsbackend.integrationTest.IntegrationTest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
 
 class FileUploadTest extends IntegrationTest {
+  @WithMockUser("USER")
   @Test
   @DisplayName("파일 업르드 테스트")
-  public void whenFileUploaded_thenVerifyStatus()
+  public void storeFile_success()
       throws Exception {
     // given
     MockMultipartFile file
-        = new MockMultipartFile(
-        "file",
-        "hello.txt",
-        MediaType.TEXT_PLAIN_VALUE,
-        "Hello, World!".getBytes()
-    );
+        = makeMultipartFile();
 
     // when
     ResultActions resultActions = mvc.perform(multipart("/images").file(file))
@@ -39,17 +35,22 @@ class FileUploadTest extends IntegrationTest {
     removeFileAfterTest(resultActions);
   }
 
-  @Test
-  @DisplayName("파일 조회 테스트")
-  void getFile_success() throws Exception {
-    // given
-    MockMultipartFile file
-        = new MockMultipartFile(
+  private static MockMultipartFile makeMultipartFile() {
+    return new MockMultipartFile(
         "file",
         "hello.txt",
         MediaType.TEXT_PLAIN_VALUE,
         "Hello, World!".getBytes()
     );
+  }
+
+  @WithMockUser("USER")
+  @Test
+  @DisplayName("파일 조회 테스트")
+  void getFile_success() throws Exception {
+    // given
+    MockMultipartFile file
+        = makeMultipartFile();
     ResultActions createAction = mvc.perform(multipart("/images").file(file));
     String newFileName = getNewFileName(createAction);
 
@@ -65,7 +66,7 @@ class FileUploadTest extends IntegrationTest {
   }
 
   /**
-   * 저장된 파일 이름을 반환합니다.
+   * ResultActions 에 있는 저장된 파일 이름을 반환합니다.
    * @param resultActions
    * @return
    * @throws Exception
