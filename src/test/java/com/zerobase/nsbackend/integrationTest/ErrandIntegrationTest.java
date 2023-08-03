@@ -16,6 +16,7 @@ import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
+import com.zerobase.nsbackend.member.type.Authority;
 import com.zerobase.nsbackend.member.type.Role;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,12 +41,12 @@ class ErrandIntegrationTest extends IntegrationTest {
     member01 = Member.builder()
         .email("member01")
         .password("password")
-        .role(Role.ROLE_USER)
+        .authority(Authority.ROLE_USER)
         .build();
     member02 = Member.builder()
         .email("member02")
         .password("password")
-        .role(Role.ROLE_USER)
+        .authority(Authority.ROLE_USER)
         .build();
     memberRepository.save(member01);
     memberRepository.save(member02);
