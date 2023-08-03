@@ -33,21 +33,13 @@ public class ChattingRoomService {
     // member 있는지 검사
     Member sender = memberFindById(senderId);
 
-    ChattingRoom chattingRoom = chattingRoomRepository
-        .findByErrand_MemberAndSender(errand, sender);
-
-    if (chattingRoom != null) {
-      // 이미 채팅방이 존재한다
-      throw new IllegalArgumentException(ErrorCode.CHATTING_NOT_FOUND.getDescription());
-    }
-
-    ChattingRoom ChattingRoomSave = chattingRoomRepository.save(
-        ChattingRoom.builder()
+    ChattingRoom chattingRoom = chattingRoomRepository.findByErrand_MemberAndSender(errand, sender)
+        .orElseGet(() -> chattingRoomRepository.save(ChattingRoom.builder()
             .errand(errand)
             .sender(sender)
-            .build());
+            .build()));
 
-    return ChattingRoomCreateResponse.from(ChattingRoomSave);
+    return ChattingRoomCreateResponse.from(chattingRoom);
   }
 
   // member가 있는지 유효성 검사
