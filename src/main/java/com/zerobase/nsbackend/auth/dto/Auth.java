@@ -5,6 +5,7 @@ import com.zerobase.nsbackend.member.domain.MemberAddress;
 import com.zerobase.nsbackend.member.type.Authority;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ public class Auth {
     @Getter
     @Setter
     @Builder
+    @AllArgsConstructor
     public static class SignUp{
         @NotBlank
         private String nickname;
@@ -46,6 +48,7 @@ public class Auth {
     @Getter
     @Setter
     @Builder
+    @AllArgsConstructor
     public static class SignIn{
         @Email
         private String email;
