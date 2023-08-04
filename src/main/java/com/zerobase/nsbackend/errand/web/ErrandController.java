@@ -30,7 +30,8 @@ public class ErrandController {
   private final ErrandService errandService;
 
   @PostMapping
-  public ResponseEntity<Void> createErrand(@RequestPart("images") @Nullable List<MultipartFile> images,
+  public ResponseEntity<Void> createErrand(
+      @RequestPart("images") @Nullable List<MultipartFile> images,
       @RequestPart("errand") ErrandCreateRequest request) {
     Errand errand = errandService.createErrand(request, images);
     return ResponseEntity.created(URI.create("/errands/" + errand.getId())).build();

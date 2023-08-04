@@ -11,16 +11,19 @@ public class AuthManagerImpl implements AuthManager {
 
   @Override
   public Authentication getAuthentication() {
-    return SecurityContextHolder.getContext().getAuthentication();
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    return authentication;
   }
 
   @Override
-  public UserDetails getPrincipal() {
-    return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+  public Member getPrincipal() {
+    Member principal = (Member) SecurityContextHolder.getContext().getAuthentication()
+        .getPrincipal();
+    return principal;
   }
 
   @Override
   public String getUsername() {
-    return getAuthentication().getName();
+    return getPrincipal().getEmail();
   }
 }
