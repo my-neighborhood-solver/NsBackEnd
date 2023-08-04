@@ -13,7 +13,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class ErrandCreateRequest {
-  private Long erranderId;
   private String title;
   private String content;
   private PayDivision payDivision;
