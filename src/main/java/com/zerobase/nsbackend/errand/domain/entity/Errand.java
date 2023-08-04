@@ -63,6 +63,10 @@ public class Errand extends BaseTimeEntity {
     this.pay = pay;
   }
 
+  public List<String> getImagesAsStringList() {
+    return images.stream().map(ErrandImage::getImageUrl).collect(Collectors.toList());
+  }
+
   public void changeStatus(ErrandStatus status) {
     this.status = status;
   }
