@@ -11,8 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ChattingRoomRepository extends JpaRepository<ChattingRoom, Long> {
 
-   Optional<ChattingRoom> findByErrand_MemberAndSender(Errand errand, Member sender);
-
-
+   Optional<ChattingRoom> findByErrandAndSender(Errand errand, Member sender);
 
 }

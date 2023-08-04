@@ -1,5 +1,7 @@
 package com.zerobase.nsbackend.chatting.domain.service;
 
+import static com.zerobase.nsbackend.chatting.dto.ChattingRoomCreateStatus.*;
+
 import com.zerobase.nsbackend.chatting.domain.entity.ChattingRoom;
 import com.zerobase.nsbackend.chatting.domain.repository.ChattingRoomRepository;
 import com.zerobase.nsbackend.chatting.dto.ChattingRoomCreateResponse;
@@ -8,6 +10,7 @@ import com.zerobase.nsbackend.errand.domain.ErrandService;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,14 +35,23 @@ public class ChattingRoomService {
 
     // member 있는지 검사
     Member sender = memberFindById(senderId);
+// 이미 채팅방이 존재하는지 검사
+    Optional<ChattingRoom> existingChattingRoom = chattingRoomRepository.findByErrandAndSender(errand, sender);
 
-    ChattingRoom chattingRoom = chattingRoomRepository.findByErrand_MemberAndSender(errand, sender)
-        .orElseGet(() -> chattingRoomRepository.save(ChattingRoom.builder()
-            .errand(errand)
-            .sender(sender)
-            .build()));
+    if (existingChattingRoom.isPresent()) {
+      // 채팅방이 존재하면 채팅방 번호 리턴
+      ChattingRoom chattingRoom = existingChattingRoom.get();
 
-    return ChattingRoomCreateResponse.from(chattingRoom);
+      return ChattingRoomCreateResponse.from(chattingRoom, CHATTING_ROOM_CREATE_EXIST);
+    }
+
+    // 채팅방이 존재하지 않으면 새로 생성
+    ChattingRoom chattingRoom = chattingRoomRepository.save(ChattingRoom.builder()
+        .errand(errand)
+        .sender(sender)
+        .build());
+
+    return ChattingRoomCreateResponse.from(chattingRoom, CHATTING_ROOM_CREATE_SUCCESS);
   }
 
   // member가 있는지 유효성 검사

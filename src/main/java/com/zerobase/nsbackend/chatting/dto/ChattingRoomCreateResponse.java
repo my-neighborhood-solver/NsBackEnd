@@ -13,12 +13,14 @@ public class ChattingRoomCreateResponse {
   private Long chattingRoomId;
   private Long errandId;
   private Long senderId;
+  private ChattingRoomCreateStatus description;
 
-  public static ChattingRoomCreateResponse from(ChattingRoom chattingRoom) {
+  public static ChattingRoomCreateResponse from(ChattingRoom chattingRoom, ChattingRoomCreateStatus status) {
     return ChattingRoomCreateResponse.builder()
         .chattingRoomId(chattingRoom.getId())
         .errandId(chattingRoom.getErrand().getId())
         .senderId(chattingRoom.getSender().getId())
+        .description(status)
         .build();
   }
 }
