@@ -87,4 +87,16 @@ public class ErrandService {
     return memberRepository.findByEmail(email)
         .orElseThrow(() -> new RuntimeException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
   }
+
+  @Transactional
+  public void addHashtag(Long id, String tag) {
+    Errand errand = getErrand(id);
+    errand.addHashtag(tag);
+  }
+
+  @Transactional
+  public void deleteHashtag(Long id, String tag) {
+    Errand errand = getErrand(id);
+    errand.removeHashtag(tag);
+  }
 }

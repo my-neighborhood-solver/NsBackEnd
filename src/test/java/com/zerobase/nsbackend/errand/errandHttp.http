@@ -20,4 +20,20 @@ Content-Type: multipart/form-data
 IMAGE(이미지 스트림데이터)
 --WebAppBoundary
 
+### getErrand (의뢰 단건 조회)
+GET http://localhost:8080/errands/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MDFAZ21haWwuY29tIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTY5MTEyMDk1MywiZXhwIjoxNjkxMTQyNTUzfQ.5RSvSqdfREtkn_Sye_X9UfpMsnr8WvUPML0oBhMn258
+
+### addHashtag
+### create errand
+PUT http://localhost:8080/errands/1/hashtag?tag="영상편집"
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MDFAZ21haWwuY29tIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTY5MTEyMDk1MywiZXhwIjoxNjkxMTQyNTUzfQ.5RSvSqdfREtkn_Sye_X9UfpMsnr8WvUPML0oBhMn258
+
+### deleteHashtag
+### create errand
+DELETE http://localhost:8080/errands/1/hashtag?tag="영상편집"
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MDFAZ21haWwuY29tIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTY5MTEyMDk1MywiZXhwIjoxNjkxMTQyNTUzfQ.5RSvSqdfREtkn_Sye_X9UfpMsnr8WvUPML0oBhMn258
+
+
+
 
