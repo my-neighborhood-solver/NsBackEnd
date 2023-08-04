@@ -18,6 +18,7 @@ public class ErrandDto {
   private List<String> images;
   private PayDivision payDivision;
   private Integer pay;
+  private List<String> hashtags;
   private LocalDateTime createdAt;
 
   public static ErrandDto from(Errand errand) {
@@ -28,6 +29,7 @@ public class ErrandDto {
         .images(errand.getImagesAsStringList())
         .payDivision(errand.getPayDivision())
         .pay(errand.getPay())
+        .hashtags(errand.getHashtagsAsStringList())
         .build();
   }
 }
