@@ -1,10 +1,10 @@
 package com.zerobase.nsbackend.global.auth;
 
+import com.zerobase.nsbackend.member.domain.Member;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 
 public interface AuthManager {
   Authentication getAuthentication();
-  UserDetails getPrincipal();
+  Member getPrincipal();
   String getUsername();
 }
