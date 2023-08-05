@@ -100,4 +100,8 @@ public class ErrandService {
     Errand errand = getErrand(id);
     errand.removeHashtag(tag);
   }
+
+  public List<Errand> getAllErrands() {
+    return errandRepository.findAll();
+  }
 }
