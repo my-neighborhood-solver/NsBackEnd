@@ -2,6 +2,7 @@ package com.zerobase.nsbackend.errand.dto;
 
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
 import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
+import com.zerobase.nsbackend.global.dto.AddressDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ public class ErrandDto {
   private PayDivision payDivision;
   private Integer pay;
   private List<String> hashtags;
+  private AddressDto address;
   private LocalDateTime createdAt;
 
   public static ErrandDto from(Errand errand) {
@@ -30,6 +32,7 @@ public class ErrandDto {
         .payDivision(errand.getPayDivision())
         .pay(errand.getPay())
         .hashtags(errand.getHashtagsAsStringList())
+        .address(AddressDto.from(errand.getAddress()))
         .build();
   }
 }
