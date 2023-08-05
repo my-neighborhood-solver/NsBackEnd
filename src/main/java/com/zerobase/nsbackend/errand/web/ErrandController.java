@@ -7,6 +7,7 @@ import com.zerobase.nsbackend.errand.dto.ErrandDto;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
@@ -37,6 +38,12 @@ public class ErrandController {
       @RequestPart("errand") ErrandCreateRequest request) {
     Errand errand = errandService.createErrand(request, images);
     return ResponseEntity.created(URI.create("/errands/" + errand.getId())).build();
+  }
+
+  @GetMapping
+  public ResponseEntity<List<ErrandDto>> readAllErrand() {
+    return ResponseEntity.ok(errandService.getAllErrands().stream().map(ErrandDto::from).collect(
+        Collectors.toList()));
   }
 
   @GetMapping("/{id}")

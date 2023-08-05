@@ -1,6 +1,6 @@
 ### create errand (사진 첨부 있는 경우)
 POST http://localhost:8080/errands
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MDFAZ21haWwuY29tIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTY5MTEyMDk1MywiZXhwIjoxNjkxMTQyNTUzfQ.5RSvSqdfREtkn_Sye_X9UfpMsnr8WvUPML0oBhMn258
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MDFAZ21haWwuY29tIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTY5MTIwMzQ3OSwiZXhwIjoxNjkxMjI1MDc5fQ.RzpRjc8CMaRxO6aKpoO7-m6s7WrhyITjyO65n5_16Y8
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
@@ -36,6 +36,10 @@ Content-Type: application/json
 "pay" : 10000
 }
 --WebAppBoundary
+
+### getAllErrands (의뢰 전체 목록 조회)
+GET http://localhost:8080/errands
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MDFAZ21haWwuY29tIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTY5MTIwMzQ3OSwiZXhwIjoxNjkxMjI1MDc5fQ.RzpRjc8CMaRxO6aKpoO7-m6s7WrhyITjyO65n5_16Y8
 
 ### getErrand (의뢰 단건 조회)
 GET http://localhost:8080/errands/1
