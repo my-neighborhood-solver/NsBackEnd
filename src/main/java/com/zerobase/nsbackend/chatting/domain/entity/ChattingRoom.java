@@ -39,6 +39,7 @@ public class ChattingRoom extends BaseTimeEntity {
   private Member sender;
 
   @OneToMany(mappedBy = "chattingRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
   private List<ChattingContent> chattingContent = new ArrayList<>();
 
 }
