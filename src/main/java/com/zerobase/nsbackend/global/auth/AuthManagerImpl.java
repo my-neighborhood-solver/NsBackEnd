@@ -3,7 +3,6 @@ package com.zerobase.nsbackend.global.auth;
 import com.zerobase.nsbackend.member.domain.Member;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,9 +16,8 @@ public class AuthManagerImpl implements AuthManager {
 
   @Override
   public Member getPrincipal() {
-    Member principal = (Member) SecurityContextHolder.getContext().getAuthentication()
+    return (Member) SecurityContextHolder.getContext().getAuthentication()
         .getPrincipal();
-    return principal;
   }
 
   @Override

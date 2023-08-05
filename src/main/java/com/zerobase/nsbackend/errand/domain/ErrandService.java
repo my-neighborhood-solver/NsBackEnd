@@ -33,6 +33,7 @@ public class ErrandService {
 
   @Transactional
   public Errand createErrand(ErrandCreateRequest request, List<MultipartFile> imageRequest) {
+    // Security Context로 부터 인증된 유저 정보 받아오기
     Member member = getMemberFromAuth();
 
     // 아미지 업로드
