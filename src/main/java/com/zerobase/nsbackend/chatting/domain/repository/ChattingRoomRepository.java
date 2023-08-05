@@ -2,7 +2,7 @@ package com.zerobase.nsbackend.chatting.domain.repository;
 
 
 import com.zerobase.nsbackend.chatting.domain.entity.ChattingRoom;
-import com.zerobase.nsbackend.errand.domain.Errand;
+import com.zerobase.nsbackend.errand.domain.entity.Errand;
 import com.zerobase.nsbackend.member.domain.Member;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

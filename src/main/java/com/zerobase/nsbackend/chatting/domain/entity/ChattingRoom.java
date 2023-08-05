@@ -1,6 +1,6 @@
 package com.zerobase.nsbackend.chatting.domain.entity;
 
-import com.zerobase.nsbackend.errand.domain.Errand;
+import com.zerobase.nsbackend.errand.domain.entity.Errand;
 import com.zerobase.nsbackend.global.BaseTimeEntity;
 import com.zerobase.nsbackend.member.domain.Member;
 import java.util.ArrayList;

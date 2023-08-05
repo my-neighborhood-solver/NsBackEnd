@@ -1,4 +1,4 @@
-package com.zerobase.nsbackend.chatting.web;
+package com.zerobase.nsbackend.chatting.controller;
 
 import com.zerobase.nsbackend.chatting.domain.service.ChattingRoomService;
 import com.zerobase.nsbackend.chatting.dto.ChattingRoomCreateRequest;
