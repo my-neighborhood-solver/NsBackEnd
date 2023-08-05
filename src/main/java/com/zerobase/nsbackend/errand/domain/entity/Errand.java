@@ -3,14 +3,19 @@ package com.zerobase.nsbackend.errand.domain.entity;
 import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
 import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
 import com.zerobase.nsbackend.global.BaseTimeEntity;
+import com.zerobase.nsbackend.global.vo.Address;
 import com.zerobase.nsbackend.member.domain.Member;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -48,6 +53,13 @@ public class Errand extends BaseTimeEntity {
   @Enumerated(EnumType.STRING)
   private PayDivision payDivision;
   private Integer pay;
+  @Embedded
+  @AttributeOverrides({
+      @AttributeOverride(name = "streetAddress", column = @Column(name = "street_address")),
+      @AttributeOverride(name = "latitude", column = @Column(name = "latitude")),
+      @AttributeOverride(name = "longitude", column = @Column(name = "longitude"))
+  })
+  private Address address;
   @Enumerated(EnumType.STRING)
   private ErrandStatus status;
   @Builder.Default
@@ -81,6 +93,10 @@ public class Errand extends BaseTimeEntity {
 
   public List<String> getHashtagsAsStringList() {
     return hashtags.stream().map(ErrandHashtag::getName).collect(Collectors.toList());
+  }
+
+  public void changeAddress(Address address) {
+    this.address = address;
   }
 }
 

@@ -6,6 +6,7 @@ import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
 import com.zerobase.nsbackend.errand.domain.entity.ErrandImage;
 import com.zerobase.nsbackend.errand.domain.repository.ErrandRepository;
+import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
@@ -103,5 +104,11 @@ public class ErrandService {
 
   public List<Errand> getAllErrands() {
     return errandRepository.findAll();
+  }
+
+  @Transactional
+  public void changeAddress(Long id, ErrandChangAddressRequest request) {
+    Errand errand = getErrand(id);
+    errand.changeAddress(request.toAddress());
   }
 }

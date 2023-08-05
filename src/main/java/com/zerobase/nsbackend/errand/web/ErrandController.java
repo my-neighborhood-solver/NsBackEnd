@@ -2,6 +2,7 @@ package com.zerobase.nsbackend.errand.web;
 
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
 import com.zerobase.nsbackend.errand.domain.ErrandService;
+import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandDto;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
@@ -73,6 +74,14 @@ public class ErrandController {
   @DeleteMapping("/{id}/hashtag")
   public ResponseEntity<Void> deleteHashtag(@PathVariable Long id, @RequestParam String tag) {
     errandService.deleteHashtag(id, tag);
+    return ResponseEntity.ok().build();
+  }
+
+  @PutMapping("/{id}/address")
+  public ResponseEntity<Void> changeErrandAddress(
+      @PathVariable Long id,
+      @RequestBody ErrandChangAddressRequest request) {
+    errandService.changeAddress(id, request);
     return ResponseEntity.ok().build();
   }
 }
