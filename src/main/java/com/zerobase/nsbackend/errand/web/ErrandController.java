@@ -2,11 +2,13 @@ package com.zerobase.nsbackend.errand.web;
 
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
 import com.zerobase.nsbackend.errand.domain.ErrandService;
+import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandDto;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
@@ -39,6 +41,12 @@ public class ErrandController {
     return ResponseEntity.created(URI.create("/errands/" + errand.getId())).build();
   }
 
+  @GetMapping
+  public ResponseEntity<List<ErrandDto>> readAllErrand() {
+    return ResponseEntity.ok(errandService.getAllErrands().stream().map(ErrandDto::from).collect(
+        Collectors.toList()));
+  }
+
   @GetMapping("/{id}")
   public ResponseEntity<ErrandDto> readErrand(@PathVariable Long id) {
     return ResponseEntity.ok(ErrandDto.from(errandService.getErrand(id)));
@@ -66,6 +74,14 @@ public class ErrandController {
   @DeleteMapping("/{id}/hashtag")
   public ResponseEntity<Void> deleteHashtag(@PathVariable Long id, @RequestParam String tag) {
     errandService.deleteHashtag(id, tag);
+    return ResponseEntity.ok().build();
+  }
+
+  @PutMapping("/{id}/address")
+  public ResponseEntity<Void> changeErrandAddress(
+      @PathVariable Long id,
+      @RequestBody ErrandChangAddressRequest request) {
+    errandService.changeAddress(id, request);
     return ResponseEntity.ok().build();
   }
 }
