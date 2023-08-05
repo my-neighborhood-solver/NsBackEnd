@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 public class MemberAddress extends BaseTimeEntity {
-    @Id @Column(name = "memberAddress_id")
+    @Id @Column(name = "member_address_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToOne(mappedBy = "memberAddress")

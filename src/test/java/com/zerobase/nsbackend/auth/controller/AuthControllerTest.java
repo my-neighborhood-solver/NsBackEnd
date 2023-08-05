@@ -1,4 +1,4 @@
-package com.zerobase.nsbackend.auth.web;
+package com.zerobase.nsbackend.auth.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -85,14 +85,6 @@ class AuthControllerTest {
             .andExpect(jsonPath("$.nickname").value(member.getNickname()))
             .andExpect(jsonPath("$.email").value(member.getEmail()))
             .andExpect(jsonPath("$.token").value("generateToken"));
-    }
-
-    @Test
-    void kakaoLogin() throws Exception {
-        given(authService.kakaoLogin())
-            .willReturn("url");
-        mockMvc.perform(get("/auth/social/kakao"))
-            .andExpect(redirectedUrl("url"));
     }
 
     @Test

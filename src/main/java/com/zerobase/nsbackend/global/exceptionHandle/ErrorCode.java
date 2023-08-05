@@ -28,6 +28,9 @@ public enum ErrorCode {
   NOT_FOUND_USER("2004","사용자 정보를 찾을 수 없습니다."),
   IS_NOT_SOCAIL_USER("2005","소셜 로그인으로 가입한 계정이 아닙니다."),
   NO_EXIST_DATA("2006","존재하지 않는 데이터입니다."),
+  IS_DELETED_USER("2007","회원탈퇴 진행중인 회원입니다."),
+  EXIST_INTEREST_BOARD("2008","이미 존재하는 관심글입니다."),
+  NO_EXIST_INTEREST_BOARD("2009","관심글이 아닌 의뢰입니다."),
 
   /**
    * 의뢰 도메인 에러 메세지

@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -36,6 +37,7 @@ public class AuthService implements UserDetailsService {
             .orElseThrow(() -> new UsernameNotFoundException("couldn't find user ->" + email));
     }
 
+    @Transactional
     public Member register(SignUp signupRequest){
         boolean exists =  this.memberRepository.existsByEmail(signupRequest.getEmail());
         if(exists){
@@ -52,6 +54,9 @@ public class AuthService implements UserDetailsService {
     public Member authenticate(SignIn signinRequest){
         Member members = this.memberRepository.findByEmail(signinRequest.getEmail())
             .orElseThrow(() -> new IllegalArgumentException(ErrorCode.NO_EXIST_EMAIL.getDescription()));
+        if(members.isDeleted()){
+            throw new IllegalArgumentException(ErrorCode.IS_DELETED_USER.getDescription());
+        }
         if(members.getIsSocialLogin()){
             throw new IllegalArgumentException(ErrorCode.IS_SOCIAL_LOGIN.getDescription());
         }
@@ -60,14 +65,7 @@ public class AuthService implements UserDetailsService {
         }
         return members;
     }
-    public String kakaoLogin(){
-        return "https://kauth.kakao.com/oauth/authorize?client_id="
-            + secretKey
-            + "&redirect_uri="
-            + redirectUri
-            + "&response_type=code";
-    }
-
+    @Transactional
     public Member kakaoRegister(String email, String nickname){
         boolean exists =  this.memberRepository.existsByEmail(email);
         if(exists){
