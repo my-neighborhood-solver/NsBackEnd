@@ -2,6 +2,7 @@ package com.zerobase.nsbackend.integrationTest;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -18,6 +19,7 @@ import com.zerobase.nsbackend.errand.domain.repository.ErrandRepository;
 import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
+import com.zerobase.nsbackend.global.auth.AuthManager;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
@@ -29,12 +31,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
+@WithMockUser
 @DisplayName("의뢰 통합 테스트")
 class ErrandIntegrationTest extends IntegrationTest {
 
@@ -42,6 +46,9 @@ class ErrandIntegrationTest extends IntegrationTest {
   MemberRepository memberRepository;
   @Autowired
   ErrandRepository errandRepository;
+
+  @MockBean
+  AuthManager authManager;
 
   Member member01;
   Member member02;
@@ -71,6 +78,7 @@ class ErrandIntegrationTest extends IntegrationTest {
         .payDivision(PayDivision.HOURLY)
         .pay(10000)
         .build();
+    when(authManager.getUsername()).thenReturn(member01.getEmail());
 
     // when
     ResultActions resultActions = requestCreateErrand(request.getTitle(), request.getContent(),
@@ -95,6 +103,7 @@ class ErrandIntegrationTest extends IntegrationTest {
         .payDivision(PayDivision.HOURLY)
         .pay(10000)
         .build();
+    when(authManager.getUsername()).thenReturn(member01.getEmail());
 
     MockMultipartFile jsonRequest = new MockMultipartFile("errand", "",
         "application/json", asJsonString(createRequest).getBytes());
@@ -106,7 +115,6 @@ class ErrandIntegrationTest extends IntegrationTest {
                 .file(file2)
                 .file(jsonRequest)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
-                .with(user(member01.getEmail()))
         )
         .andDo(print());
 
@@ -130,7 +138,6 @@ class ErrandIntegrationTest extends IntegrationTest {
         .collect(Collectors.toList()));
   }
 
-  @WithMockUser(roles = "USER")
   @Test
   @DisplayName("의뢰 ID로 의뢰 조회에 성공합니다.")
   void readErrandById_success() throws Exception {
@@ -154,7 +161,6 @@ class ErrandIntegrationTest extends IntegrationTest {
         .andExpect(jsonPath("$.pay").value(is(pay)));
   }
 
-  @WithMockUser(roles = "USER")
   @Test
   @DisplayName("의뢰ID로 의뢰 조회 시, 의뢰 ID가 없어서 실패합니다.")
   void readErrandById_fail_because_errand_not_found() throws Exception {
@@ -188,6 +194,7 @@ class ErrandIntegrationTest extends IntegrationTest {
         .payDivision(PayDivision.UNIT)
         .pay(10000)
         .build();
+    when(authManager.getUsername()).thenReturn(member01.getEmail());
 
     // when
     ResultActions resultActions = mvc.perform(
@@ -202,6 +209,7 @@ class ErrandIntegrationTest extends IntegrationTest {
         .andExpect(status().isOk());
   }
 
+  @WithMockUser(roles = "USER")
   @Test
   @DisplayName("의뢰 성공적으로 수정 시, 의뢰자가 아니라서 실패합니다.")
   void updateErrand_fail_because_not_errander() throws Exception {
@@ -214,11 +222,11 @@ class ErrandIntegrationTest extends IntegrationTest {
         .payDivision(PayDivision.UNIT)
         .pay(10000)
         .build();
+    when(authManager.getUsername()).thenReturn(member02.getEmail());
 
     // when
     ResultActions resultActions = mvc.perform(
         put("/errands/{id}", errandId)
-            .with(user(member02.getEmail()))      // member02
             .content(asJsonString(updateRequest))
             .contentType(MediaType.APPLICATION_JSON)
     );
@@ -244,11 +252,11 @@ class ErrandIntegrationTest extends IntegrationTest {
   @DisplayName("의뢰자가 아니라서 의뢰 취소에 실패합니다.")
   void cancelErrand_fail_because_not_errander() throws Exception {
     Long errandId = createErrandForGiven("testTitle", "testContent", PayDivision.UNIT, 1000);
+    when(authManager.getUsername()).thenReturn(member02.getEmail());
 
     ResultActions perform = mvc.perform(
-        post("/errands/{id}/cancel", errandId)
-            .with(user(member02.getEmail())));    // member02
-
+        post("/errands/{id}/cancel", errandId))
+            .andDo(print());
     perform.andExpect(status().isBadRequest());
   }
 
@@ -268,7 +276,6 @@ class ErrandIntegrationTest extends IntegrationTest {
         multipart("/errands")
             .file(jsonRequest)
             .contentType(MediaType.MULTIPART_FORM_DATA)
-            .with(user(member01.getEmail()))
     );
   }
 
@@ -280,6 +287,7 @@ class ErrandIntegrationTest extends IntegrationTest {
    */
   private Long createErrandForGiven(String title, String content, PayDivision payDivision, Integer pay)
       throws Exception {
+    when(authManager.getUsername()).thenReturn(member01.getEmail());
 
     MvcResult mvcResult = requestCreateErrand(title, content,payDivision,pay)
         .andReturn();
@@ -296,7 +304,8 @@ class ErrandIntegrationTest extends IntegrationTest {
   private ResultActions requestGetErrand(Long errandId) throws Exception {
     return mvc.perform(
             get("/errands/{id}", errandId)
-                .contentType(MediaType.APPLICATION_JSON));
+                .contentType(MediaType.APPLICATION_JSON)
+    );
   }
 
   private static MockMultipartFile makeMultipartFile() {

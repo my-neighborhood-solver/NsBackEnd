@@ -33,6 +33,7 @@ public class ErrandService {
 
   @Transactional
   public Errand createErrand(ErrandCreateRequest request, List<MultipartFile> imageRequest) {
+    // Security Context로 부터 인증된 유저 정보 받아오기
     Member member = getMemberFromAuth();
 
     // 아미지 업로드
@@ -86,5 +87,17 @@ public class ErrandService {
     String email = authManager.getUsername();
     return memberRepository.findByEmail(email)
         .orElseThrow(() -> new RuntimeException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
+  }
+
+  @Transactional
+  public void addHashtag(Long id, String tag) {
+    Errand errand = getErrand(id);
+    errand.addHashtag(tag);
+  }
+
+  @Transactional
+  public void deleteHashtag(Long id, String tag) {
+    Errand errand = getErrand(id);
+    errand.removeHashtag(tag);
   }
 }
