@@ -307,6 +307,32 @@ class ErrandIntegrationTest extends IntegrationTest {
     assertThat(hashtags).doesNotContain(ErrandHashtag.of(tag));
   }
 
+  @Test
+  @DisplayName("의뢰 주소를 수정합니다.")
+  void changeErrandAddress_success() throws Exception {
+    // given
+    Long errandId = createErrandForGiven("testTitle", "testContent", PayDivision.UNIT, 1000);
+    ErrandChangAddressRequest request = new ErrandChangAddressRequest(
+        "서울시 강남구", 123.123, 123.123);
+
+    // when
+    ResultActions perform = mvc.perform(
+            put("/errands/{id}/address", errandId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(request))
+        )
+        .andDo(print());
+
+    // then
+    perform.andExpect(status().isOk());
+
+    Errand errand = errandRepository.findById(errandId)
+        .orElseThrow(() -> new RuntimeException("test fail"));
+    Address address = errand.getAddress();
+    assertThat(address).usingRecursiveComparison()
+        .isEqualTo(request);
+  }
+
   private ResultActions requestCreateErrand(String title, String content, PayDivision payDivision, Integer pay)
       throws Exception {
     ErrandCreateRequest createRequest = ErrandCreateRequest.builder()
