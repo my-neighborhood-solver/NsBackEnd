@@ -1,6 +1,5 @@
 package com.zerobase.nsbackend.member.controller;
 
-import com.zerobase.nsbackend.member.domain.InterestBoard;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.dto.GetUserResponse;
 import com.zerobase.nsbackend.member.dto.Interests.interestBoardResponse;
@@ -9,7 +8,6 @@ import com.zerobase.nsbackend.member.dto.PutUserAddressRequest;
 import com.zerobase.nsbackend.member.dto.PutUserNicknameRequest;
 import com.zerobase.nsbackend.member.service.InterestBoardService;
 import com.zerobase.nsbackend.member.service.MemberService;
-import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +18,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

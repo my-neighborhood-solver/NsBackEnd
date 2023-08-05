@@ -2,7 +2,6 @@ package com.zerobase.nsbackend.member.domain;
 
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
 import com.zerobase.nsbackend.global.BaseTimeEntity;
-import com.zerobase.nsbackend.member.dto.PutUserAddressRequest;
 import com.zerobase.nsbackend.member.type.Authority;
 import java.util.ArrayList;
 import java.util.Collection;

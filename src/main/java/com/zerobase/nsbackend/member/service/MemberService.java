@@ -21,7 +21,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     public GetUserResponse getUserInfo(Member member){
-        GetUserResponse build = GetUserResponse.builder()
+        return GetUserResponse.builder()
             .email(member.getEmail())
             .nickname(member.getNickname())
             .profileImage(member.getProfileImage())
@@ -29,7 +29,6 @@ public class MemberService {
             .longitude(member.getMemberAddress().getLongitude())
             .streetNameAddress(member.getMemberAddress().getStreetNameAddress())
             .build();
-        return build;
     }
 
     @Transactional

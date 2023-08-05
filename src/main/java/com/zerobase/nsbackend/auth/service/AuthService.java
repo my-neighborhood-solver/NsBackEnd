@@ -26,10 +26,6 @@ public class AuthService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
-    private String secretKey;
-    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
-    private String redirectUri;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
