@@ -14,17 +14,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
+import com.zerobase.nsbackend.errand.domain.entity.ErrandHashtag;
 import com.zerobase.nsbackend.errand.domain.entity.ErrandImage;
 import com.zerobase.nsbackend.errand.domain.repository.ErrandRepository;
 import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
+import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
 import com.zerobase.nsbackend.global.auth.AuthManager;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
+import com.zerobase.nsbackend.global.vo.Address;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
 import com.zerobase.nsbackend.member.type.Authority;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -260,6 +264,49 @@ class ErrandIntegrationTest extends IntegrationTest {
     perform.andExpect(status().isBadRequest());
   }
 
+  @Test
+  @DisplayName("의뢰에 해쉬태그를 추가합니다.")
+  void addHashTag_success() throws Exception {
+    // given
+    Long errandId = createErrandForGiven("testTitle", "testContent", PayDivision.UNIT, 1000);
+    String tag = "알바";
+
+    // when
+    ResultActions perform = requestAddHashtag(errandId, tag);
+
+    // then
+    perform.andExpect(status().isOk());
+
+    Errand errand = errandRepository.findById(errandId)
+        .orElseThrow(() -> new RuntimeException("test fail"));
+    Set<ErrandHashtag> hashtags = errand.getHashtags();
+    assertThat(hashtags).contains(ErrandHashtag.of(tag));
+  }
+
+  @Test
+  @DisplayName("의뢰에 해쉬태그를 제거합니다.")
+  void deleteHashTag_success() throws Exception {
+    // given
+    Long errandId = createErrandForGiven("testTitle", "testContent", PayDivision.UNIT, 1000);
+    String tag = "알바";
+    requestAddHashtag(errandId, tag);
+
+    // when
+    ResultActions perform = mvc.perform(
+            delete("/errands/{id}/hashtag", errandId)
+                .param("tag", tag)
+        )
+        .andDo(print());
+
+    // then
+    perform.andExpect(status().isOk());
+
+    Errand errand = errandRepository.findById(errandId)
+        .orElseThrow(() -> new RuntimeException("test fail"));
+    Set<ErrandHashtag> hashtags = errand.getHashtags();
+    assertThat(hashtags).doesNotContain(ErrandHashtag.of(tag));
+  }
+
   private ResultActions requestCreateErrand(String title, String content, PayDivision payDivision, Integer pay)
       throws Exception {
     ErrandCreateRequest createRequest = ErrandCreateRequest.builder()
@@ -326,5 +373,21 @@ class ErrandIntegrationTest extends IntegrationTest {
     for(String fileName: fileNames) {
       mvc.perform(delete("/images/{filename}", fileName));
     }
+  }
+
+  /**
+   * 의뢰 해쉬태그 삭제 요청을 보냅니다.
+   * @param errandId
+   * @param tag
+   * @return
+   * @throws Exception
+   */
+  private ResultActions requestAddHashtag(Long errandId, String tag) throws Exception {
+    ResultActions perform = mvc.perform(
+            put("/errands/{id}/hashtag", errandId)
+                .param("tag", tag)
+        )
+        .andDo(print());
+    return perform;
   }
 }
