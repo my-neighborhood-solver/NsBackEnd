@@ -47,8 +47,8 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "member_address_id")
     private MemberAddress memberAddress;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "member_id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER,
+        mappedBy = "member")
     private List<InterestBoard> interestBoards;
     private boolean isDeleted;
 
