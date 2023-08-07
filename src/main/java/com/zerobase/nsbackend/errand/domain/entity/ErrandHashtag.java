@@ -16,9 +16,6 @@ public class ErrandHashtag {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  @ManyToOne
-  @JoinColumn(name = "ERRAND_ID")
-  private Errand errand;
 
   private String name;
 

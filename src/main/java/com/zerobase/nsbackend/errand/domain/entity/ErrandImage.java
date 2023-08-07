@@ -15,9 +15,6 @@ public class ErrandImage {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  @ManyToOne
-  @JoinColumn(name = "ERRAND_ID")
-  private Errand errand;
   private String imageUrl;
 
   private ErrandImage(String imageUrl) {
