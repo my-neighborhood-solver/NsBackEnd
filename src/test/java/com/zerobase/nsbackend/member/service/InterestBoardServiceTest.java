@@ -10,7 +10,7 @@ import com.zerobase.nsbackend.errand.domain.repository.ErrandRepository;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import com.zerobase.nsbackend.member.domain.InterestBoard;
 import com.zerobase.nsbackend.member.domain.Member;
-import com.zerobase.nsbackend.member.dto.Interests.interestBoardResponse;
+import com.zerobase.nsbackend.member.dto.InterestBoardResponse;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,15 +51,15 @@ class InterestBoardServiceTest {
         //given
         given(errandRepository.findById(any()))
             .willReturn(Optional.ofNullable(errand));
-        List<interestBoardResponse> list = new ArrayList<>();
+        List<InterestBoardResponse> list = new ArrayList<>();
         assert errand != null;
-        interestBoardResponse build = interestBoardResponse.builder()
+        InterestBoardResponse build = InterestBoardResponse.builder()
             .errandId(errand.getId())
             .errandTitle(errand.getTitle())
             .build();
         list.add(build);
         //when
-        List<interestBoardResponse> responses = this.interestBoardService.addInterestBoard(
+        List<InterestBoardResponse> responses = this.interestBoardService.addInterestBoard(
             1L, member);
         //then
         assertEquals(list.get(0).getErrandId(),responses.get(0).getErrandId());
@@ -112,7 +112,7 @@ class InterestBoardServiceTest {
             .interestBoards(list)
             .build();
         //when
-        List<interestBoardResponse> allInterestBoard = this.interestBoardService.getAllInterestBoard(
+        List<InterestBoardResponse> allInterestBoard = this.interestBoardService.getAllInterestBoard(
             build);
         assertEquals(errand.getId(),allInterestBoard.get(0).getErrandId());
         assertEquals(errand.getTitle(),allInterestBoard.get(0).getErrandTitle());
@@ -133,7 +133,7 @@ class InterestBoardServiceTest {
             .interestBoards(list)
             .build();
         //when
-        List<interestBoardResponse> responses = this.interestBoardService.deleteInterestBoard(
+        List<InterestBoardResponse> responses = this.interestBoardService.deleteInterestBoard(
             1L, build);
         //then
         assertEquals(new ArrayList<>(),responses);

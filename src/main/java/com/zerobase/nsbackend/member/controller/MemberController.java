@@ -2,7 +2,7 @@ package com.zerobase.nsbackend.member.controller;
 
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.dto.GetUserResponse;
-import com.zerobase.nsbackend.member.dto.Interests.interestBoardResponse;
+import com.zerobase.nsbackend.member.dto.InterestBoardResponse;
 import com.zerobase.nsbackend.member.dto.PutProfileImgRequest;
 import com.zerobase.nsbackend.member.dto.PutUserAddressRequest;
 import com.zerobase.nsbackend.member.dto.PutUserNicknameRequest;
@@ -62,25 +62,25 @@ public class MemberController {
     }
 
     @GetMapping("/interests")
-    public ResponseEntity<List<interestBoardResponse>> getInterestBoard(
+    public ResponseEntity<List<InterestBoardResponse>> getInterestBoard(
         @AuthenticationPrincipal Member member){
-        List<interestBoardResponse> allInterestBoard = this.interestBoardService.getAllInterestBoard(
+        List<InterestBoardResponse> allInterestBoard = this.interestBoardService.getAllInterestBoard(
             member);
         return ResponseEntity.ok(allInterestBoard);
     }
 
     @PutMapping("/interests/{id}")
-    public ResponseEntity<List<interestBoardResponse>> addInterestBoard(@PathVariable Long id
+    public ResponseEntity<List<InterestBoardResponse>> addInterestBoard(@PathVariable Long id
         , @AuthenticationPrincipal Member member){
-        List<interestBoardResponse> interestBoardResponseList = this.interestBoardService.addInterestBoard(
+        List<InterestBoardResponse> interestBoardResponseList = this.interestBoardService.addInterestBoard(
             id, member);
         return ResponseEntity.ok(interestBoardResponseList);
     }
 
     @DeleteMapping("/interests/{id}")
-    public ResponseEntity<List<interestBoardResponse>> deleteInterestBoard(@PathVariable Long id
+    public ResponseEntity<List<InterestBoardResponse>> deleteInterestBoard(@PathVariable Long id
         , @AuthenticationPrincipal Member member){
-        List<interestBoardResponse> interestBoardResponseList = this.interestBoardService.deleteInterestBoard(
+        List<InterestBoardResponse> interestBoardResponseList = this.interestBoardService.deleteInterestBoard(
             id, member);
         return ResponseEntity.ok(interestBoardResponseList);
     }

@@ -61,11 +61,8 @@ public class Member extends BaseTimeEntity implements UserDetails {
     public void deleteUser(){
         this.isDeleted = true;
     }
-    public void updateInterestBoard(List<InterestBoard> interestBoards){
-        this.interestBoards = interestBoards;
-    }
-    public void deleteInterestBoard(Member member, Errand errand){
-        this.interestBoards.remove(InterestBoard.toEntity(member,errand));
+    public void deleteInterestBoard(Errand errand){
+        this.interestBoards.remove(InterestBoard.toEntity(this,errand));
     }
 
     @Override
