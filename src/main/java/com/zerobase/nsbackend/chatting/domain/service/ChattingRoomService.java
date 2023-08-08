@@ -118,7 +118,7 @@ public class ChattingRoomService {
     // 채팅방 존재하는지 멤버가 존재하는지 검사
     if (!ChattingRoomValidationUtil(roomId, memberId)) {
       //채팅방 안에 멤버가 존재하지않는다.
-      throw new IllegalArgumentException(ErrorCode.CHATTING_NOT_FOUND.getDescription());
+      throw new IllegalArgumentException(ErrorCode.CHATTING_NOT_FOUND_MEMBER.getDescription());
     }
     List<ChattingContent> chattingContents = chattingContentRepository
         .findByChattingRoom_IdOrderByCreatedAtDesc(roomId);
