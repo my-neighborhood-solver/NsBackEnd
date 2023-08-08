@@ -49,7 +49,7 @@ public class ErrandController {
 
   @GetMapping("/{id}")
   public ResponseEntity<ErrandDto> readErrand(@PathVariable Long id) {
-    return ResponseEntity.ok(ErrandDto.from(errandService.getErrand(id)));
+    return ResponseEntity.ok(errandService.getErrandDto(id));
   }
 
   @PutMapping("/{id}")
