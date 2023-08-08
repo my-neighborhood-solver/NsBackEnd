@@ -43,13 +43,12 @@ public class ErrandController {
 
   @GetMapping
   public ResponseEntity<List<ErrandDto>> readAllErrand() {
-    return ResponseEntity.ok(errandService.getAllErrands().stream().map(ErrandDto::from).collect(
-        Collectors.toList()));
+    return ResponseEntity.ok(errandService.getAllErrands());
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<ErrandDto> readErrand(@PathVariable Long id) {
-    return ResponseEntity.ok(ErrandDto.from(errandService.getErrand(id)));
+    return ResponseEntity.ok(errandService.getErrandDto(id));
   }
 
   @PutMapping("/{id}")

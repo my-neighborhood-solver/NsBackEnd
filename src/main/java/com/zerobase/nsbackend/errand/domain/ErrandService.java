@@ -9,6 +9,7 @@ import com.zerobase.nsbackend.errand.domain.repository.ErrandRepository;
 import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
+import com.zerobase.nsbackend.errand.dto.ErrandDto;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
 import com.zerobase.nsbackend.global.auth.AuthManager;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
@@ -56,8 +57,14 @@ public class ErrandService {
   }
 
   public Errand getErrand(Long id) {
-    return errandRepository.findById(id)
+    return errandRepository.findErrandWithImagesAndHashTagById(id)
         .orElseThrow(() -> new IllegalArgumentException(ErrorCode.ERRAND_NOT_FOUND.getDescription()));
+  }
+
+  @Transactional
+  public ErrandDto getErrandDto(Long id) {
+    Errand errand = getErrand(id);
+    return ErrandDto.from(errand);
   }
 
   @Transactional
@@ -102,8 +109,9 @@ public class ErrandService {
     errand.removeHashtag(tag);
   }
 
-  public List<Errand> getAllErrands() {
-    return errandRepository.findAll();
+  public List<ErrandDto> getAllErrands() {
+    return errandRepository.findErrandAllWithImagesAndHashTag()
+        .stream().map(ErrandDto::from).collect(Collectors.toList());
   }
 
   @Transactional
