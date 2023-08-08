@@ -5,11 +5,14 @@ import static com.zerobase.nsbackend.chatting.type.ChattingRoomCreateStatus.CHAT
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
+import com.zerobase.nsbackend.chatting.domain.entity.ChattingContent;
 import com.zerobase.nsbackend.chatting.domain.entity.ChattingRoom;
 import com.zerobase.nsbackend.chatting.domain.repository.ChattingContentRepository;
 import com.zerobase.nsbackend.chatting.domain.repository.ChattingRoomRepository;
+import com.zerobase.nsbackend.chatting.dto.ChatContentResponse;
 import com.zerobase.nsbackend.chatting.dto.ChattingRoomAllResponse;
 import com.zerobase.nsbackend.chatting.dto.ChattingRoomCreateResponse;
 import com.zerobase.nsbackend.errand.domain.ErrandService;
@@ -54,6 +57,12 @@ class ChattingRoomServiceTest {
   Errand errand1;
   Errand errand2;
 
+  ChattingRoom chattingRoom1;
+  ChattingRoom chattingRoom2;
+
+  ChattingContent chattingContent1;
+  ChattingContent chattingContent2;
+
   @BeforeEach
   void setUp() {
     member1 = Member.builder()
@@ -80,6 +89,31 @@ class ChattingRoomServiceTest {
         .errander(member2)
         .title("ㅎㅇ")
         .content("ㅎㅇ ㅎㅇ")
+        .build();
+
+    chattingRoom1 = ChattingRoom.builder()
+        .id(1L)
+        .errand(errand1)
+        .sender(member2)
+        .build();
+
+    chattingRoom2 = ChattingRoom.builder()
+        .id(2L)
+        .errand(errand2)
+        .sender(member1)
+        .build();
+
+    chattingContent1 = ChattingContent.builder()
+        .content("밥먹자")
+        .chattingRoom(chattingRoom1)
+        .sender(member1)
+        .isRead(true)
+        .build();
+    chattingContent2 = ChattingContent.builder()
+        .content("배고프다")
+        .chattingRoom(chattingRoom1)
+        .sender(member2)
+        .isRead(false)
         .build();
   }
 
@@ -147,18 +181,6 @@ class ChattingRoomServiceTest {
   void testGetChattingRoomsByMemberId() {
     Long memberId = 1L;
 
-    ChattingRoom chattingRoom1 = ChattingRoom.builder()
-        .id(1L)
-        .errand(errand1)
-        .sender(member2)
-        .build();
-
-    ChattingRoom chattingRoom2 = ChattingRoom.builder()
-        .id(2L)
-        .errand(errand2)
-        .sender(member1)
-        .build();
-
     // Mocking
     when(errandService.getErrand(1L)).thenReturn(errand1);
     when(memberRepository.findById(2L)).thenReturn(Optional.of(member2));
@@ -207,7 +229,8 @@ class ChattingRoomServiceTest {
     when(memberRepository.findById(memberId)).thenReturn(Optional.of(member1));
 
     // 테스트 실행 및 예외 검증
-    assertThrows(IllegalArgumentException.class, () -> chattingRoomService.getChattingRoomsByMemberId(memberId), "채팅방이 존재하지 않습니다.");
+    assertThrows(IllegalArgumentException.class,
+        () -> chattingRoomService.getChattingRoomsByMemberId(memberId), "채팅방이 존재하지 않습니다.");
 
     // Mock 검증
     Mockito.verify(memberRepository, Mockito.times(1)).findById(memberId);
@@ -215,4 +238,35 @@ class ChattingRoomServiceTest {
         .findByErrand_Errander_IdOrSenderId(memberId, memberId);
   }
 
+  @Test
+  @DisplayName("채팅방 단건 조회 성공")
+  void testGetChattingRoomByIdAndMemberId_Success() {
+
+    Long roomId = 1L;
+
+    when(chattingRoomRepository.findById(eq(roomId))).thenReturn(Optional.of(chattingRoom1));
+
+    when(memberRepository.findById(member1.getId())).thenReturn(Optional.of(member1));
+    when(memberRepository.findById(member2.getId())).thenReturn(Optional.of(member2));
+
+    when(chattingContentRepository.findByChattingRoom_IdOrderByCreatedAtDesc(roomId))
+        .thenReturn(Arrays.asList(chattingContent1, chattingContent2));
+
+    // 테스트 실행
+    List<ChatContentResponse> response = chattingRoomService
+        .getChattingRoomByIdAndMemberId(roomId, member1.getId());
+
+    // 결과 검증
+    assertThat(response.size()).isEqualTo(2);
+    assertThat(response.get(0).getNickName()).isEqualTo(member1.getNickname());
+    assertThat(response.get(1).getNickName()).isEqualTo(member2.getNickname());
+    assertThat(response.get(0).getContent()).isEqualTo("밥먹자");
+    assertThat(response.get(1).getContent()).isEqualTo("배고프다");
+
+    // Mock 검증
+    Mockito.verify(chattingRoomRepository, Mockito.times(1)).findById(eq(roomId));
+    Mockito.verify(memberRepository, Mockito.times(1)).findById(member1.getId());
+    Mockito.verify(chattingContentRepository, Mockito.times(1))
+        .findByChattingRoom_IdOrderByCreatedAtDesc(roomId);
+  }
 }

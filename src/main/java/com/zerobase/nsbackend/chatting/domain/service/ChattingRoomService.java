@@ -146,7 +146,7 @@ public class ChattingRoomService {
   }
 
   // 채팅방 안에 멤버가 있는지 유효성 검사
-  private boolean ChattingRoomValidationUtil(Long roomId, Long memberId) {
+  public boolean ChattingRoomValidationUtil(Long roomId, Long memberId) {
     Member member = memberFindById(memberId);
     ChattingRoom room = chattingRoomFindById(roomId);
     return member == room.getSender() || member == room.getErrand().getErrander();
