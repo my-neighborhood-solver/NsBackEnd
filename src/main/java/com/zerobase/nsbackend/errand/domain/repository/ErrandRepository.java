@@ -14,4 +14,10 @@ public interface ErrandRepository extends JpaRepository<Errand, Long> {
       + " left join fetch e.hashtags "
       + " where e.id = :id")
   Optional<Errand> findErrandWithImagesAndHashTagById(@Param("id") Long id);
+
+  @Query("select e "
+      + "from Errand e"
+      + " left join fetch e.images "
+      + " left join fetch e.hashtags ")
+  Optional<Errand> findErrandAllWithImagesAndHashTag();
 }

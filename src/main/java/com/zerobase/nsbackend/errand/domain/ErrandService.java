@@ -109,8 +109,9 @@ public class ErrandService {
     errand.removeHashtag(tag);
   }
 
-  public List<Errand> getAllErrands() {
-    return errandRepository.findAll();
+  public List<ErrandDto> getAllErrands() {
+    return errandRepository.findErrandAllWithImagesAndHashTag()
+        .stream().map(ErrandDto::from).collect(Collectors.toList());
   }
 
   @Transactional
