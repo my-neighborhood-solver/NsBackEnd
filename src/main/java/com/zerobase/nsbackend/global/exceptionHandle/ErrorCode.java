@@ -43,7 +43,11 @@ public enum ErrorCode {
    * 채팅 도메인 에러 메세지
    * 규칙 : 4000 ~ 4999
    */
-  CHATTING_NOT_FOUND("4000", "채팅을 찾지 못했습니다.");
+  CHATTING_NOT_FOUND("4000", "채팅을 찾지 못했습니다."),
+  CHATTING_ROOM_NOT_FOUND("4001", "채팅방이 존재하지 않습니다."),
+  CHATTING_NOT_FOUND_MEMBER("4002" ,"채팅방 안에 멤버가 존재하지 않습니다."),
+  CHATTING_ROOM_ALREADY_EXISTS("4003", "채팅방이 이미 존재합니다."),
+  ERRAND_ID_MEMBER_ID_CONFLICT("4004", "errandId 값과 memberId 값이 동일하여 채팅방을 생성할 수 없습니다.");
 
 
 
