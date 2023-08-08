@@ -51,6 +51,8 @@ class InterestBoardServiceTest {
         //given
         given(errandRepository.findById(any()))
             .willReturn(Optional.ofNullable(errand));
+        given(memberRepository.findByEmail(any()))
+            .willReturn(Optional.ofNullable(member));
         List<InterestBoardResponse> list = new ArrayList<>();
         assert errand != null;
         InterestBoardResponse build = InterestBoardResponse.builder()
@@ -60,7 +62,7 @@ class InterestBoardServiceTest {
         list.add(build);
         //when
         List<InterestBoardResponse> responses = this.interestBoardService.addInterestBoard(
-            1L, member);
+            1L, member.getEmail());
         //then
         assertEquals(list.get(0).getErrandId(),responses.get(0).getErrandId());
         assertEquals(list.get(0).getErrandTitle(),responses.get(0).getErrandTitle());
@@ -71,9 +73,11 @@ class InterestBoardServiceTest {
         //given
         given(errandRepository.findById(any()))
             .willReturn(Optional.empty());
+        given(memberRepository.findByEmail(any()))
+            .willReturn(Optional.ofNullable(member));
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-            () -> interestBoardService.addInterestBoard(1L, member));
+            () -> interestBoardService.addInterestBoard(1L, member.getEmail()));
         //then
         assertEquals(ErrorCode.ERRAND_NOT_FOUND.getDescription(),exception.getMessage());
     }
@@ -92,9 +96,11 @@ class InterestBoardServiceTest {
             .password("encodePassword")
             .interestBoards(list)
             .build();
+        given(memberRepository.findByEmail(any()))
+            .willReturn(Optional.ofNullable(build));
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-            () -> interestBoardService.addInterestBoard(1L, build));
+            () -> interestBoardService.addInterestBoard(1L, build.getEmail()));
         //then
         assertEquals(ErrorCode.EXIST_INTEREST_BOARD.getDescription(),exception.getMessage());
     }
@@ -111,9 +117,11 @@ class InterestBoardServiceTest {
             .password("encodePassword")
             .interestBoards(list)
             .build();
+        given(memberRepository.findByEmail(any()))
+            .willReturn(Optional.ofNullable(build));
         //when
         List<InterestBoardResponse> allInterestBoard = this.interestBoardService.getAllInterestBoard(
-            build);
+            build.getEmail());
         assertEquals(errand.getId(),allInterestBoard.get(0).getErrandId());
         assertEquals(errand.getTitle(),allInterestBoard.get(0).getErrandTitle());
     }
@@ -132,9 +140,11 @@ class InterestBoardServiceTest {
             .password("encodePassword")
             .interestBoards(list)
             .build();
+        given(memberRepository.findByEmail(any()))
+            .willReturn(Optional.ofNullable(build));
         //when
         List<InterestBoardResponse> responses = this.interestBoardService.deleteInterestBoard(
-            1L, build);
+            1L, build.getEmail());
         //then
         assertEquals(new ArrayList<>(),responses);
     }
@@ -145,9 +155,11 @@ class InterestBoardServiceTest {
         //given
         given(errandRepository.findById(any()))
             .willReturn(Optional.empty());
+        given(memberRepository.findByEmail(any()))
+            .willReturn(Optional.ofNullable(member));
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-            () -> interestBoardService.deleteInterestBoard(1L, member));
+            () -> interestBoardService.deleteInterestBoard(1L, member.getEmail()));
         //then
         assertEquals(ErrorCode.ERRAND_NOT_FOUND.getDescription(), exception.getMessage());
     }
@@ -157,9 +169,11 @@ class InterestBoardServiceTest {
         //given
         given(errandRepository.findById(any()))
             .willReturn(Optional.ofNullable(errand));
+        given(memberRepository.findByEmail(any()))
+            .willReturn(Optional.ofNullable(member));
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-            () -> interestBoardService.deleteInterestBoard(1L, member));
+            () -> interestBoardService.deleteInterestBoard(1L, member.getEmail()));
         //then
         assertEquals(ErrorCode.NO_EXIST_INTEREST_BOARD.getDescription(),exception.getMessage());
     }

@@ -23,7 +23,9 @@ public class InterestBoardService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public List<InterestBoardResponse> addInterestBoard(Long errandId, Member member){
+    public List<InterestBoardResponse> addInterestBoard(Long errandId, String email){
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new IllegalArgumentException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
         List<InterestBoard> interestBoardList = member.getInterestBoards();
         Errand errand = this.errandRepository.findById(errandId)
             .orElseThrow(() -> new IllegalArgumentException(ErrorCode.ERRAND_NOT_FOUND.getDescription()));
@@ -32,15 +34,19 @@ public class InterestBoardService {
         }
         InterestBoard interestBoard = new InterestBoard(member,errand);
         interestBoardList.add(interestBoard);
-        memberRepository.save(member);
         return convertInterestBoardResponse(member.getInterestBoards());
     }
-    public List<InterestBoardResponse> getAllInterestBoard(Member member){
+
+    public List<InterestBoardResponse> getAllInterestBoard(String email){
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new IllegalArgumentException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
         return convertInterestBoardResponse(member.getInterestBoards());
     }
 
     @Transactional
-    public List<InterestBoardResponse> deleteInterestBoard(Long errandId, Member member){
+    public List<InterestBoardResponse> deleteInterestBoard(Long errandId, String email){
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new IllegalArgumentException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
         List<InterestBoard> interestBoardList = member.getInterestBoards();
         Errand errand = this.errandRepository.findById(errandId)
             .orElseThrow(() -> new IllegalArgumentException(ErrorCode.ERRAND_NOT_FOUND.getDescription()));
@@ -48,7 +54,6 @@ public class InterestBoardService {
             throw new IllegalArgumentException(ErrorCode.NO_EXIST_INTEREST_BOARD.getDescription());
         }
         member.deleteInterestBoard(errand);
-        memberRepository.save(member);
         return convertInterestBoardResponse(member.getInterestBoards());
     }
 

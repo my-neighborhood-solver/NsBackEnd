@@ -34,30 +34,30 @@ public class MemberController {
 
     @GetMapping()
     public ResponseEntity<GetUserResponse> getUserInfo(@AuthenticationPrincipal Member member){
-        GetUserResponse userInfo = memberService.getUserInfo(member);
+        GetUserResponse userInfo = memberService.getUserInfo(member.getEmail());
         return ResponseEntity.ok(userInfo);
     }
     @PutMapping("/profileimg")
     public ResponseEntity<GetUserResponse> putProfileImg(@RequestBody @Valid PutProfileImgRequest request
         , @AuthenticationPrincipal Member member){
-        memberService.updateUserImg(request, member);
+        memberService.updateUserImg(request, member.getEmail());
         return ResponseEntity.ok().build();
     }
     @PutMapping("/nickname")
     public ResponseEntity<GetUserResponse> putUserNickname(@RequestBody @Valid PutUserNicknameRequest request
     , @AuthenticationPrincipal Member member){
-        memberService.updateUserNickname(request, member);
+        memberService.updateUserNickname(request, member.getEmail());
         return ResponseEntity.ok().build();
     }
     @PutMapping("/address")
     public ResponseEntity<GetUserResponse> putUserAddress(@RequestBody @Valid PutUserAddressRequest request
     , @AuthenticationPrincipal Member member){
-        memberService.updateUserAddress(request, member);
+        memberService.updateUserAddress(request, member.getEmail());
         return ResponseEntity.ok().build();
     }
     @DeleteMapping()
     public ResponseEntity<GetUserResponse> deleteUserInfo(@AuthenticationPrincipal Member member){
-        memberService.deleteUser(member);
+        memberService.deleteUser(member.getEmail());
         return ResponseEntity.ok().build();
     }
 
@@ -65,7 +65,7 @@ public class MemberController {
     public ResponseEntity<List<InterestBoardResponse>> getInterestBoard(
         @AuthenticationPrincipal Member member){
         List<InterestBoardResponse> allInterestBoard = this.interestBoardService.getAllInterestBoard(
-            member);
+            member.getEmail());
         return ResponseEntity.ok(allInterestBoard);
     }
 
@@ -73,7 +73,7 @@ public class MemberController {
     public ResponseEntity<List<InterestBoardResponse>> addInterestBoard(@PathVariable Long id
         , @AuthenticationPrincipal Member member){
         List<InterestBoardResponse> interestBoardResponseList = this.interestBoardService.addInterestBoard(
-            id, member);
+            id, member.getEmail());
         return ResponseEntity.ok(interestBoardResponseList);
     }
 
@@ -81,7 +81,7 @@ public class MemberController {
     public ResponseEntity<List<InterestBoardResponse>> deleteInterestBoard(@PathVariable Long id
         , @AuthenticationPrincipal Member member){
         List<InterestBoardResponse> interestBoardResponseList = this.interestBoardService.deleteInterestBoard(
-            id, member);
+            id, member.getEmail());
         return ResponseEntity.ok(interestBoardResponseList);
     }
 

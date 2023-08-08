@@ -47,11 +47,9 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "member_address_id")
     private MemberAddress memberAddress;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER,
-        mappedBy = "member")
-    private List<InterestBoard> interestBoards;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "member")
+    private List<InterestBoard> interestBoards = new ArrayList<>();
     private boolean isDeleted;
-
     public void updateUserNickname(String nickname){
         this.nickname = nickname;
     }
