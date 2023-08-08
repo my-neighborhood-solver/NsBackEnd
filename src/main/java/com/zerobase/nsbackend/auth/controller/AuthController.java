@@ -1,16 +1,16 @@
-package com.zerobase.nsbackend.auth.web;
+package com.zerobase.nsbackend.auth.controller;
 
-import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.auth.dto.Auth.SignIn;
 import com.zerobase.nsbackend.auth.dto.Auth.SignInResponse;
 import com.zerobase.nsbackend.auth.dto.Auth.SignUp;
 import com.zerobase.nsbackend.auth.dto.Auth.SignUpResponse;
 import com.zerobase.nsbackend.auth.dto.KakaoTokenResponse;
 import com.zerobase.nsbackend.auth.dto.KakaoUserInfoResponse;
-import com.zerobase.nsbackend.auth.security.TokenProvider;
-import com.zerobase.nsbackend.auth.service.AuthService;
 import com.zerobase.nsbackend.auth.external.KakaoTokenJsonData;
 import com.zerobase.nsbackend.auth.external.KakaoUserInfo;
+import com.zerobase.nsbackend.auth.security.TokenProvider;
+import com.zerobase.nsbackend.auth.service.AuthService;
+import com.zerobase.nsbackend.member.domain.Member;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.view.RedirectView;
 
 @Slf4j
 @RequestMapping("/auth")
@@ -57,14 +56,6 @@ public class AuthController {
             .token(token)
             .build();
         return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/social/kakao")
-    public RedirectView kakaoLogin (){
-        RedirectView redirectView = new RedirectView();
-        String url = authService.kakaoLogin();
-        redirectView.setUrl(url);
-        return redirectView;
     }
 
     @GetMapping("/kakao/callback")

@@ -4,7 +4,6 @@ spring:
     url: jdbc:mysql://localhost:3376/neighborSolver
     username: root
     password: 12
-
   jpa:
     show-sql: true
     database: mysql
@@ -13,8 +12,8 @@ spring:
         format_sql: true
         show_sql: true
     hibernate:
-      ddl-auto: create-drop
-
+      ddl-auto: create
+    open-in-view: false
   jwt:
     secret: cc40a3791cf94e649344be45eb1292a2
   profiles:

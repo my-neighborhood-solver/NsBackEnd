@@ -1,4 +1,4 @@
-package com.zerobase.nsbackend.auth.web;
+package com.zerobase.nsbackend.auth.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -85,14 +84,6 @@ class AuthControllerTest {
             .andExpect(jsonPath("$.nickname").value(member.getNickname()))
             .andExpect(jsonPath("$.email").value(member.getEmail()))
             .andExpect(jsonPath("$.token").value("generateToken"));
-    }
-
-    @Test
-    void kakaoLogin() throws Exception {
-        given(authService.kakaoLogin())
-            .willReturn("url");
-        mockMvc.perform(get("/auth/social/kakao"))
-            .andExpect(redirectedUrl("url"));
     }
 
     @Test
