@@ -83,4 +83,10 @@ public class ErrandController {
     errandService.changeAddress(id, request);
     return ResponseEntity.ok().build();
   }
+
+  @PostMapping("/{id}/like")
+  public ResponseEntity<Void> likeErrand(@PathVariable Long id) {
+    errandService.likeErrand(id);
+    return ResponseEntity.ok().build();
+  }
 }

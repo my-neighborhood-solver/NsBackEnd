@@ -119,4 +119,11 @@ public class ErrandService {
     Errand errand = getErrand(id);
     errand.changeAddress(request.toAddress());
   }
+
+  @Transactional
+  public void likeErrand(Long id) {
+    Member member = getMemberFromAuth();
+    Errand errand = getErrand(id);
+    errand.like(member);
+  }
 }

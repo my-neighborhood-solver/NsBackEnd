@@ -8,6 +8,7 @@ import com.zerobase.nsbackend.member.domain.Member;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.AttributeOverride;
@@ -66,6 +67,10 @@ public class Errand extends BaseTimeEntity {
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "ERRAND_ID")
   private Set<ErrandHashtag> hashtags = new HashSet<>();
+
+  @Builder.Default
+  @OneToMany(mappedBy = "errand", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<LikedMember> likedMembers = new HashSet<>();
   private Integer viewCount;
 
   public void edit(String title, String content, PayDivision payDivision, Integer pay) {
@@ -97,6 +102,32 @@ public class Errand extends BaseTimeEntity {
 
   public void changeAddress(Address address) {
     this.address = address;
+  }
+
+  public void like(Member member) {
+    LikedMember likedMember = LikedMember.of(this, member);
+    if (likedMembers.contains(likedMember)) {
+      likedMembers.remove(likedMember);
+      return;
+    }
+    likedMembers.add(likedMember);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Errand errand = (Errand) o;
+    return id.equals(errand.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
   }
 }
 

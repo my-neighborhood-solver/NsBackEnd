@@ -16,6 +16,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
 import com.zerobase.nsbackend.errand.domain.entity.ErrandHashtag;
 import com.zerobase.nsbackend.errand.domain.entity.ErrandImage;
+import com.zerobase.nsbackend.errand.domain.entity.LikedMember;
 import com.zerobase.nsbackend.errand.domain.repository.ErrandRepository;
 import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
 import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
@@ -331,6 +332,53 @@ class ErrandIntegrationTest extends IntegrationTest {
     Address address = errand.getAddress();
     assertThat(address).usingRecursiveComparison()
         .isEqualTo(request);
+  }
+
+  @Test
+  @DisplayName("의뢰 좋아요에 성공합니다.")
+  void likeErrand_on_success() throws Exception {
+    // given
+    Long errandId = createErrandForGiven("testTitle", "testContent", PayDivision.UNIT, 1000);
+
+    // when
+    ResultActions perform = mvc.perform(
+            post("/errands/{id}/like", errandId)
+        )
+        .andDo(print());
+
+    // then
+    perform.andExpect(status().isOk());
+
+    Errand errand = errandRepository.findById(errandId)
+        .orElseThrow(() -> new RuntimeException("test fail"));
+    Set<LikedMember> likedMembers = errand.getLikedMembers();
+
+    assertThat(likedMembers).contains(LikedMember.of(errand, member01));
+  }
+
+  @Test
+  @DisplayName("의뢰 좋아요 취소에 성공합니다.")
+  void likeErrand_cancel_success() throws Exception {
+    // given
+    Long errandId = createErrandForGiven("testTitle", "testContent", PayDivision.UNIT, 1000);
+    mvc.perform(
+        post("/errands/{id}/like", errandId)
+    );
+
+    // when
+    ResultActions perform = mvc.perform(
+            post("/errands/{id}/like", errandId)
+        )
+        .andDo(print());
+
+    // then
+    perform.andExpect(status().isOk());
+
+    Errand errand = errandRepository.findById(errandId)
+        .orElseThrow(() -> new RuntimeException("test fail"));
+    Set<LikedMember> likedMembers = errand.getLikedMembers();
+
+    assertThat(likedMembers).doesNotContain(LikedMember.of(errand, member01));
   }
 
   private ResultActions requestCreateErrand(String title, String content, PayDivision payDivision, Integer pay)
