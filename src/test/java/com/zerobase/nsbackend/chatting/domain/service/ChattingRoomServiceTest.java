@@ -17,6 +17,7 @@ import com.zerobase.nsbackend.chatting.dto.ChattingRoomAllResponse;
 import com.zerobase.nsbackend.chatting.dto.ChattingRoomCreateResponse;
 import com.zerobase.nsbackend.errand.domain.ErrandService;
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
+import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
 import java.util.Arrays;
@@ -268,5 +269,29 @@ class ChattingRoomServiceTest {
     Mockito.verify(memberRepository, Mockito.times(1)).findById(member1.getId());
     Mockito.verify(chattingContentRepository, Mockito.times(1))
         .findByChattingRoom_IdOrderByCreatedAtDesc(roomId);
+  }
+
+  @Test
+  @DisplayName("채팅방 단건 조회 실패")
+  void testGetChattingRoomByIdAndMemberId_Fail() {
+
+    Long roomId = 1L;
+    Member member3 = Member.builder()
+        .id(3L)
+        .email("testUser3@tsetexample.com")
+        .password("1234")
+        .nickname("사자")
+        .build();
+
+    when(chattingRoomRepository.findById(eq(roomId))).thenReturn(Optional.of(chattingRoom1));
+
+    when(memberRepository.findById(member1.getId())).thenReturn(Optional.of(member1));
+    when(memberRepository.findById(member3.getId())).thenReturn(Optional.of(member3));
+
+    when(chattingContentRepository.findByChattingRoom_IdOrderByCreatedAtDesc(roomId)).thenThrow(
+        new IllegalArgumentException(ErrorCode.CHATTING_NOT_FOUND_MEMBER.getDescription()));
+
+    assertThrows(IllegalArgumentException.class,
+        () -> chattingContentRepository.findByChattingRoom_IdOrderByCreatedAtDesc(roomId));
   }
 }
