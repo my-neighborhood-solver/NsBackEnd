@@ -12,5 +12,5 @@ public interface ChattingContentRepository extends JpaRepository<ChattingContent
 
   List<ChattingContent> findByChattingRoom_IdOrderByCreatedAtDesc(Long roomId);
 
-  int countBySenderNotAndIsReadAndChattingRoom(Member member1, boolean b, ChattingRoom chattingRoom1);
+  int countBySenderNotAndIsReadAndChattingRoom(Member member, boolean isRead, ChattingRoom chattingRoom);
 }

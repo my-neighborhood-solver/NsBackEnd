@@ -17,7 +17,7 @@ public class ChatContentResponse {
   boolean isRead;
   LocalDateTime time;
 
-  public static ChatContentResponse to(ChattingContent chattingContent){
+  public static ChatContentResponse from(ChattingContent chattingContent){
     return ChatContentResponse.builder()
         .contentId(chattingContent.getId())
         .nickName(chattingContent.getSender().getNickname())

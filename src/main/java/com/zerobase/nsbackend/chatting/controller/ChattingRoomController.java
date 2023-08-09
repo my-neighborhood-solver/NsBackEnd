@@ -1,6 +1,5 @@
 package com.zerobase.nsbackend.chatting.controller;
 
-import com.zerobase.nsbackend.chatting.domain.entity.ChattingContent;
 import com.zerobase.nsbackend.chatting.domain.service.ChattingRoomService;
 import com.zerobase.nsbackend.chatting.dto.ChatContentResponse;
 import com.zerobase.nsbackend.chatting.dto.ChattingRoomAllResponse;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,7 +25,7 @@ public class ChattingRoomController {
 
 
   //채팅방 생성
-  @PostMapping("")
+  @PostMapping
   public ResponseEntity<ChattingRoomCreateResponse> createChattingRoom(
       @RequestBody ChattingRoomCreateRequest request) {
 
@@ -34,18 +34,18 @@ public class ChattingRoomController {
   }
 
   //채팅방 전체조회
-  @GetMapping("/memberId={memberId}")
+  @GetMapping
   public ResponseEntity<List<ChattingRoomAllResponse>> getChattingRooms(
-      @PathVariable Long memberId) {
+      @RequestParam Long memberId) {
     List<ChattingRoomAllResponse> chattingRooms = chattingRoomService
         .getChattingRoomsByMemberId(memberId);
     return ResponseEntity.ok(chattingRooms);
   }
 
   // 채팅방 단건 조회
-  @GetMapping("/{roomId}/memberId={memberId}")
+  @GetMapping("/{roomId}")
   public ResponseEntity<List<ChatContentResponse>> getChattingRoom(@PathVariable Long roomId,
-      @PathVariable Long memberId) {
+      @RequestParam Long memberId) {
     return ResponseEntity.ok().body(chattingRoomService
         .getChattingRoomByIdAndMemberId(roomId, memberId));
   }

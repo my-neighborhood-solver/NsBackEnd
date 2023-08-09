@@ -93,10 +93,10 @@ public class ChattingRoomService {
       List<ChattingContent> chattingContent = chattingRoom.getChattingContent();
       String content = null;
       LocalDateTime time = null;
-      int isRead;
+      int readNotCount;
 
       // 읽지않은 갯수 인데 메서드 따로 뺄 예정
-      isRead = chattingContentRepository
+      readNotCount = chattingContentRepository
           .countBySenderNotAndIsReadAndChattingRoom(sender, false, chattingRoom);
 
       if (!chattingContent.isEmpty()) {
@@ -104,7 +104,7 @@ public class ChattingRoomService {
         time = chattingContent.get(chattingContent.size() - 1).getCreatedAt();
       }
 
-      chattingRoomResponses.add(ChattingRoomAllResponse.from(chattingRoom, content, time, isRead));
+      chattingRoomResponses.add(ChattingRoomAllResponse.from(chattingRoom, content, time, readNotCount));
     }   // for each 문 끝
 
     return chattingRoomResponses;
@@ -116,7 +116,7 @@ public class ChattingRoomService {
   public List<ChatContentResponse> getChattingRoomByIdAndMemberId(Long roomId, Long memberId) {
 
     // 채팅방 존재하는지 멤버가 존재하는지 검사
-    if (!ChattingRoomValidationUtil(roomId, memberId)) {
+    if (!validMemberInRoom(roomId, memberId)) {
       //채팅방 안에 멤버가 존재하지않는다.
       throw new IllegalArgumentException(ErrorCode.CHATTING_NOT_FOUND_MEMBER.getDescription());
     }
@@ -126,7 +126,7 @@ public class ChattingRoomService {
     List<ChatContentResponse> chatContentResponses = new ArrayList<>();
 
     for (ChattingContent chattingContent : chattingContents) {
-      chatContentResponses.add(ChatContentResponse.to(chattingContent));
+      chatContentResponses.add(ChatContentResponse.from(chattingContent));
     }
 
     return chatContentResponses;
@@ -146,7 +146,7 @@ public class ChattingRoomService {
   }
 
   // 채팅방 안에 멤버가 있는지 유효성 검사
-  public boolean ChattingRoomValidationUtil(Long roomId, Long memberId) {
+  public boolean validMemberInRoom(Long roomId, Long memberId) {
     Member member = memberFindById(memberId);
     ChattingRoom room = chattingRoomFindById(roomId);
     return member == room.getSender() || member == room.getErrand().getErrander();
