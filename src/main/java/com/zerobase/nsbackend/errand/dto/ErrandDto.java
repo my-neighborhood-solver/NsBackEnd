@@ -21,6 +21,7 @@ public class ErrandDto {
   private Integer pay;
   private List<String> hashtags;
   private AddressDto address;
+  private boolean isLiked;
   private LocalDateTime createdAt;
 
   public static ErrandDto from(Errand errand) {
@@ -34,5 +35,27 @@ public class ErrandDto {
         .hashtags(errand.getHashtagsAsStringList())
         .address(AddressDto.from(errand.getAddress()))
         .build();
+  }
+
+  /**
+   * Errand 엔티티와 Like 여부와 함께 ErrandDto를 만듭니다.
+   * @param errand
+   * @param isLiked
+   * @return
+   */
+  public static ErrandDto from(Errand errand, boolean isLiked) {
+    ErrandDto errandDto = ErrandDto.from(errand);
+    errandDto.setIsLiked(isLiked);
+    return errandDto;
+  }
+
+  /**
+   * isLiked를 변경합니다.
+   * 좋아요 여부를 확인하려면 현재 로그인한 유저를 받아와야 하는데,
+   * DTO 내에 AuthManager 의존성을 추가해 주는것이 맞지 않다고 생각했습니다.
+   * @param isLiked
+   */
+  private void setIsLiked(boolean isLiked) {
+    this.isLiked = isLiked;
   }
 }

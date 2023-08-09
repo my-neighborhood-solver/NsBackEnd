@@ -35,7 +35,6 @@ public class ErrandService {
 
   @Transactional
   public Errand createErrand(ErrandCreateRequest request, List<MultipartFile> imageRequest) {
-    // Security Context로 부터 인증된 유저 정보 받아오기
     Member member = getMemberFromAuth();
 
     // 아미지 업로드
@@ -64,7 +63,9 @@ public class ErrandService {
   @Transactional
   public ErrandDto getErrandDto(Long id) {
     Errand errand = getErrand(id);
-    return ErrandDto.from(errand);
+    Member memberFromAuth = getMemberFromAuth();
+    boolean isLiked = errand.checkLiked(memberFromAuth);
+    return ErrandDto.from(errand, isLiked);
   }
 
   @Transactional
@@ -109,9 +110,11 @@ public class ErrandService {
     errand.removeHashtag(tag);
   }
 
+  @Transactional
   public List<ErrandDto> getAllErrands() {
+    Member member = getMemberFromAuth();
     return errandRepository.findErrandAllWithImagesAndHashTag()
-        .stream().map(ErrandDto::from).collect(Collectors.toList());
+        .stream().map(errand -> ErrandDto.from(errand, errand.checkLiked(member))).collect(Collectors.toList());
   }
 
   @Transactional
@@ -131,6 +134,6 @@ public class ErrandService {
     Errand errand = getErrand(id);
     errand.like(member);
 
-    return errand.isLiked(member);
+    return errand.checkLiked(member);
   }
 }

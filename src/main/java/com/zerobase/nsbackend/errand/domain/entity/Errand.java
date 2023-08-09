@@ -15,7 +15,6 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -113,7 +112,12 @@ public class Errand extends BaseTimeEntity {
     likedMembers.add(likedMember);
   }
 
-  public boolean isLiked(Member member) {
+  /**
+   * 회원이 해당 의뢰에 대해 좋아요를 눌렀는지 체크합니다.
+   * @param member
+   * @return
+   */
+  public boolean checkLiked(Member member) {
     return likedMembers.contains(LikedMember.of(this, member));
   }
 
