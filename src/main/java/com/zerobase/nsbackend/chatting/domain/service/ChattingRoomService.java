@@ -95,7 +95,7 @@ public class ChattingRoomService {
       LocalDateTime time = null;
       int readNotCount;
 
-      // 읽지않은 갯수 인데 메서드 따로 뺄 예정
+      // 읽지 않은 갯수
       readNotCount = chattingContentRepository
           .countBySenderNotAndIsReadAndChattingRoom(sender, false, chattingRoom);
 

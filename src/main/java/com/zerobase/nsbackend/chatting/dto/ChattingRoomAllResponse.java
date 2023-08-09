@@ -15,17 +15,17 @@ public class ChattingRoomAllResponse {
   private String ChattingContent;
   private String nickName;
   private LocalDateTime time;
-  private int readCount;
+  private int readNotCount;
 
 
   public static ChattingRoomAllResponse from(ChattingRoom chattingRoom, String content,
-      LocalDateTime time, int readCount) {
+      LocalDateTime time, int count) {
     return ChattingRoomAllResponse.builder()
         .ChattingRoom_Id(chattingRoom.getId())
         .ChattingContent(content)
         .nickName(chattingRoom.getSender().getNickname())
         .time(time)
-        .readCount(readCount)
+        .readNotCount(count)
         .build();
   }
 }
