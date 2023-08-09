@@ -113,6 +113,10 @@ public class Errand extends BaseTimeEntity {
     likedMembers.add(likedMember);
   }
 
+  public boolean isLiked(Member member) {
+    return likedMembers.contains(LikedMember.of(this, member));
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

@@ -120,10 +120,17 @@ public class ErrandService {
     errand.changeAddress(request.toAddress());
   }
 
+  /**
+   * 좋아요 처리를 합니다.
+   * @param id
+   * @return 로그인한 회원의 해당 의뢰에 대한 좋아요 여부
+   */
   @Transactional
-  public void likeErrand(Long id) {
+  public boolean likeErrand(Long id) {
     Member member = getMemberFromAuth();
     Errand errand = getErrand(id);
     errand.like(member);
+
+    return errand.isLiked(member);
   }
 }

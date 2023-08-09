@@ -1,5 +1,10 @@
+## url 설정
+## localhost url: localhost:8080
+## dev url : 3.34.174.154:8080
+    > {% client.global.set("host", "localhost:8080"); %}
+
 ### 회원가입 요청
-POST http://localhost:8080/auth/signup
+POST http://{{host}}/auth/signup
 Content-Type: application/json
 
 {
@@ -9,10 +14,12 @@ Content-Type: application/json
 }
 
 ### 로그인 요청
-POST http://localhost:8080/auth/signin
+POST http://{{host}}/auth/signin
 Content-Type: application/json
 
 {
 "email" : "test01@gmail.com",
 "password" : "111111"
 }
+
+> {% client.global.set("auth_token", response.body.token); %}
