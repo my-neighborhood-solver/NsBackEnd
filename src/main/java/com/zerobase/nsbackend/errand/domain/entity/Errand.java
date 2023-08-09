@@ -121,6 +121,10 @@ public class Errand extends BaseTimeEntity {
     return likedMembers.contains(LikedMember.of(this, member));
   }
 
+  public Integer getLikedCount() {
+    return likedMembers.size();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

@@ -22,6 +22,7 @@ public class ErrandDto {
   private List<String> hashtags;
   private AddressDto address;
   private boolean isLiked;
+  private Integer likedCount;
   private LocalDateTime createdAt;
 
   public static ErrandDto from(Errand errand) {
@@ -34,6 +35,7 @@ public class ErrandDto {
         .pay(errand.getPay())
         .hashtags(errand.getHashtagsAsStringList())
         .address(AddressDto.from(errand.getAddress()))
+        .likedCount(errand.getLikedCount())
         .build();
   }
 
