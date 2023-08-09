@@ -7,6 +7,7 @@ import com.zerobase.nsbackend.chatting.domain.entity.ChattingContent;
 import com.zerobase.nsbackend.chatting.domain.entity.ChattingRoom;
 import com.zerobase.nsbackend.chatting.domain.repository.ChattingContentRepository;
 import com.zerobase.nsbackend.chatting.domain.repository.ChattingRoomRepository;
+import com.zerobase.nsbackend.chatting.dto.ChatContentAllResponse;
 import com.zerobase.nsbackend.chatting.dto.ChatContentResponse;
 import com.zerobase.nsbackend.chatting.dto.ChattingRoomAllResponse;
 import com.zerobase.nsbackend.chatting.dto.ChattingRoomCreateResponse;
@@ -104,7 +105,8 @@ public class ChattingRoomService {
         time = chattingContent.get(chattingContent.size() - 1).getCreatedAt();
       }
 
-      chattingRoomResponses.add(ChattingRoomAllResponse.from(chattingRoom, content, time, readNotCount));
+      chattingRoomResponses
+          .add(ChattingRoomAllResponse.from(chattingRoom, content, time, readNotCount));
     }   // for each 문 끝
 
     return chattingRoomResponses;
@@ -113,9 +115,10 @@ public class ChattingRoomService {
 
   // 채팅방 단건조회
   @Transactional
-  public List<ChatContentResponse> getChattingRoomByIdAndMemberId(Long roomId, Long memberId) {
+  public ChatContentAllResponse getChattingRoomByIdAndMemberId(Long roomId, Long memberId) {
 
     // 채팅방 존재하는지 멤버가 존재하는지 검사
+    Errand errand = chattingRoomFindById(roomId).getErrand();
     if (!validMemberInRoom(roomId, memberId)) {
       //채팅방 안에 멤버가 존재하지않는다.
       throw new IllegalArgumentException(ErrorCode.CHATTING_NOT_FOUND_MEMBER.getDescription());
@@ -129,7 +132,8 @@ public class ChattingRoomService {
       chatContentResponses.add(ChatContentResponse.from(chattingContent));
     }
 
-    return chatContentResponses;
+
+    return ChatContentAllResponse.from(roomId,errand.getTitle(), chatContentResponses);
   }
 
   // member가 있는지 유효성 검사

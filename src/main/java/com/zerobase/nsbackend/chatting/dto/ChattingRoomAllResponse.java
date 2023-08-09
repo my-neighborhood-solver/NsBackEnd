@@ -11,9 +11,10 @@ import lombok.Getter;
 @Builder
 public class ChattingRoomAllResponse {
 
-  private Long ChattingRoom_Id;
-  private String ChattingContent;
+  private Long chattingRoom_Id;
+  private String title;
   private String nickName;
+  private String chattingContent;
   private LocalDateTime time;
   private int readNotCount;
 
@@ -21,9 +22,10 @@ public class ChattingRoomAllResponse {
   public static ChattingRoomAllResponse from(ChattingRoom chattingRoom, String content,
       LocalDateTime time, int count) {
     return ChattingRoomAllResponse.builder()
-        .ChattingRoom_Id(chattingRoom.getId())
-        .ChattingContent(content)
+        .chattingRoom_Id(chattingRoom.getId())
+        .title(chattingRoom.getErrand().getTitle())
         .nickName(chattingRoom.getSender().getNickname())
+        .chattingContent(content)
         .time(time)
         .readNotCount(count)
         .build();

@@ -11,7 +11,7 @@ import lombok.Getter;
 @Builder
 public class ChatContentResponse {
 
-  Long contentId;
+  Long senderId;
   String nickName;
   String content;
   boolean isRead;
@@ -19,7 +19,7 @@ public class ChatContentResponse {
 
   public static ChatContentResponse from(ChattingContent chattingContent){
     return ChatContentResponse.builder()
-        .contentId(chattingContent.getId())
+        .senderId(chattingContent.getSender().getId())
         .nickName(chattingContent.getSender().getNickname())
         .content(chattingContent.getContent())
         .isRead(chattingContent.isRead())

@@ -1,7 +1,7 @@
 package com.zerobase.nsbackend.chatting.controller;
 
 import com.zerobase.nsbackend.chatting.domain.service.ChattingRoomService;
-import com.zerobase.nsbackend.chatting.dto.ChatContentResponse;
+import com.zerobase.nsbackend.chatting.dto.ChatContentAllResponse;
 import com.zerobase.nsbackend.chatting.dto.ChattingRoomAllResponse;
 import com.zerobase.nsbackend.chatting.dto.ChattingRoomCreateRequest;
 import com.zerobase.nsbackend.chatting.dto.ChattingRoomCreateResponse;
@@ -44,7 +44,7 @@ public class ChattingRoomController {
 
   // 채팅방 단건 조회
   @GetMapping("/{roomId}")
-  public ResponseEntity<List<ChatContentResponse>> getChattingRoom(@PathVariable Long roomId,
+  public ResponseEntity<ChatContentAllResponse> getChattingRoom(@PathVariable Long roomId,
       @RequestParam Long memberId) {
     return ResponseEntity.ok().body(chattingRoomService
         .getChattingRoomByIdAndMemberId(roomId, memberId));
