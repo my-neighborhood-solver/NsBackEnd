@@ -4,10 +4,11 @@ import com.sun.istack.NotNull;
 import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
 public class PutProfileImgRequest {
     @NotBlank
-    private String img;
+    private MultipartFile img;
 }

@@ -15,8 +15,8 @@ import com.zerobase.nsbackend.auth.dto.KakaoAccount;
 import com.zerobase.nsbackend.auth.dto.KakaoProfile;
 import com.zerobase.nsbackend.auth.dto.KakaoTokenResponse;
 import com.zerobase.nsbackend.auth.dto.KakaoUserInfoResponse;
-import com.zerobase.nsbackend.auth.external.KakaoTokenJsonData;
-import com.zerobase.nsbackend.auth.external.KakaoUserInfo;
+import com.zerobase.nsbackend.auth.external.KakaoTokenFeign;
+import com.zerobase.nsbackend.auth.external.KakaoUserFeign;
 import com.zerobase.nsbackend.auth.security.TokenProvider;
 import com.zerobase.nsbackend.auth.service.AuthService;
 import com.zerobase.nsbackend.member.domain.Member;
@@ -37,9 +37,9 @@ class AuthControllerTest {
     @MockBean
     private TokenProvider tokenProvider;
     @MockBean
-    private KakaoTokenJsonData KakaoTokenJsonData;
+    private KakaoTokenFeign KakaoTokenJsonData;
     @MockBean
-    private KakaoUserInfo kakaoUserInfo;
+    private KakaoUserFeign kakaoUserInfo;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -92,9 +92,9 @@ class AuthControllerTest {
             .email("bb@naver.com")
             .profile(KakaoProfile.builder().nickname("test2").build())
             .build();
-        given(KakaoTokenJsonData.getToken(any()))
+        given(KakaoTokenJsonData.call(any(),any(),any(),any()))
             .willReturn(KakaoTokenResponse.builder().build());
-        given(kakaoUserInfo.getUserInfo(any()))
+        given(kakaoUserInfo.call(any()))
             .willReturn(KakaoUserInfoResponse.builder()
                 .kakao_account(kakaoAccount)
                 .build());

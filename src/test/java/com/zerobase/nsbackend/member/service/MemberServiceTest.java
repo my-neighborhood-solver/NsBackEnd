@@ -1,24 +1,28 @@
 package com.zerobase.nsbackend.member.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import com.zerobase.nsbackend.global.fileUpload.StoreFileToAWS;
+import com.zerobase.nsbackend.global.fileUpload.UploadFile;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.domain.MemberAddress;
 import com.zerobase.nsbackend.member.dto.GetUserResponse;
-import com.zerobase.nsbackend.member.dto.PutProfileImgRequest;
 import com.zerobase.nsbackend.member.dto.PutUserAddressRequest;
 import com.zerobase.nsbackend.member.dto.PutUserNicknameRequest;
 import com.zerobase.nsbackend.member.repository.MemberAddressRepository;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
+import java.io.IOException;
 import java.util.Optional;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -29,6 +33,8 @@ class MemberServiceTest {
     MemberAddressRepository memberAddressRepository;
     @Mock
     MemberRepository memberRepository;
+    @Mock
+    StoreFileToAWS storeFileToAWS;
     private final MemberAddress memberAddress = MemberAddress.builder()
         .latitude(0f)
         .longitude(1f)
@@ -71,17 +77,30 @@ class MemberServiceTest {
     }
 
     @Test
-    void updateUserImg() {
+    void updateUserImg(){
         //given
         given(memberRepository.findByEmail(any()))
             .willReturn(Optional.ofNullable(member));
-        PutProfileImgRequest request = new PutProfileImgRequest();
-        request.setImg("set");
+        given(storeFileToAWS.storeFile(any()))
+            .willReturn(UploadFile.of("testUploadName","testStoreName"));
+        MockMultipartFile request
+            = makeMultipartFile();
+        given(storeFileToAWS.responseFileUrl(any()))
+            .willReturn("testUrl");
         //when
+        assert member != null;
         Member updated = memberService.updateUserImg(request, member.getEmail());
         //then
-        assertEquals("set",updated.getProfileImage());
+        assertEquals("testUrl",updated.getProfileImage());
         assertEquals(member.getEmail(),updated.getEmail());
+    }
+    private static MockMultipartFile makeMultipartFile() {
+        return new MockMultipartFile(
+            "file",
+            "hello.txt",
+            MediaType.TEXT_PLAIN_VALUE,
+            "Hello, World!".getBytes()
+        );
     }
 
     @Test
