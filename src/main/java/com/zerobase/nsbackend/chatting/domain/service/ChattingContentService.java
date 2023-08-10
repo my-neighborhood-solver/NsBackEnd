@@ -10,6 +10,7 @@ import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,15 +21,17 @@ public class ChattingContentService {
 
   private final ChattingContentRepository chattingContentRepository;
   private final ChattingRoomRepository chattingRoomRepository;
-
   private final MemberRepository memberRepository;
+
+  private final SimpMessagingTemplate template;
+
 
   // 채팅 내용 저장
   @Transactional
   public ChattingContent saveChattingContent(ChatContentRequest request) {
     ChattingRoom chattingRoom = chattingRoomFindById(request.getChattingRoomId());
-
     Member sender = memberFindById(request.getSenderId());
+    template.convertAndSendToUser(sender.getNickname(), "/private", request.getContent());
 
     return chattingContentRepository.save(
         ChattingContent.builder()
