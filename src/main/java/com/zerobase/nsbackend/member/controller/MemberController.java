@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,7 +22,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RequestMapping("/users")
@@ -38,9 +41,9 @@ public class MemberController {
         return ResponseEntity.ok(userInfo);
     }
     @PutMapping("/profileimg")
-    public ResponseEntity<GetUserResponse> putProfileImg(@RequestBody @Valid PutProfileImgRequest request
+    public ResponseEntity<GetUserResponse> putProfileImg(@RequestPart("image") @Nullable MultipartFile image
         , @AuthenticationPrincipal Member member){
-        memberService.updateUserImg(request, member.getEmail());
+        memberService.updateUserImg(image, member.getEmail());
         return ResponseEntity.ok().build();
     }
     @PutMapping("/nickname")

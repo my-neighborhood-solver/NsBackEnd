@@ -62,6 +62,10 @@ public class StoreFileToAWS implements StoreFile {
     return UploadFile.of(multipartFile.getOriginalFilename(), storeFileName);
   }
 
+  public String responseFileUrl(UploadFile uploadFile){
+    return s3Client.getUrl(bucketName,uploadFile.getStoreFileName()).toString();
+  }
+
   @Override
   public List<UploadFile> storeFiles(List<MultipartFile> multipartFiles) {
     if (multipartFiles == null || multipartFiles.isEmpty()) {
