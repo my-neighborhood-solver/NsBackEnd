@@ -76,14 +76,18 @@ public class ErrandService {
   }
 
   public Errand getErrand(Long id) {
-    return errandRepository.findErrandWithImagesAndHashTagById(id)
-        .orElseThrow(() -> new IllegalArgumentException(ErrorCode.ERRAND_NOT_FOUND.getDescription()));
+    Errand errand = errandRepository.findErrandWithImagesAndHashTagById(id)
+        .orElseThrow(
+            () -> new IllegalArgumentException(ErrorCode.ERRAND_NOT_FOUND.getDescription()));
+    errand.increaseViewCount();
+    return errand;
   }
 
   @Transactional
   public ErrandDto getErrandDto(Long id) {
     Errand errand = getErrand(id);
     Member memberFromAuth = getMemberFromAuth();
+
     boolean isLiked = errand.checkLiked(memberFromAuth);
     return ErrandDto.from(errand, isLiked);
   }

@@ -127,6 +127,13 @@ public class Errand extends BaseTimeEntity {
     return likedMembers.size();
   }
 
+  /**
+   * 조회 수 1 증가
+   */
+  public void increaseViewCount() {
+    viewCount += 1;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
