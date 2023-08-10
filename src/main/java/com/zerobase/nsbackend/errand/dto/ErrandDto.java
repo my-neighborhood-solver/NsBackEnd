@@ -42,6 +42,7 @@ public class ErrandDto {
         .hashtags(errand.getHashtagsAsStringList())
         .address(AddressDto.from(errand.getAddress()))
         .likedCount(errand.getLikedCount())
+        .createdAt(errand.getCreatedAt())
         .build();
   }
 
