@@ -1,26 +1,26 @@
 package com.zerobase.nsbackend.member.service;
 
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
+import com.zerobase.nsbackend.global.fileUpload.StoreFileToAWS;
+import com.zerobase.nsbackend.global.fileUpload.UploadFile;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.domain.MemberAddress;
 import com.zerobase.nsbackend.member.dto.GetUserResponse;
-import com.zerobase.nsbackend.member.dto.PutProfileImgRequest;
 import com.zerobase.nsbackend.member.dto.PutUserAddressRequest;
 import com.zerobase.nsbackend.member.dto.PutUserNicknameRequest;
-import com.zerobase.nsbackend.member.repository.MemberAddressRepository;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-    private final MemberAddressRepository memberAddressRepository;
     private final MemberRepository memberRepository;
+    private final StoreFileToAWS storeFileToAWS;
 
     public GetUserResponse getUserInfo(String email){
         Member member = memberRepository.findByEmail(email)
@@ -44,10 +44,12 @@ public class MemberService {
     }
 
     @Transactional
-    public Member updateUserImg(PutProfileImgRequest request, String email){
+    public Member updateUserImg(MultipartFile request, String email){
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new IllegalArgumentException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
-        member.updateUserImg(request.getImg());
+        UploadFile uploadFile = storeFileToAWS.storeFile(request);
+        String url = storeFileToAWS.responseFileUrl(uploadFile);
+        member.updateUserImg(url);
         return member;
     }
 

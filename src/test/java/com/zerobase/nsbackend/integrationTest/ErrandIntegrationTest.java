@@ -16,10 +16,12 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
 import com.zerobase.nsbackend.errand.domain.entity.ErrandHashtag;
 import com.zerobase.nsbackend.errand.domain.entity.ErrandImage;
+import com.zerobase.nsbackend.errand.domain.entity.LikedMember;
 import com.zerobase.nsbackend.errand.domain.repository.ErrandRepository;
 import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
 import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
+import com.zerobase.nsbackend.errand.dto.ErrandDto;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
 import com.zerobase.nsbackend.global.auth.AuthManager;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
@@ -27,7 +29,13 @@ import com.zerobase.nsbackend.global.vo.Address;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
 import com.zerobase.nsbackend.member.type.Authority;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.hamcrest.CoreMatchers;
@@ -36,7 +44,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
@@ -45,19 +55,20 @@ import org.springframework.test.web.servlet.ResultActions;
 @WithMockUser
 @DisplayName("의뢰 통합 테스트")
 class ErrandIntegrationTest extends IntegrationTest {
-
+  SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
   @Autowired
   MemberRepository memberRepository;
   @Autowired
   ErrandRepository errandRepository;
-
   @MockBean
   AuthManager authManager;
 
   Member member01;
   Member member02;
+
+  ErrandCreateRequest createRequest1;
   @BeforeEach
-  void init() {
+  void init() throws ParseException {
     member01 = Member.builder()
         .email("member01")
         .password("password")
@@ -70,23 +81,25 @@ class ErrandIntegrationTest extends IntegrationTest {
         .build();
     memberRepository.save(member01);
     memberRepository.save(member02);
+
+    createRequest1 = ErrandCreateRequest.builder()
+        .title("testTitle")
+        .content("testContent")
+        .payDivision(PayDivision.HOURLY)
+        .pay(10000)
+        .deadLine(dateFormat.parse("2024-01-29"))
+        .hashtags(List.of("알바", "이사"))
+        .build();
   }
 
   @Test
   @DisplayName("의뢰 생성에 성공합니다 (첨부 사진 없는 경우)")
   void createErrand_success_when_no_images() throws Exception {
     // given
-    ErrandCreateRequest request = ErrandCreateRequest.builder()
-        .title("testTitle")
-        .content("testContent")
-        .payDivision(PayDivision.HOURLY)
-        .pay(10000)
-        .build();
     when(authManager.getUsername()).thenReturn(member01.getEmail());
 
     // when
-    ResultActions resultActions = requestCreateErrand(request.getTitle(), request.getContent(),
-        request.getPayDivision(), request.getPay());
+    ResultActions resultActions = requestCreateErrand(createRequest1);
 
     // then
     resultActions
@@ -101,12 +114,7 @@ class ErrandIntegrationTest extends IntegrationTest {
     MockMultipartFile file1 = makeMultipartFile();
     MockMultipartFile file2 = makeMultipartFile();
 
-    ErrandCreateRequest createRequest = ErrandCreateRequest.builder()
-        .title("testTitle")
-        .content("testContent")
-        .payDivision(PayDivision.HOURLY)
-        .pay(10000)
-        .build();
+    ErrandCreateRequest createRequest = createRequest1;
     when(authManager.getUsername()).thenReturn(member01.getEmail());
 
     MockMultipartFile jsonRequest = new MockMultipartFile("errand", "",
@@ -146,34 +154,35 @@ class ErrandIntegrationTest extends IntegrationTest {
   @DisplayName("의뢰 ID로 의뢰 조회에 성공합니다.")
   void readErrandById_success() throws Exception {
     // given
-    String title = "testTitle";
-    String content = "testContent";
-    PayDivision payDivision = PayDivision.HOURLY;
-    Integer pay = 10000;
-    Long errandId = createErrandForGiven(title, content, payDivision, pay);
+    Long errandId = createErrandForGiven(createRequest1);
 
     // when
-    ResultActions resultActions = requestGetErrand(errandId);
+    MvcResult mvcResult = requestGetErrand(errandId)
+        .andReturn();
 
     // then
-    resultActions
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(errandId))
-        .andExpect(jsonPath("$.title").value(is(title)))
-        .andExpect(jsonPath("$.content").value(is(content)))
-        .andExpect(jsonPath("$.payDivision").value(is(payDivision.name())))
-        .andExpect(jsonPath("$.pay").value(is(pay)));
+    assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+
+    MockHttpServletResponse mockHttpServletResponse = mvcResult.getResponse();
+    mockHttpServletResponse.setCharacterEncoding("UTF-8");
+    String contentAsString = mockHttpServletResponse.getContentAsString();
+    ErrandDto result = objectMapper.readValue(contentAsString, ErrandDto.class);
+
+    assertThat(result.getTitle()).isEqualTo(createRequest1.getTitle());
+    assertThat(result.getContent()).isEqualTo(createRequest1.getContent());
+    assertThat(result.getPayDivision()).isEqualTo(createRequest1.getPayDivision());
+    assertThat(result.getPay()).isEqualTo(createRequest1.getPay());
+    assertThat(result.getHashtags()).usingRecursiveComparison().isEqualTo(createRequest1.getHashtags());
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    assertThat(result.getDeadLine().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .isEqualTo(dateFormat.format(createRequest1.getDeadLine()));
   }
 
   @Test
   @DisplayName("의뢰ID로 의뢰 조회 시, 의뢰 ID가 없어서 실패합니다.")
   void readErrandById_fail_because_errand_not_found() throws Exception {
     // given
-    String title = "testTitle";
-    String content = "testContent";
-    PayDivision payDivision = PayDivision.HOURLY;
-    Integer pay = 10000;
-    Long errandId = createErrandForGiven(title, content, payDivision, pay);
+    Long errandId = createErrandForGiven(createRequest1);
 
     Long notFoundId = 100L;
 
@@ -190,7 +199,7 @@ class ErrandIntegrationTest extends IntegrationTest {
   @DisplayName("의뢰 성공적으로 수정합니다.")
   void updateErrand_success() throws Exception {
     // given
-    Long errandId = createErrandForGiven("testTitle", "testContent", PayDivision.HOURLY, 10000);
+    Long errandId = createErrandForGiven(createRequest1);
 
     ErrandUpdateRequest updateRequest = ErrandUpdateRequest.builder()
         .title("updatedTitle")
@@ -218,7 +227,7 @@ class ErrandIntegrationTest extends IntegrationTest {
   @DisplayName("의뢰 성공적으로 수정 시, 의뢰자가 아니라서 실패합니다.")
   void updateErrand_fail_because_not_errander() throws Exception {
     // given
-    Long errandId = createErrandForGiven("testTitle", "testContent", PayDivision.HOURLY, 10000);
+    Long errandId = createErrandForGiven(createRequest1);
 
     ErrandUpdateRequest updateRequest = ErrandUpdateRequest.builder()
         .title("updatedTitle")
@@ -243,7 +252,7 @@ class ErrandIntegrationTest extends IntegrationTest {
   @Test
   @DisplayName("의뢰 취소에 성공합니다.")
   void cancelErrand_success() throws Exception {
-    Long errandId = createErrandForGiven("testTitle", "testContent", PayDivision.UNIT, 1000);
+    Long errandId = createErrandForGiven(createRequest1);
 
     ResultActions perform = mvc.perform(
         post("/errands/{id}/cancel", errandId)
@@ -255,7 +264,7 @@ class ErrandIntegrationTest extends IntegrationTest {
   @Test
   @DisplayName("의뢰자가 아니라서 의뢰 취소에 실패합니다.")
   void cancelErrand_fail_because_not_errander() throws Exception {
-    Long errandId = createErrandForGiven("testTitle", "testContent", PayDivision.UNIT, 1000);
+    Long errandId = createErrandForGiven(createRequest1);
     when(authManager.getUsername()).thenReturn(member02.getEmail());
 
     ResultActions perform = mvc.perform(
@@ -268,7 +277,7 @@ class ErrandIntegrationTest extends IntegrationTest {
   @DisplayName("의뢰에 해쉬태그를 추가합니다.")
   void addHashTag_success() throws Exception {
     // given
-    Long errandId = createErrandForGiven("testTitle", "testContent", PayDivision.UNIT, 1000);
+    Long errandId = createErrandForGiven(createRequest1);
     String tag = "알바";
 
     // when
@@ -287,7 +296,7 @@ class ErrandIntegrationTest extends IntegrationTest {
   @DisplayName("의뢰에 해쉬태그를 제거합니다.")
   void deleteHashTag_success() throws Exception {
     // given
-    Long errandId = createErrandForGiven("testTitle", "testContent", PayDivision.UNIT, 1000);
+    Long errandId = createErrandForGiven(createRequest1);
     String tag = "알바";
     requestAddHashtag(errandId, tag);
 
@@ -311,7 +320,7 @@ class ErrandIntegrationTest extends IntegrationTest {
   @DisplayName("의뢰 주소를 수정합니다.")
   void changeErrandAddress_success() throws Exception {
     // given
-    Long errandId = createErrandForGiven("testTitle", "testContent", PayDivision.UNIT, 1000);
+    Long errandId = createErrandForGiven(createRequest1);
     ErrandChangAddressRequest request = new ErrandChangAddressRequest(
         "서울시 강남구", 123.123, 123.123);
 
@@ -333,17 +342,58 @@ class ErrandIntegrationTest extends IntegrationTest {
         .isEqualTo(request);
   }
 
-  private ResultActions requestCreateErrand(String title, String content, PayDivision payDivision, Integer pay)
+  @Test
+  @DisplayName("의뢰 좋아요에 성공합니다.")
+  void likeErrand_on_success() throws Exception {
+    // given
+    Long errandId = createErrandForGiven(createRequest1);
+
+    // when
+    ResultActions perform = mvc.perform(
+            post("/errands/{id}/like", errandId)
+        )
+        .andDo(print());
+
+    // then
+    perform.andExpect(status().isOk());
+
+    Errand errand = errandRepository.findById(errandId)
+        .orElseThrow(() -> new RuntimeException("test fail"));
+    Set<LikedMember> likedMembers = errand.getLikedMembers();
+
+    assertThat(likedMembers).contains(LikedMember.of(errand, member01));
+  }
+
+  @Test
+  @DisplayName("의뢰 좋아요 취소에 성공합니다.")
+  void likeErrand_cancel_success() throws Exception {
+    // given
+    Long errandId = createErrandForGiven(createRequest1);
+    mvc.perform(
+        post("/errands/{id}/like", errandId)
+    );
+
+    // when
+    ResultActions perform = mvc.perform(
+            post("/errands/{id}/like", errandId)
+        )
+        .andDo(print());
+
+    // then
+    perform.andExpect(status().isOk());
+
+    Errand errand = errandRepository.findById(errandId)
+        .orElseThrow(() -> new RuntimeException("test fail"));
+    Set<LikedMember> likedMembers = errand.getLikedMembers();
+
+    assertThat(likedMembers).doesNotContain(LikedMember.of(errand, member01));
+  }
+
+  private ResultActions requestCreateErrand(ErrandCreateRequest request)
       throws Exception {
-    ErrandCreateRequest createRequest = ErrandCreateRequest.builder()
-        .title(title)
-        .content(content)
-        .payDivision(payDivision)
-        .pay(pay)
-        .build();
 
     MockMultipartFile jsonRequest = new MockMultipartFile("errand", "",
-        "application/json", asJsonString(createRequest).getBytes());
+        "application/json", asJsonString(request).getBytes());
 
     return mvc.perform(
         multipart("/errands")
@@ -358,11 +408,11 @@ class ErrandIntegrationTest extends IntegrationTest {
    * @return 생성된 의뢰의 id
    * @throws Exception
    */
-  private Long createErrandForGiven(String title, String content, PayDivision payDivision, Integer pay)
+  private Long createErrandForGiven(ErrandCreateRequest request)
       throws Exception {
     when(authManager.getUsername()).thenReturn(member01.getEmail());
 
-    MvcResult mvcResult = requestCreateErrand(title, content,payDivision,pay)
+    MvcResult mvcResult = requestCreateErrand(request)
         .andReturn();
 
     return parseNewId(mvcResult);

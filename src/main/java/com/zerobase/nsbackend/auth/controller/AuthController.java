@@ -6,14 +6,16 @@ import com.zerobase.nsbackend.auth.dto.Auth.SignUp;
 import com.zerobase.nsbackend.auth.dto.Auth.SignUpResponse;
 import com.zerobase.nsbackend.auth.dto.KakaoTokenResponse;
 import com.zerobase.nsbackend.auth.dto.KakaoUserInfoResponse;
-import com.zerobase.nsbackend.auth.external.KakaoTokenJsonData;
-import com.zerobase.nsbackend.auth.external.KakaoUserInfo;
+import com.zerobase.nsbackend.auth.external.KakaoTokenFeign;
+import com.zerobase.nsbackend.auth.external.KakaoUserFeign;
 import com.zerobase.nsbackend.auth.security.TokenProvider;
 import com.zerobase.nsbackend.auth.service.AuthService;
 import com.zerobase.nsbackend.member.domain.Member;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,8 +33,16 @@ public class AuthController {
 
     private final AuthService authService;
     private final TokenProvider tokenProvider;
-    private final KakaoTokenJsonData kakaoTokenJsonData;
-    private final KakaoUserInfo kakaoUserInfo;
+    @Autowired
+    private KakaoTokenFeign kakaoTokenFeign;
+    @Autowired
+    private KakaoUserFeign kakaoUserFeign;
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
+    private String REDIRECT_URI;
+    @Value("${spring.security.oauth2.client.registration.kakao.authorization-grant-type}")
+    private String GRANT_TYPE;
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+    private String CLIENT_ID;
 
     @PostMapping("/signup")
     public ResponseEntity<SignUpResponse> createMember(@RequestBody @Valid SignUp request){
@@ -57,12 +67,13 @@ public class AuthController {
             .build();
         return ResponseEntity.ok(response);
     }
-
     @GetMapping("/kakao/callback")
     @ResponseBody
     public ResponseEntity<SignInResponse> kakaoOauth(@RequestParam("code") String code) {
-        KakaoTokenResponse kakaoTokenResponse = kakaoTokenJsonData.getToken(code);
-        KakaoUserInfoResponse userInfo = kakaoUserInfo.getUserInfo(kakaoTokenResponse.getAccess_token());
+        KakaoTokenResponse kakaoTokenResponse = this.kakaoTokenFeign.call(GRANT_TYPE, CLIENT_ID,
+            REDIRECT_URI, code);
+        KakaoUserInfoResponse userInfo = this.kakaoUserFeign.call(
+            "Bearer " + kakaoTokenResponse.getAccess_token());
         String name = userInfo.getKakao_account().getProfile().getNickname();
         Member member = this.authService.kakaoRegister(userInfo.getKakao_account().getEmail(),
             name);
