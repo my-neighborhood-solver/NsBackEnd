@@ -5,6 +5,7 @@ import static com.zerobase.nsbackend.chatting.type.ChattingRoomCreateStatus.CHAT
 
 import com.zerobase.nsbackend.chatting.domain.entity.ChattingContent;
 import com.zerobase.nsbackend.chatting.domain.entity.ChattingRoom;
+import com.zerobase.nsbackend.chatting.domain.repository.ChattingContentRepository;
 import com.zerobase.nsbackend.chatting.domain.repository.ChattingRoomRepository;
 import com.zerobase.nsbackend.chatting.dto.ChatContentAllResponse;
 import com.zerobase.nsbackend.chatting.dto.ChatContentResponse;
