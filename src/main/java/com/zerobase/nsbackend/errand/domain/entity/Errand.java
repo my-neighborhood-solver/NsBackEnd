@@ -5,6 +5,7 @@ import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
 import com.zerobase.nsbackend.global.BaseTimeEntity;
 import com.zerobase.nsbackend.global.vo.Address;
 import com.zerobase.nsbackend.member.domain.Member;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -53,6 +54,7 @@ public class Errand extends BaseTimeEntity {
   @Enumerated(EnumType.STRING)
   private PayDivision payDivision;
   private Integer pay;
+  private LocalDate deadLine;
   @Embedded
   @AttributeOverrides({
       @AttributeOverride(name = "streetAddress", column = @Column(name = "street_address")),

@@ -3,11 +3,14 @@ package com.zerobase.nsbackend.errand.dto;
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
 import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
 import com.zerobase.nsbackend.global.dto.AddressDto;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
@@ -19,6 +22,7 @@ public class ErrandDto {
   private List<String> images;
   private PayDivision payDivision;
   private Integer pay;
+  private LocalDate deadLine;
   private List<String> hashtags;
   private AddressDto address;
   private boolean isLiked;
@@ -33,6 +37,7 @@ public class ErrandDto {
         .images(errand.getImagesAsStringList())
         .payDivision(errand.getPayDivision())
         .pay(errand.getPay())
+        .deadLine(errand.getDeadLine())
         .hashtags(errand.getHashtagsAsStringList())
         .address(AddressDto.from(errand.getAddress()))
         .likedCount(errand.getLikedCount())

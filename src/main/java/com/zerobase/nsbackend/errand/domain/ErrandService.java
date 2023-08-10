@@ -4,6 +4,7 @@ import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_
 import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY_TO_EDIT;
 
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
+import com.zerobase.nsbackend.errand.domain.entity.ErrandHashtag;
 import com.zerobase.nsbackend.errand.domain.entity.ErrandImage;
 import com.zerobase.nsbackend.errand.domain.repository.ErrandRepository;
 import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
@@ -17,8 +18,12 @@ import com.zerobase.nsbackend.global.fileUpload.StoreFile;
 import com.zerobase.nsbackend.global.fileUpload.UploadFile;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,8 +44,14 @@ public class ErrandService {
 
     // 아미지 업로드
     List<UploadFile> uploadFiles = storeFile.storeFiles(imageRequest);
-    List<ErrandImage> images = uploadFiles.stream().map(UploadFile::toErrandImage)
+    List<ErrandImage> images = uploadFiles.stream()
+        .map(UploadFile::toErrandImage)
         .collect(Collectors.toList());
+
+    // 해쉬태그
+    Set<ErrandHashtag> hashtagSet = request.getHashtags().stream()
+        .map(ErrandHashtag::of)
+        .collect(Collectors.toSet());
 
     return errandRepository.save(
         Errand.builder()
@@ -50,9 +61,18 @@ public class ErrandService {
             .images(images)
             .payDivision(request.getPayDivision())
             .pay(request.getPay())
+            .deadLine(convertToLocalDateTime(request.getDeadLine()))
+            .hashtags(hashtagSet)
             .status(ErrandStatus.REQUEST)
             .viewCount(0)
             .build());
+  }
+
+  private LocalDate convertToLocalDateTime(Date date) {
+    if (date == null) {
+      return null;
+    }
+    return LocalDate.ofInstant(date.toInstant(), ZoneId.systemDefault());
   }
 
   public Errand getErrand(Long id) {
