@@ -37,6 +37,7 @@ public class InterestBoardService {
         return convertInterestBoardResponse(member.getInterestBoards());
     }
 
+    @Transactional
     public List<InterestBoardResponse> getAllInterestBoard(String email){
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new IllegalArgumentException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));

@@ -48,6 +48,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @JoinColumn(name = "member_address_id")
     private MemberAddress memberAddress;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "member")
+    @Builder.Default
     private List<InterestBoard> interestBoards = new ArrayList<>();
     private boolean isDeleted;
     public void updateUserNickname(String nickname){
