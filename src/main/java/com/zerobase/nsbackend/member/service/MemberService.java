@@ -6,6 +6,7 @@ import com.zerobase.nsbackend.global.fileUpload.UploadFile;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.domain.MemberAddress;
 import com.zerobase.nsbackend.member.dto.GetUserResponse;
+import com.zerobase.nsbackend.member.dto.HashtagResponse;
 import com.zerobase.nsbackend.member.dto.PutUserAddressRequest;
 import com.zerobase.nsbackend.member.dto.PutUserNicknameRequest;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
@@ -69,6 +70,35 @@ public class MemberService {
             .orElseThrow(() -> new IllegalArgumentException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
         member.deleteUser();
         return member;
+    }
+
+    @Transactional
+    public HashtagResponse getHashtag(String email){
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new IllegalArgumentException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
+        return HashtagResponse.of(member.getHashtags());
+    }
+
+    @Transactional
+    public HashtagResponse updateHashtag(String email, String content){
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new IllegalArgumentException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
+        if(member.getHashtags().size() > 3){
+            throw new IllegalArgumentException(ErrorCode.HASHTAG_IS_FULL.getDescription());
+        }
+        member.addHashtag(content);
+        return HashtagResponse.of(member.getHashtags());
+    }
+
+    @Transactional
+    public HashtagResponse deleteHashtag(String email, String content){
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new IllegalArgumentException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
+        if(!member.existHashtag(content)){
+            throw new IllegalArgumentException(ErrorCode.NO_EXIST_HASHTAG.getDescription());
+        }
+        member.deleteHashtag(content);
+        return HashtagResponse.of(member.getHashtags());
     }
 
 }
