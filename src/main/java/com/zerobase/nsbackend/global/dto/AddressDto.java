@@ -2,7 +2,9 @@ package com.zerobase.nsbackend.global.dto;
 
 import com.zerobase.nsbackend.global.vo.Address;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Getter
 public class AddressDto {
   private String streetAddress;

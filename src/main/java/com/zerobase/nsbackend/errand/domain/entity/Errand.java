@@ -5,16 +5,17 @@ import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
 import com.zerobase.nsbackend.global.BaseTimeEntity;
 import com.zerobase.nsbackend.global.vo.Address;
 import com.zerobase.nsbackend.member.domain.Member;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -53,6 +54,7 @@ public class Errand extends BaseTimeEntity {
   @Enumerated(EnumType.STRING)
   private PayDivision payDivision;
   private Integer pay;
+  private LocalDate deadLine;
   @Embedded
   @AttributeOverrides({
       @AttributeOverride(name = "streetAddress", column = @Column(name = "street_address")),
@@ -66,6 +68,10 @@ public class Errand extends BaseTimeEntity {
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "ERRAND_ID")
   private Set<ErrandHashtag> hashtags = new HashSet<>();
+
+  @Builder.Default
+  @OneToMany(mappedBy = "errand", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<LikedMember> likedMembers = new HashSet<>();
   private Integer viewCount;
 
   public void edit(String title, String content, PayDivision payDivision, Integer pay) {
@@ -97,6 +103,45 @@ public class Errand extends BaseTimeEntity {
 
   public void changeAddress(Address address) {
     this.address = address;
+  }
+
+  public void like(Member member) {
+    LikedMember likedMember = LikedMember.of(this, member);
+    if (likedMembers.contains(likedMember)) {
+      likedMembers.remove(likedMember);
+      return;
+    }
+    likedMembers.add(likedMember);
+  }
+
+  /**
+   * 회원이 해당 의뢰에 대해 좋아요를 눌렀는지 체크합니다.
+   * @param member
+   * @return
+   */
+  public boolean checkLiked(Member member) {
+    return likedMembers.contains(LikedMember.of(this, member));
+  }
+
+  public Integer getLikedCount() {
+    return likedMembers.size();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Errand errand = (Errand) o;
+    return id.equals(errand.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
   }
 }
 
