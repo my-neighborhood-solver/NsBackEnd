@@ -6,6 +6,7 @@ import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandDto;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
+import com.zerobase.nsbackend.errand.dto.ErranderDto;
 import com.zerobase.nsbackend.errand.dto.LikeErrandResponse;
 import java.net.URI;
 import java.util.List;
@@ -88,5 +89,10 @@ public class ErrandController {
   @PostMapping("/{id}/like")
   public ResponseEntity<LikeErrandResponse> likeErrand(@PathVariable Long id) {
     return ResponseEntity.ok(LikeErrandResponse.of(errandService.likeErrand(id)));
+  }
+
+  @GetMapping("/{id}/errander")
+  public ResponseEntity<ErranderDto> readErrander(@PathVariable Long id) {
+    return ResponseEntity.ok(errandService.findErrander(id));
   }
 }

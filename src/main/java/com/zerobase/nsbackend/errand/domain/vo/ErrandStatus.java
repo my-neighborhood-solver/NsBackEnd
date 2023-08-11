@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ErrandStatus {
-  REQUEST("REQUEST", "요청"),
-  PERFORMING("PERFORMING", "의뢰중"),
+  REQUEST("REQUEST", "의뢰중"),
+  PERFORMING("PERFORMING", "수행중"),
   FINISH("FINISH", "완료"),
   CANCEL("CANCEL", "취소");
 
