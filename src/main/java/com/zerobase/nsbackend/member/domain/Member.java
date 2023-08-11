@@ -5,14 +5,15 @@ import com.zerobase.nsbackend.global.BaseTimeEntity;
 import com.zerobase.nsbackend.member.type.Authority;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -48,9 +49,13 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "member_address_id")
     private MemberAddress memberAddress;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "member")
     @Builder.Default
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "member")
     private List<InterestBoard> interestBoards = new ArrayList<>();
+    @Builder.Default
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "member_hashtag")
+    private Set<MemberHashtag> hashtags = new HashSet<>();
     private boolean isDeleted;
     public void updateUserNickname(String nickname){
         this.nickname = nickname;
@@ -63,6 +68,18 @@ public class Member extends BaseTimeEntity implements UserDetails {
     }
     public void deleteInterestBoard(Errand errand){
         this.interestBoards.remove(InterestBoard.toEntity(this,errand));
+    }
+    public List<String> getHashtags(){
+        return this.hashtags.stream().map(MemberHashtag::getContent).collect(Collectors.toList());
+    }
+    public void addHashtag(String content){
+        hashtags.add(MemberHashtag.of(content));
+    }
+    public void deleteHashtag(String content){
+        hashtags.remove(MemberHashtag.of(content));
+    }
+    public boolean existHashtag(String content){
+        return hashtags.contains(MemberHashtag.of(content));
     }
 
     @Override
@@ -96,22 +113,5 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return !isDeleted;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Member member = (Member) o;
-        return id.equals(member.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }
