@@ -24,6 +24,7 @@ import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandDto;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
+import com.zerobase.nsbackend.errand.dto.ErranderDto;
 import com.zerobase.nsbackend.global.auth.AuthManager;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import com.zerobase.nsbackend.global.vo.Address;
@@ -391,6 +392,34 @@ class ErrandIntegrationTest extends IntegrationTest {
     Set<LikedMember> likedMembers = errand.getLikedMembers();
 
     assertThat(likedMembers).doesNotContain(LikedMember.of(errand, member01));
+  }
+
+  @Test
+  @DisplayName("의뢰자 정보를 조회합니다.")
+  void readErranderSuccess() throws Exception {
+    // given
+    Long errandId = createErrandForGiven(createRequest1);
+
+    // when
+    MvcResult mvcResult = mvc.perform(
+            get("/errands/{id}/errander", errandId)
+        )
+        .andDo(print())
+        .andReturn();
+
+    // then
+    assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+
+    MockHttpServletResponse mockHttpServletResponse = mvcResult.getResponse();
+    mockHttpServletResponse.setCharacterEncoding("UTF-8");
+    String contentAsString = mockHttpServletResponse.getContentAsString();
+    ErranderDto result = objectMapper.readValue(contentAsString, ErranderDto.class);
+
+    assertThat(result.getMemberId()).isEqualTo(member01.getId());
+    assertThat(result.getNickname()).isEqualTo(member01.getNickname());
+    assertThat(result.getEmail()).isEqualTo(member01.getEmail());
+    assertThat(result.getProfileImage()).isEqualTo(member01.getProfileImage());
+    assertThat(result.getErrandCount()).isEqualTo(1);
   }
 
   private ResultActions requestCreateErrand(ErrandCreateRequest request)
