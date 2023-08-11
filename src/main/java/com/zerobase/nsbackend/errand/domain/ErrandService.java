@@ -12,6 +12,7 @@ import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
 import com.zerobase.nsbackend.errand.dto.ErrandDto;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
+import com.zerobase.nsbackend.errand.dto.ErranderDto;
 import com.zerobase.nsbackend.global.auth.AuthManager;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import com.zerobase.nsbackend.global.fileUpload.StoreFile;
@@ -159,5 +160,14 @@ public class ErrandService {
     errand.like(member);
 
     return errand.checkLiked(member);
+  }
+
+  public ErranderDto findErrander(Long errandId) {
+    Errand errand = getErrand(errandId);
+    Member errander = memberRepository.findById(errand.getErrander().getId())
+        .orElseThrow(() -> new IllegalStateException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
+
+    Integer errandCount = errandRepository.countByErranderId(errander.getId());
+    return ErranderDto.of(errander, errandCount);
   }
 }

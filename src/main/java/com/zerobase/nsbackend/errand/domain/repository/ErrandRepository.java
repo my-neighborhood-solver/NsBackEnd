@@ -20,4 +20,7 @@ public interface ErrandRepository extends JpaRepository<Errand, Long> {
       + " left join fetch e.images "
       + " left join fetch e.hashtags ")
   List<Errand> findErrandAllWithImagesAndHashTag();
+
+  @Query("select count(e) from Errand e where e.errander.id = :memberId")
+  Integer countByErranderId(Long memberId);
 }
