@@ -30,6 +30,7 @@ public class ErrandDto {
   private boolean isLiked;
   private Integer likedCount;
   private ErrandStatus status;
+  private Integer viewCount;
   private LocalDateTime createdAt;
 
   public static ErrandDto from(Errand errand) {
@@ -45,6 +46,7 @@ public class ErrandDto {
         .address(AddressDto.from(errand.getAddress()))
         .likedCount(errand.getLikedCount())
         .status(errand.getStatus())
+        .viewCount(errand.getViewCount())
         .createdAt(errand.getCreatedAt())
         .build();
   }
