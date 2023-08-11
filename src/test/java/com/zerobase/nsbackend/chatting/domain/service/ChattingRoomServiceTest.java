@@ -5,7 +5,10 @@ import static com.zerobase.nsbackend.chatting.type.ChattingRoomCreateStatus.CHAT
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.zerobase.nsbackend.chatting.domain.entity.ChattingContent;
@@ -18,6 +21,7 @@ import com.zerobase.nsbackend.chatting.dto.ChattingRoomAllResponse;
 import com.zerobase.nsbackend.chatting.dto.ChattingRoomCreateResponse;
 import com.zerobase.nsbackend.errand.domain.ErrandService;
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
+import com.zerobase.nsbackend.errand.domain.repository.ErrandRepository;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
@@ -43,6 +47,9 @@ class ChattingRoomServiceTest {
   private MemberRepository memberRepository;
 
   @Mock
+  private ErrandRepository errandRepository;
+
+  @Mock
   private ChattingContentRepository chattingContentRepository;
 
   @Mock
@@ -64,6 +71,9 @@ class ChattingRoomServiceTest {
 
   ChattingContent chattingContent1;
   ChattingContent chattingContent2;
+  ChattingContent chattingContent3;
+  ChattingContent chattingContent4;
+
 
   @BeforeEach
   void setUp() {
@@ -106,28 +116,44 @@ class ChattingRoomServiceTest {
         .build();
 
     chattingContent1 = ChattingContent.builder()
+        .id(1L)
         .content("밥먹자")
         .chattingRoom(chattingRoom1)
         .sender(member1)
         .isRead(true)
         .build();
     chattingContent2 = ChattingContent.builder()
+        .id(2L)
         .content("배고프다")
         .chattingRoom(chattingRoom1)
         .sender(member2)
         .isRead(false)
         .build();
+    chattingContent3 = ChattingContent.builder()
+        .id(3L)
+        .content("배고프다")
+        .chattingRoom(chattingRoom1)
+        .sender(member2)
+        .isRead(false)
+        .build();
+    chattingContent4 = ChattingContent.builder()
+        .id(4L)
+        .content("배고프다")
+        .chattingRoom(chattingRoom1)
+        .sender(member2)
+        .isRead(false)
+        .build();
+
+
   }
 
   @Test
   @DisplayName("채팅방 생성 성공")
   void testCreateChattingRoom1() {
-    // given
 
-    // when
-    // 가짜 회원 데이터를 리포지토리에서 반환하도록 설정
-    when(errandService.getErrand(1L)).thenReturn(errand1);
-    when(memberRepository.findById(2L)).thenReturn(Optional.of(member2));
+    when(errandRepository.findById(errand1.getId())).thenReturn(Optional.of(errand1));
+    when(memberRepository.findById(member2.getId())).thenReturn(Optional.of(member2));
+
     when(chattingRoomRepository.findByErrandAndSender(errand1, member2))
         .thenReturn(Optional.empty());
     // 채팅방 생성을 나타내는 새로운 ChattingRoom 객체 생성
@@ -136,16 +162,16 @@ class ChattingRoomServiceTest {
         .errand(errand1)
         .sender(member2)
         .build();
-    when(chattingRoomRepository.save(any(ChattingRoom.class))).thenReturn(chattingRoom1);
-    // then
+    when(chattingRoomRepository.save(any(ChattingRoom.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-    ChattingRoomCreateResponse createResponse = chattingRoomService.createChattingRoom(1L, 2L);
+    ChattingRoomCreateResponse response
+        = chattingRoomService.createChattingRoom(errand1.getId(), member2.getId());
 
-    assertThat(createResponse).isNotNull();
-    assertThat(createResponse.getChattingRoomId()).isEqualTo(1001L);
-    assertThat(createResponse.getErrandId()).isEqualTo(101L);
-    assertThat(createResponse.getSenderId()).isEqualTo(2L);
-    assertThat(createResponse.getDescription()).isEqualTo(CHATTING_ROOM_CREATE_SUCCESS);
+    assertThat(response).isNotNull();
+
+    assertThat(response.getErrandId()).isEqualTo(101L);
+    assertThat(response.getSenderId()).isEqualTo(2L);
+    assertThat(response.getDescription()).isEqualTo(CHATTING_ROOM_CREATE_SUCCESS);
   }
 
   @Test
@@ -161,14 +187,15 @@ class ChattingRoomServiceTest {
 
     // when
     // 가짜 회원 데이터를 리포지토리에서 반환하도록 설정
-    when(errandService.getErrand(1L)).thenReturn(errand1);
-    when(memberRepository.findById(2L)).thenReturn(Optional.of(member2));
+    when(errandRepository.findById(errand1.getId())).thenReturn(Optional.of(errand1));
+    when(memberRepository.findById(member2.getId())).thenReturn(Optional.of(member2));
     // 존재하는 채팅방 객체를 반환하도록 설정
     when(chattingRoomRepository.findByErrandAndSender(errand1, member2))
         .thenReturn(Optional.of(ChattingRoom1));
 
     // then
-    ChattingRoomCreateResponse createResponse = chattingRoomService.createChattingRoom(1L, 2L);
+    ChattingRoomCreateResponse createResponse =
+        chattingRoomService.createChattingRoom(errand1.getId(), member2.getId());
 
     assertThat(createResponse).isNotNull();
     assertThat(createResponse.getChattingRoomId()).isEqualTo(1001L);
@@ -259,14 +286,14 @@ class ChattingRoomServiceTest {
         .getChattingRoomByIdAndMemberId(roomId, member1.getId());
 
     // 결과 검증
-//    assertThat(response.size()).isEqualTo(2);
-//    assertThat(response.get(0).getNickName()).isEqualTo(member1.getNickname());
-//    assertThat(response.get(1).getNickName()).isEqualTo(member2.getNickname());
-//    assertThat(response.get(0).getContent()).isEqualTo("밥먹자");
-//    assertThat(response.get(1).getContent()).isEqualTo("배고프다");
+    assertThat(response.getRoomId()).isEqualTo(1L);
+    assertThat(response.getChatContent().get(0).getNickName()).isEqualTo(member1.getNickname());
+    assertThat(response.getChatContent().get(1).getNickName()).isEqualTo(member2.getNickname());
+    assertThat(response.getChatContent().get(0).getContent()).isEqualTo("밥먹자");
+    assertThat(response.getChatContent().get(1).getContent()).isEqualTo("배고프다");
 
     // Mock 검증
-    Mockito.verify(chattingRoomRepository, Mockito.times(1)).findById(eq(roomId));
+    Mockito.verify(chattingRoomRepository, Mockito.times(2)).findById(eq(roomId));
     Mockito.verify(memberRepository, Mockito.times(1)).findById(member1.getId());
     Mockito.verify(chattingContentRepository, Mockito.times(1))
         .findByChattingRoom_IdOrderByCreatedAtDesc(roomId);
@@ -294,5 +321,32 @@ class ChattingRoomServiceTest {
 
     assertThrows(IllegalArgumentException.class,
         () -> chattingContentRepository.findByChattingRoom_IdOrderByCreatedAtDesc(roomId));
+  }
+
+  @Test
+  @DisplayName("채팅방 읽음 처리 성공")
+  void testMarkUnreadChattingContentAsRead(){
+
+    when(chattingContentRepository.findBySender_IdNotAndIsReadFalseAndChattingRoom_Id(member1.getId(), member1.getId()))
+        .thenReturn(Arrays.asList(chattingContent1, chattingContent2, chattingContent3, chattingContent4));
+      // given
+    assertThat(chattingContent1.isRead()).isTrue();
+    assertThat(chattingContent2.isRead()).isFalse();
+    assertThat(chattingContent3.isRead()).isFalse();
+    assertThat(chattingContent4.isRead()).isFalse();
+
+    chattingRoomService.markUnreadChattingContentAsRead(member1.getId(), member1.getId());
+
+    chattingContentRepository.findBySender_IdNotAndIsReadFalseAndChattingRoom_Id(member1.getId(), member1.getId());
+
+    verify(chattingContentRepository, times(1)).saveAll(anyList());
+
+
+    assertThat(chattingContent1.isRead()).isTrue();
+    assertThat(chattingContent2.isRead()).isTrue();
+    assertThat(chattingContent3.isRead()).isTrue();
+    assertThat(chattingContent4.isRead()).isTrue();
+
+
   }
 }

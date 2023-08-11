@@ -40,4 +40,7 @@ public class ChattingContent extends BaseTimeEntity {
   @Column(nullable = false)
   private boolean isRead;
 
+  public void setRead(boolean isRead) {
+    this.isRead = isRead;
+  }
 }
