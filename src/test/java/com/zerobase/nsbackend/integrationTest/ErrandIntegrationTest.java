@@ -18,6 +18,7 @@ import com.zerobase.nsbackend.errand.domain.entity.ErrandHashtag;
 import com.zerobase.nsbackend.errand.domain.entity.ErrandImage;
 import com.zerobase.nsbackend.errand.domain.entity.LikedMember;
 import com.zerobase.nsbackend.errand.domain.repository.ErrandRepository;
+import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
 import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
 import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
@@ -176,6 +177,9 @@ class ErrandIntegrationTest extends IntegrationTest {
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     assertThat(result.getDeadLine().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .isEqualTo(dateFormat.format(createRequest1.getDeadLine()));
+    assertThat(result.getViewCount()).isEqualTo(1);
+    assertThat(result.getCreatedAt()).isNotNull();
+    assertThat(result.getStatus()).isEqualTo(ErrandStatus.REQUEST);
   }
 
   @Test
