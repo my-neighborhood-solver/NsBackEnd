@@ -77,7 +77,7 @@ public class ErrandService {
   }
 
   public Errand getErrand(Long id) {
-    Errand errand = errandRepository.findErrandWithImagesAndHashTagById(id)
+    Errand errand = errandRepository.findWithFetchById(id)
         .orElseThrow(
             () -> new IllegalArgumentException(ErrorCode.ERRAND_NOT_FOUND.getDescription()));
     errand.increaseViewCount();
@@ -138,8 +138,9 @@ public class ErrandService {
   @Transactional
   public List<ErrandDto> getAllErrands() {
     Member member = getMemberFromAuth();
-    return errandRepository.findErrandAllWithImagesAndHashTag()
-        .stream().map(errand -> ErrandDto.from(errand, errand.checkLiked(member))).collect(Collectors.toList());
+    return errandRepository.findWithFetchAll()
+        .stream().map(errand -> ErrandDto.from(errand, errand.checkLiked(member)))
+        .collect(Collectors.toList());
   }
 
   @Transactional
