@@ -5,9 +5,11 @@ import com.zerobase.nsbackend.global.BaseTimeEntity;
 import com.zerobase.nsbackend.member.type.Authority;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -55,7 +57,8 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Builder.Default
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "member_hashtag")
-    private Set<MemberHashtag> hashtags = new HashSet<>();
+    private Set<MemberHashtag> hashtags =
+        Collections.newSetFromMap(new ConcurrentHashMap<>());
     private boolean isDeleted;
     public void updateUserNickname(String nickname){
         this.nickname = nickname;
