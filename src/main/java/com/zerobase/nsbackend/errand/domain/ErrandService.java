@@ -11,6 +11,8 @@ import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
 import com.zerobase.nsbackend.errand.dto.ErrandDto;
+import com.zerobase.nsbackend.errand.dto.ErrandSearchCondition;
+import com.zerobase.nsbackend.errand.dto.ErrandSearchResult;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
 import com.zerobase.nsbackend.errand.dto.ErranderDto;
 import com.zerobase.nsbackend.global.auth.AuthManager;
@@ -27,6 +29,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -170,5 +175,9 @@ public class ErrandService {
 
     Integer errandCount = errandRepository.countByErranderId(errander.getId());
     return ErranderDto.of(errander, errandCount);
+  }
+
+  public Slice<ErrandSearchResult> searchErrand(ErrandSearchCondition condition, Pageable pageable) {
+    return errandRepository.search(condition, pageable);
   }
 }
