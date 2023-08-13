@@ -1,4 +1,4 @@
-package com.zerobase.nsbackend.errand.domain;
+package com.zerobase.nsbackend.errand.domain.service;
 
 import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY_TO_DELETE;
 import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY_TO_EDIT;
@@ -12,7 +12,7 @@ import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
 import com.zerobase.nsbackend.errand.dto.ErrandDto;
 import com.zerobase.nsbackend.errand.dto.ErrandSearchCondition;
-import com.zerobase.nsbackend.errand.dto.ErrandSearchResult;
+import com.zerobase.nsbackend.errand.dto.search.ErrandSearchResult;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
 import com.zerobase.nsbackend.errand.dto.ErranderDto;
 import com.zerobase.nsbackend.global.auth.AuthManager;
@@ -176,6 +176,7 @@ public class ErrandService {
     return ErranderDto.of(errander, errandCount);
   }
 
+  @Transactional
   public Slice<ErrandSearchResult> searchErrand(ErrandSearchCondition condition, Pageable pageable) {
     return errandRepository.search(condition, pageable);
   }

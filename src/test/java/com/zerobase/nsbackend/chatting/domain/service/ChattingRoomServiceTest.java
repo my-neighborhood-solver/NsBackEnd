@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import com.zerobase.nsbackend.chatting.domain.entity.ChattingRoom;
 import com.zerobase.nsbackend.chatting.domain.repository.ChattingRoomRepository;
 import com.zerobase.nsbackend.chatting.dto.ChattingRoomCreateResponse;
-import com.zerobase.nsbackend.errand.domain.ErrandService;
+import com.zerobase.nsbackend.errand.domain.service.ErrandService;
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
@@ -19,7 +19,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
 
