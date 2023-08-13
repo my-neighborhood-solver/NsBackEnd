@@ -14,15 +14,15 @@ import com.zerobase.nsbackend.errand.dto.ErrandSearchResult;
 import com.zerobase.nsbackend.member.domain.Member;
 import java.util.HashSet;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.test.annotation.Rollback;
 
-@Rollback(value = false)
 class ErrandQueryDslRepositoryTest extends RepositoryTest {
   @Autowired
   TestEntityManager em;
@@ -76,10 +76,13 @@ class ErrandQueryDslRepositoryTest extends RepositoryTest {
   void search_with_no_condition_success() {
     ErrandSearchCondition cond = ErrandSearchCondition.builder()
         .build();
+    int size = 10;
+    int page = 0;
+    PageRequest pageRequest = PageRequest.of(page, size);
 
-    List<ErrandSearchResult> searchResult = errandQueryDslRepository.search(cond);
+    Slice<ErrandSearchResult> searchResult = errandQueryDslRepository.search(cond, pageRequest);
 
-    assertThat(searchResult).hasSize(2);
+    assertThat(searchResult.getContent()).hasSize(2);
   }
 
   @Test
@@ -88,9 +91,12 @@ class ErrandQueryDslRepositoryTest extends RepositoryTest {
     ErrandSearchCondition cond = ErrandSearchCondition.builder()
         .errandTitle("첫번째")
         .build();
+    int size = 10;
+    int page = 0;
+    PageRequest pageRequest = PageRequest.of(page, size);
 
-    List<ErrandSearchResult> searchResult = errandQueryDslRepository.search(cond);
+    Slice<ErrandSearchResult> searchResult = errandQueryDslRepository.search(cond, pageRequest);
 
-    assertThat(searchResult).hasSize(1);
+    assertThat(searchResult.getContent()).hasSize(1);
   }
 }
