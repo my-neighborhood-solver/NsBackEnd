@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface ErrandRepository extends JpaRepository<Errand, Long> {
+public interface ErrandRepository extends JpaRepository<Errand, Long>, ErrandQueryDslRepository{
 
   @Query("select distinct e "
       + " from Errand e "
