@@ -47,8 +47,7 @@ public class ErrandRepositoryImpl implements ErrandQueryDslRepository {
         .join(errand.errander, member)
         .leftJoin(errand.likedMembers, likedMember)
         .where(
-            errandTitleContains(condition.getErrandTitle()),
-            errandHashtagsEq(condition.getHashtag())
+            errandTitleContains(condition.getErrandTitle())
         )
         .groupBy(errand.id, errand.title, errand.content, errand.viewCount,
             errand.createdAt, member.nickname, member.profileImage)
@@ -66,8 +65,5 @@ public class ErrandRepositoryImpl implements ErrandQueryDslRepository {
 
   private BooleanExpression errandTitleContains(String errandTitle) {
     return StringUtils.hasText(errandTitle) ? errand.title.contains(errandTitle) : null;
-  }
-  private BooleanExpression errandHashtagsEq(String hashtag) {
-    return hashtag != null ? errand.hashtags.contains(ErrandHashtag.of(hashtag)) : null;
   }
 }
