@@ -1,7 +1,7 @@
-package com.zerobase.nsbackend.errand.dto;
+package com.zerobase.nsbackend.errand.dto.search;
 
 import com.querydsl.core.annotations.QueryProjection;
-import java.util.Set;
+import java.util.List;
 import lombok.Getter;
 
 @Getter
@@ -10,7 +10,7 @@ public class ErrandSearchResult {
   private String title;
   private String content;
   private String imageUrl;  // 의뢰 사진 url (한건)
-  private Set<String> hashtags; // 해쉬태그
+  private List<String> hashtags; // 해쉬태그
   private Long likeCount;  // 좋아요 수
   private Integer viewCount;  // 조회수
   private String postingDate; // 게시일자
@@ -34,7 +34,7 @@ public class ErrandSearchResult {
     this.imageUrl = imageUrl;
   }
 
-  public void changeHashtags(Set<String> hashtags) {
+  public void changeHashtags(List<String> hashtags) {
     this.hashtags = hashtags;
   }
 
