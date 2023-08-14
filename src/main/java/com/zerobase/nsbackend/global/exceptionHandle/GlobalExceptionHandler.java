@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+  private static final String INFO_LOG_TEMPLATE = "## info : {}, {}";
+  private static final String ERROR_LOG_TEMPLATE = "## error : {}, {}";
 
   private UUID generateLogId(Exception ex) {
     return UUID.randomUUID();
@@ -23,14 +25,14 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ErrorResponse handleIllegalArgumentException(IllegalArgumentException ex) {
     UUID uuid = generateLogId(ex);
-    log.info("## info : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
+    log.info(INFO_LOG_TEMPLATE, uuid, ex.getClass().getSimpleName(), ex);
     return ErrorResponse.of(generateLogId(ex), ex);
   }
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ErrorResponse handleIllegalArgumentException(MethodArgumentNotValidException ex) {
     UUID uuid = generateLogId(ex);
-    log.info("## info : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
+    log.info(INFO_LOG_TEMPLATE, uuid, ex.getClass().getSimpleName(), ex);
     return ErrorResponse.builder()
         .errorCode(ErrorCode.INVALID_INPUT_ERROR.getCode())
         .description(ErrorCode.INVALID_INPUT_ERROR.getDescription())
@@ -42,14 +44,14 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ErrorResponse handleIllegalStateException(IllegalStateException ex) {
     UUID uuid = generateLogId(ex);
-    log.info("## info : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
+    log.info(INFO_LOG_TEMPLATE, uuid, ex.getClass().getSimpleName(), ex);
     return ErrorResponse.of(generateLogId(ex), ex);
   }
   @ExceptionHandler(UsernameNotFoundException.class)
-  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
   public ErrorResponse handleIllegalArgumentException(UsernameNotFoundException ex) {
     UUID uuid = generateLogId(ex);
-    log.error("## error : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
+    log.info(INFO_LOG_TEMPLATE, uuid, ex.getClass().getSimpleName(), ex);
     return ErrorResponse.of(generateLogId(ex), ex);
   }
 
@@ -57,7 +59,7 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ErrorResponse handleIllegalArgumentException(NoSuchElementException ex) {
     UUID uuid = generateLogId(ex);
-    log.error("## error : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
+    log.error(ERROR_LOG_TEMPLATE, uuid, ex.getClass().getSimpleName(), ex);
     return ErrorResponse.of(generateLogId(ex), ex);
   }
 
@@ -65,7 +67,7 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ErrorResponse handleIllegalArgumentException(Exception ex) {
     UUID uuid = generateLogId(ex);
-    log.error("## error : {}, {}", uuid, ex.getClass().getSimpleName(), ex);
+    log.error(ERROR_LOG_TEMPLATE, uuid, ex.getClass().getSimpleName(), ex);
     return ErrorResponse.of(generateLogId(ex), ex);
   }
 }

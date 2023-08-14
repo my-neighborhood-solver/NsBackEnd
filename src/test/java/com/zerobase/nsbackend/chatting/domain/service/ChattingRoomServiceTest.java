@@ -19,7 +19,7 @@ import com.zerobase.nsbackend.chatting.dto.ChatContentAllResponse;
 import com.zerobase.nsbackend.chatting.dto.ChatContentResponse;
 import com.zerobase.nsbackend.chatting.dto.ChattingRoomAllResponse;
 import com.zerobase.nsbackend.chatting.dto.ChattingRoomCreateResponse;
-import com.zerobase.nsbackend.errand.domain.ErrandService;
+import com.zerobase.nsbackend.errand.domain.service.ErrandService;
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
 import com.zerobase.nsbackend.errand.domain.repository.ErrandRepository;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
@@ -33,7 +33,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
 
@@ -205,6 +204,7 @@ class ChattingRoomServiceTest {
 
   }
 
+
   @Test
   @DisplayName("채팅방 전체조회")
   void testGetChattingRoomsByMemberId() {
@@ -350,3 +350,4 @@ class ChattingRoomServiceTest {
 
   }
 }
+

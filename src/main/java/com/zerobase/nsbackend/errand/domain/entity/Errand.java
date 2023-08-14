@@ -82,7 +82,7 @@ public class Errand extends BaseTimeEntity {
   }
 
   public List<String> getImagesAsStringList() {
-    return images.stream().map(ErrandImage::getImageUrl).collect(Collectors.toList());
+    return images.stream().map(ErrandImage::getFullImageUrl).collect(Collectors.toList());
   }
 
   public void changeStatus(ErrandStatus status) {
