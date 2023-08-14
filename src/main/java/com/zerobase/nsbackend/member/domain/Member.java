@@ -45,7 +45,6 @@ public class Member extends BaseTimeEntity implements UserDetails {
     private String password;
     private String nickname;
     private String profileImage;
-    private String hashTag;
     @Enumerated(EnumType.STRING)
     private Authority authority;
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)

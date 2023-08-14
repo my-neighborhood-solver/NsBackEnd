@@ -74,6 +74,7 @@ public class SubscribeService {
         Notification notification = notificationRepository.save(Notification.builder()
             .receiver(receiver)
             .content(content)
+            .isRead(false)
             .notificationType(notificationType).build());
         notificationRepository.save(notification);
         String receiverId = String.valueOf(receiver.getId());
