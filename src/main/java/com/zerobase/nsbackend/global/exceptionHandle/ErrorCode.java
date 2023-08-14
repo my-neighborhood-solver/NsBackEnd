@@ -31,6 +31,8 @@ public enum ErrorCode {
   IS_DELETED_USER("2007","회원탈퇴 진행중인 회원입니다."),
   EXIST_INTEREST_BOARD("2008","이미 존재하는 관심글입니다."),
   NO_EXIST_INTEREST_BOARD("2009","관심글이 아닌 의뢰입니다."),
+  HASHTAG_IS_FULL("2010","더 이상 해시태그를 추가할 수 없습니다."),
+  NO_EXIST_HASHTAG("2011","해당되는 해시태그가 없습니다."),
 
   /**
    * 의뢰 도메인 에러 메세지

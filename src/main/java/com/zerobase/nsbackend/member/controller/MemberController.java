@@ -2,8 +2,8 @@ package com.zerobase.nsbackend.member.controller;
 
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.dto.GetUserResponse;
+import com.zerobase.nsbackend.member.dto.HashtagResponse;
 import com.zerobase.nsbackend.member.dto.InterestBoardResponse;
-import com.zerobase.nsbackend.member.dto.PutProfileImgRequest;
 import com.zerobase.nsbackend.member.dto.PutUserAddressRequest;
 import com.zerobase.nsbackend.member.dto.PutUserNicknameRequest;
 import com.zerobase.nsbackend.member.service.InterestBoardService;
@@ -19,9 +19,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -87,5 +89,26 @@ public class MemberController {
             id, member.getEmail());
         return ResponseEntity.ok(interestBoardResponseList);
     }
+
+    @GetMapping("/hashtags")
+    public ResponseEntity<HashtagResponse> getHashtag(@AuthenticationPrincipal Member member){
+        HashtagResponse hashtags = memberService.getHashtag(member.getEmail());
+        return ResponseEntity.ok(hashtags);
+    }
+
+    @PostMapping("/hashtags")
+    public ResponseEntity<HashtagResponse> addHashtag(@RequestParam("tag") String tag
+    , @AuthenticationPrincipal Member member){
+        HashtagResponse hashtags = memberService.updateHashtag(member.getEmail(), tag);
+        return ResponseEntity.ok(hashtags);
+    }
+
+    @DeleteMapping("/hashtags")
+    public ResponseEntity<HashtagResponse> deleteHashtag(@RequestParam("tag") String tag
+    , @AuthenticationPrincipal Member member){
+        HashtagResponse hashtags = memberService.deleteHashtag(member.getEmail(), tag);
+        return ResponseEntity.ok(hashtags);
+    }
+
 
 }
