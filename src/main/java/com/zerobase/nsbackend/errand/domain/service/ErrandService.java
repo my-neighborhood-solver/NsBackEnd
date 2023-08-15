@@ -1,17 +1,30 @@
 package com.zerobase.nsbackend.errand.domain.service;
 
-import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY_TO_DELETE;
-import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY_TO_EDIT;
+import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.CANNOT_CHOOSE_PERFORMER_WHEN_FINISHED;
+import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.CAN_FINISH_ONLY_PERFORMING;
+import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY;
+import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.INVALID_INPUT_ERROR;
+import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.PERFORMER_ALREADY_EXISTS;
+import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.REVIEWEE_IS_UNVALID;
+import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.REVIEW_ONLY_CAN_FINISH;
+import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.REVIEW_ONLY_CAN_PERFORMER;
 
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
 import com.zerobase.nsbackend.errand.domain.entity.ErrandHashtag;
 import com.zerobase.nsbackend.errand.domain.entity.ErrandImage;
+import com.zerobase.nsbackend.errand.domain.entity.Performer;
+import com.zerobase.nsbackend.errand.domain.entity.Review;
 import com.zerobase.nsbackend.errand.domain.repository.ErrandRepository;
+import com.zerobase.nsbackend.errand.domain.repository.PerformerRepository;
+import com.zerobase.nsbackend.errand.domain.repository.ReviewRepository;
+import com.zerobase.nsbackend.errand.domain.vo.ReviewDivision;
 import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
 import com.zerobase.nsbackend.errand.dto.ErrandDto;
 import com.zerobase.nsbackend.errand.dto.ErrandSearchCondition;
+import com.zerobase.nsbackend.errand.dto.PerformerDto;
+import com.zerobase.nsbackend.errand.dto.ReviewErrandRequest;
 import com.zerobase.nsbackend.errand.dto.search.ErrandSearchResult;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
 import com.zerobase.nsbackend.errand.dto.ErranderDto;
@@ -40,6 +53,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class ErrandService {
   private final MemberRepository memberRepository;
   private final ErrandRepository errandRepository;
+  private final PerformerRepository performerRepository;
+  private final ReviewRepository reviewRepository;
   private final AuthManager authManager;
   private final StoreFile storeFile;
 
@@ -100,9 +115,8 @@ public class ErrandService {
   @Transactional
   public void editErrand(ErrandUpdateRequest request, Long id) {
     Errand errand = getErrand(id);
-    if (!isErrander(errand.getErrander().getId())) {
-      throw new IllegalStateException(DONT_HAVE_AUTHORITY_TO_EDIT.getDescription());
-    }
+
+    validateIsErrander(errand.getId());
     errand.edit(request.getTitle(), request.getContent(),
           request.getPayDivision(), request.getPay());
   }
@@ -110,15 +124,20 @@ public class ErrandService {
   @Transactional
   public void cancelErrand(Long id) {
     Errand errand = getErrand(id);
-    if (!isErrander(errand.getErrander().getId())) {
-      throw new IllegalStateException(DONT_HAVE_AUTHORITY_TO_DELETE.getDescription());
-    }
+
+    validateIsErrander(errand.getId());
     errand.changeStatus(ErrandStatus.CANCEL);
   }
 
-  private boolean isErrander(Long erranderId) {
+  /**
+   * 현재 로그인한 사용자가 의뢰자인지 유효성 체크합니다.
+   * @param erranderId
+   */
+  private void validateIsErrander(Long erranderId) {
     Member member = getMemberFromAuth();
-    return Objects.equals(erranderId, member.getId());
+    if(!Objects.equals(erranderId, member.getId())) {
+      throw new IllegalStateException(DONT_HAVE_AUTHORITY.getDescription());
+    }
   }
 
   private Member getMemberFromAuth() {
@@ -169,15 +188,146 @@ public class ErrandService {
 
   public ErranderDto findErrander(Long errandId) {
     Errand errand = getErrand(errandId);
-    Member errander = memberRepository.findById(errand.getErrander().getId())
-        .orElseThrow(() -> new IllegalStateException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
+    Member errander = getErrander(errand);
 
     Integer errandCount = errandRepository.countByErranderId(errander.getId());
     return ErranderDto.of(errander, errandCount);
   }
 
+  private Member getErrander(Errand errand) {
+    return getMemberById(errand.getErrander().getId());
+  }
+
+  private Member getMemberById(Long id) {
+    return memberRepository.findById(id)
+        .orElseThrow(() -> new IllegalStateException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
+  }
+
   @Transactional
   public Slice<ErrandSearchResult> searchErrand(ErrandSearchCondition condition, Pageable pageable) {
     return errandRepository.search(condition, pageable);
+  }
+
+  /**
+   * 의뢰 완료
+   * @param errandId
+   */
+  @Transactional
+  public void finishErrand(Long errandId) {
+    Errand errand = getErrand(errandId);
+    validateFinishErrand(errand);
+    errand.finish();
+  }
+
+  private void validateFinishErrand(Errand errand) {
+    validateIsErrander(errand.getId());
+    if (errand.getStatus() != ErrandStatus.PERFORMING) {
+      throw new IllegalStateException(CAN_FINISH_ONLY_PERFORMING.getDescription());
+    }
+  }
+
+  /**
+   * 의뢰 수행 요청
+   * @param errandId
+   */
+  @Transactional
+  public void requestPerform(Long errandId) {
+    Errand errand = getErrand(errandId);
+    Member member = getMemberFromAuth();
+
+    validateRequestPerform(errand, member);
+
+    performerRepository.save(Performer.of(errand, member));
+  }
+
+  /**
+   * 의뢰의 수행자를 선택합니다.
+   * @param errandId 의뢰 ID
+   * @param performerId 수행자 ID
+   */
+  @Transactional
+  public void choosePerformer(Long errandId, Long performerId) {
+    Errand errand = getErrand(errandId);
+    Member member = getMemberById(performerId);
+
+    Performer performer = performerRepository.findByErrandAndMember(errand, member)
+        .orElseThrow(() -> new IllegalArgumentException(INVALID_INPUT_ERROR.getDescription()));
+
+    performer.approve();
+    errand.performing();
+  }
+
+  private void validateRequestPerform(Errand errand, Member member) {
+    if (isErrandFinished(errand)) {
+      throw new IllegalStateException(CANNOT_CHOOSE_PERFORMER_WHEN_FINISHED.getDescription());
+    }
+
+    boolean memberExists = performerRepository.existsByErrandAndMember(errand, member);
+    if (memberExists) {
+      throw new IllegalArgumentException(PERFORMER_ALREADY_EXISTS.getDescription());
+    }
+  }
+
+  private static boolean isErrandFinished(Errand errand) {
+    return errand.getStatus() == ErrandStatus.FINISH || errand.getStatus() == ErrandStatus.CANCEL;
+  }
+
+  /**
+   * 의뢰 리뷰를 등록합니다.
+   * @param errandId
+   * @param request
+   */
+  public void reviewErrand(Long errandId, ReviewErrandRequest request) {
+    Errand errand = getErrand(errandId);
+    if (!errand.isFinished()) {
+      throw new IllegalStateException(REVIEW_ONLY_CAN_FINISH.getDescription());
+    }
+    Member performer = getPerformer(request, errand);
+
+    validateReviewErrand(errand, performer);
+
+    reviewRepository.save(Review.of(errand, performer, request.getReviewGrade(),
+        request.getComment(), request.getDivision()));
+  }
+
+  private Member getPerformer(ReviewErrandRequest request, Errand errand) {
+    // 의뢰자 리뷰의 경우
+    if (request.getDivision() == ReviewDivision.ERRANDER_REVIEW) {
+      validRevieweeIsErrander(request, errand);
+      return getMemberFromAuth();
+    }
+    // 수행자 리뷰의 경우
+    if (request.getDivision() == ReviewDivision.PERFORMER_REVIEW) {
+      Long revieweeId = request.getRevieweeId();
+      return getMemberById(revieweeId);
+    }
+    throw new IllegalArgumentException(INVALID_INPUT_ERROR.getDescription());
+  }
+
+  /**
+   * 피평가자가 리뷰의 의뢰자인지 체크합니다.
+   */
+  private void validRevieweeIsErrander(ReviewErrandRequest request, Errand errand) {
+    if(!Objects.equals(request.getRevieweeId(), errand.getErrander().getId())) {
+      throw new IllegalArgumentException(REVIEWEE_IS_UNVALID.getDescription());
+    }
+  }
+
+  private void validateReviewErrand(Errand errand, Member performer) {
+    boolean isExists = performerRepository.existsByErrandAndApprovedMember(errand, performer);
+    if (!isExists) {
+      throw new IllegalArgumentException(REVIEW_ONLY_CAN_PERFORMER.getDescription());
+    }
+  }
+
+  /**
+   * 해당 의뢰에 요청된 수행 요청 목록을 조회합니다.
+   * @param errandId
+   * @return
+   */
+  public List<PerformerDto> getAllPerformer(Long errandId) {
+    Errand errand = getErrand(errandId);
+    List<Performer> performers = performerRepository.findByErrand(errand);
+    return performers.stream().map(PerformerDto::from).collect(Collectors.toList());
   }
 }

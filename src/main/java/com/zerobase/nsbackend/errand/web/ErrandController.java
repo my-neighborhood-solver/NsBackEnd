@@ -6,6 +6,8 @@ import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandDto;
 import com.zerobase.nsbackend.errand.dto.ErrandSearchCondition;
+import com.zerobase.nsbackend.errand.dto.PerformerDto;
+import com.zerobase.nsbackend.errand.dto.ReviewErrandRequest;
 import com.zerobase.nsbackend.errand.dto.search.ErrandSearchResult;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
 import com.zerobase.nsbackend.errand.dto.ErranderDto;
@@ -103,6 +105,9 @@ public class ErrandController {
    * 의뢰를 검색합니다.
    * @param condition
    * @param
+   *    - errandTitle ; 의뢰 제목 검색어
+   *    - pageable 페이징 정보
+   *       - page : 페이지 번호
    * @return
    */
   @GetMapping("/search")
@@ -110,5 +115,64 @@ public class ErrandController {
       @RequestBody ErrandSearchCondition condition,
       Pageable pageable) {
     return ResponseEntity.ok(errandService.searchErrand(condition, pageable));
+  }
+
+  /**
+   * 의뢰 수행을 요청합니다.
+   * @param id
+   * @return
+   */
+  @PostMapping("{id}/perform")
+  public ResponseEntity<Void> requestPerform(@PathVariable Long id) {
+
+    errandService.requestPerform(id);
+    return ResponseEntity.ok().build();
+  }
+
+  /**
+   * 의뢰 수행 요청 목록을 조회합니다.
+   * @param id
+   * @return
+   */
+  @GetMapping("{id}/perform")
+  public ResponseEntity<List<PerformerDto>> getAllPerformer(@PathVariable Long id) {
+    return ResponseEntity.ok(errandService.getAllPerformer(id));
+  }
+
+  /**
+   * 의뢰에 대한 수행자를 선택합니다.
+   * @return
+   */
+  @PostMapping("{id}/performer")
+  public ResponseEntity<Void> choosePerformer(
+      @PathVariable Long id,
+      @RequestParam Long memberId) {
+
+    errandService.choosePerformer(id, memberId);
+    return ResponseEntity.ok().build();
+  }
+
+  /**
+   * 의뢰를 완료합니다.
+   * @param id  의뢰 ID
+   * @return
+   */
+  @PutMapping("/{id}/finish")
+  public ResponseEntity<Void> finishErrand(@PathVariable Long id) {
+    errandService.finishErrand(id);
+    return ResponseEntity.ok().build();
+  }
+
+  /**
+   * 의뢰의 리뷰를 등록합니다.
+   * @param id
+   * @return
+   */
+  @PostMapping("{id}/review")
+  public ResponseEntity<Void> reviewErrand(
+      @PathVariable Long id,
+      @RequestBody ReviewErrandRequest request) {
+    errandService.reviewErrand(id, request);
+    return ResponseEntity.ok().build();
   }
 }
