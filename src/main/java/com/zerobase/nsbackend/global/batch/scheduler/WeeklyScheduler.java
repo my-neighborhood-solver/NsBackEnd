@@ -22,7 +22,7 @@ public class WeeklyScheduler {
     private final JobLauncher jobLauncher;
     private final BatchConfig batchConfig;
 
-    @Scheduled(cron="0 0/1 * * * ?")
+    @Scheduled(cron="0 0 0 ? * MON")
     public void runJob(){
 
         Map<String, JobParameter> confMap = new HashMap<>();
