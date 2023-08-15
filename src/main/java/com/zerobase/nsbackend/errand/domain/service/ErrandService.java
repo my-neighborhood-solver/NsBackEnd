@@ -23,6 +23,7 @@ import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
 import com.zerobase.nsbackend.errand.dto.ErrandDto;
 import com.zerobase.nsbackend.errand.dto.ErrandSearchCondition;
+import com.zerobase.nsbackend.errand.dto.PerformerDto;
 import com.zerobase.nsbackend.errand.dto.ReviewErrandRequest;
 import com.zerobase.nsbackend.errand.dto.search.ErrandSearchResult;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
@@ -319,5 +320,14 @@ public class ErrandService {
     }
   }
 
-
+  /**
+   * 해당 의뢰에 요청된 수행 요청 목록을 조회합니다.
+   * @param errandId
+   * @return
+   */
+  public List<PerformerDto> getAllPerformer(Long errandId) {
+    Errand errand = getErrand(errandId);
+    List<Performer> performers = performerRepository.findByErrand(errand);
+    return performers.stream().map(PerformerDto::from).collect(Collectors.toList());
+  }
 }

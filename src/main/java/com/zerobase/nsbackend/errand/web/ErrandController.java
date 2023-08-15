@@ -6,6 +6,7 @@ import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandDto;
 import com.zerobase.nsbackend.errand.dto.ErrandSearchCondition;
+import com.zerobase.nsbackend.errand.dto.PerformerDto;
 import com.zerobase.nsbackend.errand.dto.ReviewErrandRequest;
 import com.zerobase.nsbackend.errand.dto.search.ErrandSearchResult;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
@@ -126,6 +127,16 @@ public class ErrandController {
 
     errandService.requestPerform(id);
     return ResponseEntity.ok().build();
+  }
+
+  /**
+   * 의뢰 수행 요청 목록을 조회합니다.
+   * @param id
+   * @return
+   */
+  @GetMapping("{id}/perform")
+  public ResponseEntity<List<PerformerDto>> getAllPerformer(@PathVariable Long id) {
+    return ResponseEntity.ok(errandService.getAllPerformer(id));
   }
 
   /**
