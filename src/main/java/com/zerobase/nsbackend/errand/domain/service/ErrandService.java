@@ -226,6 +226,20 @@ public class ErrandService {
   }
 
   /**
+   * 의뢰 수행 요청
+   * @param errandId
+   */
+  @Transactional
+  public void requestPerform(Long errandId) {
+    Errand errand = getErrand(errandId);
+    Member member = getMemberFromAuth();
+
+    validateRequestPerform(errand, member);
+
+    performerRepository.save(Performer.of(errand, member));
+  }
+
+  /**
    * 의뢰의 수행자를 선택합니다.
    * @param errandId 의뢰 ID
    * @param performerId 수행자 ID
@@ -235,13 +249,14 @@ public class ErrandService {
     Errand errand = getErrand(errandId);
     Member member = getMemberById(performerId);
 
-    validateChoosePerformer(errand, member);
+    Performer performer = performerRepository.findByErrandAndMember(errand, member)
+        .orElseThrow(() -> new IllegalArgumentException(INVALID_INPUT_ERROR.getDescription()));
 
-    performerRepository.save(Performer.of(errand, member));
+    performer.approve();
     errand.performing();
   }
 
-  private void validateChoosePerformer(Errand errand, Member member) {
+  private void validateRequestPerform(Errand errand, Member member) {
     if (isErrandFinished(errand)) {
       throw new IllegalStateException(CANNOT_CHOOSE_PERFORMER_WHEN_FINISHED.getDescription());
     }
@@ -298,9 +313,11 @@ public class ErrandService {
   }
 
   private void validateReviewErrand(Errand errand, Member performer) {
-    boolean isExists = performerRepository.existsByErrandAndMember(errand, performer);
+    boolean isExists = performerRepository.existsByErrandAndApprovedMember(errand, performer);
     if (!isExists) {
       throw new IllegalArgumentException(REVIEW_ONLY_CAN_PERFORMER.getDescription());
     }
   }
+
+
 }
