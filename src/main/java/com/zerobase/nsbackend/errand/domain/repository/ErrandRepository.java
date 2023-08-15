@@ -1,9 +1,6 @@
 package com.zerobase.nsbackend.errand.domain.repository;
 
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
-import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,6 +20,4 @@ public interface ErrandRepository extends JpaRepository<Errand, Long> {
       + " left join fetch e.images "
       + " left join fetch e.hashtags ")
   List<Errand> findErrandAllWithImagesAndHashTag();
-
-  List<Errand> findErrandByDeadLineaAndStatus(LocalDate date, ErrandStatus status);
 }
