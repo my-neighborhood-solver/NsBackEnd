@@ -18,6 +18,7 @@ import com.zerobase.nsbackend.errand.domain.entity.ErrandHashtag;
 import com.zerobase.nsbackend.errand.domain.entity.ErrandImage;
 import com.zerobase.nsbackend.errand.domain.entity.LikedMember;
 import com.zerobase.nsbackend.errand.domain.repository.ErrandRepository;
+import com.zerobase.nsbackend.errand.domain.repository.PerformerRepository;
 import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
 import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
 import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
@@ -439,6 +440,27 @@ class ErrandIntegrationTest extends IntegrationTest {
     Errand errand = errandRepository.findById(errandId)
         .orElseThrow(() -> new RuntimeException("test fail"));
     assertThat(errand.getStatus()).isEqualTo(ErrandStatus.FINISH);
+  }
+
+  @Test
+  @DisplayName("의뢰의 수행자를 추가합니다.")
+  void chooseErrand_success() throws Exception {
+    // given
+    Long errandId = createErrandForGiven(createRequest1);
+    Long memberId = member02.getId();
+
+    // when
+    mvc.perform(
+            post("/errands/{id}/performer", errandId)
+                .param("memberId", memberId.toString())
+        )
+        .andDo(print())
+        .andReturn();
+
+    // then
+    Errand errand = errandRepository.findById(errandId)
+        .orElseThrow(() -> new RuntimeException("test fail"));
+    assertThat(errand.getStatus()).isEqualTo(ErrandStatus.PERFORMING);
   }
 
   private ResultActions requestCreateErrand(ErrandCreateRequest request)
