@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(final CorsRegistry registry) {
         registry.addMapping("/**")
             .allowedOrigins("http://localhost:5173","https://accounts.kakao.com"
-                ,"https://kauth.kakao.com")
+                ,"https://kauth.kakao.com","http://localhost:5500")
             .allowedMethods(ALLOWED_METHOD_NAMES.split(","))
             .exposedHeaders(HttpHeaders.LOCATION)
             .maxAge(3000);

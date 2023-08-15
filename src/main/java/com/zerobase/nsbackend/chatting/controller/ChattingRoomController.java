@@ -8,6 +8,7 @@ import com.zerobase.nsbackend.chatting.dto.ChattingRoomCreateResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@PreAuthorize("hasRole('USER')")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/chats")
@@ -39,7 +41,7 @@ public class ChattingRoomController {
       @RequestParam Long memberId) {
     List<ChattingRoomAllResponse> chattingRooms = chattingRoomService
         .getChattingRoomsByMemberId(memberId);
-    return ResponseEntity.ok(chattingRooms);
+    return ResponseEntity.ok().body(chattingRooms);
   }
 
   // 채팅방 단건 조회

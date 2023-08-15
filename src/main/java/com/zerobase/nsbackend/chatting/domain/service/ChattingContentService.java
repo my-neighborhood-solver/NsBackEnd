@@ -5,6 +5,7 @@ import com.zerobase.nsbackend.chatting.domain.entity.ChattingRoom;
 import com.zerobase.nsbackend.chatting.domain.repository.ChattingContentRepository;
 import com.zerobase.nsbackend.chatting.domain.repository.ChattingRoomRepository;
 import com.zerobase.nsbackend.chatting.dto.ChatContentRequest;
+import com.zerobase.nsbackend.chatting.dto.ChatContentResponse;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
@@ -28,18 +29,23 @@ public class ChattingContentService {
 
   // 채팅 내용 저장
   @Transactional
-  public ChattingContent saveChattingContent(ChatContentRequest request) {
+  public ChatContentResponse saveChattingContent(ChatContentRequest request) {
     ChattingRoom chattingRoom = chattingRoomFindById(request.getChattingRoomId());
     Member sender = memberFindById(request.getSenderId());
-    template.convertAndSendToUser(sender.getNickname(), "/private", request.getContent());
 
-    return chattingContentRepository.save(
+    ChattingContent saveContent = chattingContentRepository.save(
         ChattingContent.builder()
             .chattingRoom(chattingRoom)
             .sender(sender)
             .content(request.getContent())
             .isRead(false)
             .build());
+
+    ChatContentResponse response = ChatContentResponse.from(saveContent);
+
+    template
+        .convertAndSendToUser(String.valueOf(request.getChattingRoomId()), "/private", response);
+    return response;
   }
 
   public Member memberFindById(Long memberId) {
