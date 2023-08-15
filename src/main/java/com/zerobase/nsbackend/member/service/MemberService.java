@@ -83,7 +83,7 @@ public class MemberService {
     public HashtagResponse updateHashtag(String email, String content){
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new IllegalArgumentException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
-        if(member.getHashtags().size() >= 3){
+        if(member.getHashtags().size() >= 5){
             throw new IllegalArgumentException(ErrorCode.HASHTAG_IS_FULL.getDescription());
         }
         member.addHashtag(content);
