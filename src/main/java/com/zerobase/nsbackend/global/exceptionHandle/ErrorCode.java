@@ -42,6 +42,8 @@ public enum ErrorCode {
   DONT_HAVE_AUTHORITY_TO_EDIT("3001", "수정할 권한이 없습니다."),
   DONT_HAVE_AUTHORITY_TO_DELETE("3002", "삭제할 권한이 없습니다."),
   DONT_HAVE_AUTHORITY("3003", "권한이 없습니다."),
+  PERFORMER_ALREADY_EXISTS("3004", "수행자가 이미 존재합니다."),
+  CANNOT_CHOOSE_PERFORMER_WHEN_FINISHED("3005", "종료된 의뢰는 선택할수 없습니다."),
   /**
    * 채팅 도메인 에러 메세지
    * 규칙 : 4000 ~ 4999

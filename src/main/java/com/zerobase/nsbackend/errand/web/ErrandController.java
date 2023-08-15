@@ -116,6 +116,19 @@ public class ErrandController {
   }
 
   /**
+   * 의뢰에 대한 수행자를 선택합니다.
+   * @return
+   */
+  @PostMapping("{id}/performer")
+  public ResponseEntity<Void> choosePerformer(
+      @PathVariable Long id,
+      @RequestParam Long memberId) {
+
+    errandService.choosePerformer(id, memberId);
+    return ResponseEntity.ok().build();
+  }
+
+  /**
    * 의뢰를 완료합니다.
    * @param id  의뢰 ID
    * @return

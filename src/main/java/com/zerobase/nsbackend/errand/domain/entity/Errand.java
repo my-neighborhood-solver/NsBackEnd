@@ -74,6 +74,10 @@ public class Errand extends BaseTimeEntity {
   private Set<LikedMember> likedMembers = new HashSet<>();
   private Integer viewCount;
 
+  @Builder.Default
+  @OneToMany(mappedBy = "errand")
+  private List<Performer> performers = new ArrayList<>();
+
   public void edit(String title, String content, PayDivision payDivision, Integer pay) {
     this.title = title;
     this.content = content;
@@ -139,6 +143,13 @@ public class Errand extends BaseTimeEntity {
    */
   public void finish() {
     status = ErrandStatus.FINISH;
+  }
+
+  /**
+   * 의뢰 수행중 처리
+   */
+  public void performing() {
+    status = ErrandStatus.PERFORMING;
   }
 
   @Override

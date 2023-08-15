@@ -1,13 +1,17 @@
 package com.zerobase.nsbackend.errand.domain.service;
 
+import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.CANNOT_CHOOSE_PERFORMER_WHEN_FINISHED;
 import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY;
 import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY_TO_DELETE;
 import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY_TO_EDIT;
+import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.PERFORMER_ALREADY_EXISTS;
 
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
 import com.zerobase.nsbackend.errand.domain.entity.ErrandHashtag;
 import com.zerobase.nsbackend.errand.domain.entity.ErrandImage;
+import com.zerobase.nsbackend.errand.domain.entity.Performer;
 import com.zerobase.nsbackend.errand.domain.repository.ErrandRepository;
+import com.zerobase.nsbackend.errand.domain.repository.PerformerRepository;
 import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
@@ -41,6 +45,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ErrandService {
   private final MemberRepository memberRepository;
   private final ErrandRepository errandRepository;
+  private final PerformerRepository performerRepository;
   private final AuthManager authManager;
   private final StoreFile storeFile;
 
@@ -170,11 +175,19 @@ public class ErrandService {
 
   public ErranderDto findErrander(Long errandId) {
     Errand errand = getErrand(errandId);
-    Member errander = memberRepository.findById(errand.getErrander().getId())
-        .orElseThrow(() -> new IllegalStateException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
+    Member errander = getErrander(errand);
 
     Integer errandCount = errandRepository.countByErranderId(errander.getId());
     return ErranderDto.of(errander, errandCount);
+  }
+
+  private Member getErrander(Errand errand) {
+    return getMemberById(errand.getErrander().getId());
+  }
+
+  private Member getMemberById(Long id) {
+    return memberRepository.findById(id)
+        .orElseThrow(() -> new IllegalStateException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
   }
 
   @Transactional
@@ -192,5 +205,36 @@ public class ErrandService {
     validateErrander(errand.getId());
 
     errand.finish();
+  }
+
+  /**
+   * 의뢰의 수행자를 선택합니다.
+   * @param errandId 의뢰 ID
+   * @param performerId 수행자 ID
+   */
+  @Transactional
+  public void choosePerformer(Long errandId, Long performerId) {
+    Errand errand = getErrand(errandId);
+    Member member = getMemberById(performerId);
+
+    validateChoosePerformer(errand, member);
+
+    performerRepository.save(Performer.of(errand, member));
+    errand.performing();
+  }
+
+  private void validateChoosePerformer(Errand errand, Member member) {
+    if (isErrandFinished(errand)) {
+      throw new IllegalStateException(CANNOT_CHOOSE_PERFORMER_WHEN_FINISHED.getDescription());
+    }
+
+    boolean memberExists = performerRepository.existsByErrandAndMember(errand, member);
+    if (memberExists) {
+      throw new IllegalArgumentException(PERFORMER_ALREADY_EXISTS.getDescription());
+    }
+  }
+
+  private static boolean isErrandFinished(Errand errand) {
+    return errand.getStatus() == ErrandStatus.FINISH || errand.getStatus() == ErrandStatus.CANCEL;
   }
 }
