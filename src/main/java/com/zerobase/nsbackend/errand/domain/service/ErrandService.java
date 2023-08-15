@@ -208,7 +208,7 @@ public class ErrandService {
   }
 
   /**
-   * 의뢰 마감
+   * 의뢰 완료
    * @param errandId
    */
   @Transactional
