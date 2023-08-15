@@ -4,6 +4,9 @@ spring:
     url: jdbc:mysql://localhost:3376/neighborSolver
     username: root
     password: 12
+  batch:
+    jdbc:
+      initialize-schema: always
   data:
     web:
       pageable:

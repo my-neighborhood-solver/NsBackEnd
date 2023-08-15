@@ -27,7 +27,6 @@ public class MemberAddress extends BaseTimeEntity {
     private String streetNameAddress;
     private Float latitude;//위도
     private Float longitude;//경도
-    private boolean permission;
 
     public void updateUserAddress(float latitude, float longitude, String streetNameAddress){
         this.latitude = latitude;

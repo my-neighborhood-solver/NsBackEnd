@@ -63,7 +63,8 @@ dependencies {
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
     //querydsl 추가
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
