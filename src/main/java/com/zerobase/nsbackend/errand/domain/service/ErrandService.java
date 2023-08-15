@@ -1,9 +1,8 @@
 package com.zerobase.nsbackend.errand.domain.service;
 
 import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.CANNOT_CHOOSE_PERFORMER_WHEN_FINISHED;
+import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.CAN_FINISH_ONLY_PERFORMING;
 import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY;
-import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY_TO_DELETE;
-import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY_TO_EDIT;
 import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.PERFORMER_ALREADY_EXISTS;
 
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
@@ -107,7 +106,7 @@ public class ErrandService {
   public void editErrand(ErrandUpdateRequest request, Long id) {
     Errand errand = getErrand(id);
 
-    validateErrander(errand.getId());
+    validateIsErrander(errand.getId());
     errand.edit(request.getTitle(), request.getContent(),
           request.getPayDivision(), request.getPay());
   }
@@ -116,11 +115,15 @@ public class ErrandService {
   public void cancelErrand(Long id) {
     Errand errand = getErrand(id);
 
-    validateErrander(errand.getId());
+    validateIsErrander(errand.getId());
     errand.changeStatus(ErrandStatus.CANCEL);
   }
 
-  private void validateErrander(Long erranderId) {
+  /**
+   * 현재 로그인한 사용자가 의뢰자인지 유효성 체크합니다.
+   * @param erranderId
+   */
+  private void validateIsErrander(Long erranderId) {
     Member member = getMemberFromAuth();
     if(!Objects.equals(erranderId, member.getId())) {
       throw new IllegalStateException(DONT_HAVE_AUTHORITY.getDescription());
@@ -202,9 +205,15 @@ public class ErrandService {
   @Transactional
   public void finishErrand(Long errandId) {
     Errand errand = getErrand(errandId);
-    validateErrander(errand.getId());
-
+    validateFinishErrand(errand);
     errand.finish();
+  }
+
+  private void validateFinishErrand(Errand errand) {
+    validateIsErrander(errand.getId());
+    if (errand.getStatus() != ErrandStatus.PERFORMING) {
+      throw new IllegalStateException(CAN_FINISH_ONLY_PERFORMING.getDescription());
+    }
   }
 
   /**

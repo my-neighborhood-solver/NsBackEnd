@@ -44,6 +44,7 @@ public enum ErrorCode {
   DONT_HAVE_AUTHORITY("3003", "권한이 없습니다."),
   PERFORMER_ALREADY_EXISTS("3004", "수행자가 이미 존재합니다."),
   CANNOT_CHOOSE_PERFORMER_WHEN_FINISHED("3005", "종료된 의뢰는 선택할수 없습니다."),
+  CAN_FINISH_ONLY_PERFORMING("3006", "수행중인 의뢰만 종료가능합니다."),
   /**
    * 채팅 도메인 에러 메세지
    * 규칙 : 4000 ~ 4999
