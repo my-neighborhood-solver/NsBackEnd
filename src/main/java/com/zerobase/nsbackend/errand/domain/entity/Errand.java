@@ -152,6 +152,10 @@ public class Errand extends BaseTimeEntity {
     status = ErrandStatus.PERFORMING;
   }
 
+  public boolean isFinished() {
+    return status == ErrandStatus.FINISH;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

@@ -45,6 +45,9 @@ public enum ErrorCode {
   PERFORMER_ALREADY_EXISTS("3004", "수행자가 이미 존재합니다."),
   CANNOT_CHOOSE_PERFORMER_WHEN_FINISHED("3005", "종료된 의뢰는 선택할수 없습니다."),
   CAN_FINISH_ONLY_PERFORMING("3006", "수행중인 의뢰만 종료가능합니다."),
+  REVIEWEE_IS_UNVALID("3007", "피평가자가 올바르지 않습니다."),
+  REVIEW_ONLY_CAN_FINISH("3008", "종료된 의뢰만 리뷰 가능합니다."),
+  REVIEW_ONLY_CAN_PERFORMER("3009", "해당 의뢰의 수행자만 리뷰할 수 있습니다."),
   /**
    * 채팅 도메인 에러 메세지
    * 규칙 : 4000 ~ 4999

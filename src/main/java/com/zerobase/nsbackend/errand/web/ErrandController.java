@@ -6,6 +6,7 @@ import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandDto;
 import com.zerobase.nsbackend.errand.dto.ErrandSearchCondition;
+import com.zerobase.nsbackend.errand.dto.ReviewErrandRequest;
 import com.zerobase.nsbackend.errand.dto.search.ErrandSearchResult;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
 import com.zerobase.nsbackend.errand.dto.ErranderDto;
@@ -136,6 +137,19 @@ public class ErrandController {
   @PutMapping("/{id}/finish")
   public ResponseEntity<Void> finishErrand(@PathVariable Long id) {
     errandService.finishErrand(id);
+    return ResponseEntity.ok().build();
+  }
+
+  /**
+   * 의뢰의 리뷰를 등록합니다.
+   * @param id
+   * @return
+   */
+  @PostMapping("{id}/review")
+  public ResponseEntity<Void> reviewErrand(
+      @PathVariable Long id,
+      @RequestBody ReviewErrandRequest request) {
+    errandService.reviewErrand(id, request);
     return ResponseEntity.ok().build();
   }
 }
