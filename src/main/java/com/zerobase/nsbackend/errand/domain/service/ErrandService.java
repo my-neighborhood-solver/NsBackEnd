@@ -1,5 +1,6 @@
 package com.zerobase.nsbackend.errand.domain.service;
 
+import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY;
 import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY_TO_DELETE;
 import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY_TO_EDIT;
 
@@ -100,9 +101,8 @@ public class ErrandService {
   @Transactional
   public void editErrand(ErrandUpdateRequest request, Long id) {
     Errand errand = getErrand(id);
-    if (!isErrander(errand.getErrander().getId())) {
-      throw new IllegalStateException(DONT_HAVE_AUTHORITY_TO_EDIT.getDescription());
-    }
+
+    validateErrander(errand.getId());
     errand.edit(request.getTitle(), request.getContent(),
           request.getPayDivision(), request.getPay());
   }
@@ -110,15 +110,16 @@ public class ErrandService {
   @Transactional
   public void cancelErrand(Long id) {
     Errand errand = getErrand(id);
-    if (!isErrander(errand.getErrander().getId())) {
-      throw new IllegalStateException(DONT_HAVE_AUTHORITY_TO_DELETE.getDescription());
-    }
+
+    validateErrander(errand.getId());
     errand.changeStatus(ErrandStatus.CANCEL);
   }
 
-  private boolean isErrander(Long erranderId) {
+  private void validateErrander(Long erranderId) {
     Member member = getMemberFromAuth();
-    return Objects.equals(erranderId, member.getId());
+    if(!Objects.equals(erranderId, member.getId())) {
+      throw new IllegalStateException(DONT_HAVE_AUTHORITY.getDescription());
+    }
   }
 
   private Member getMemberFromAuth() {
@@ -179,5 +180,17 @@ public class ErrandService {
   @Transactional
   public Slice<ErrandSearchResult> searchErrand(ErrandSearchCondition condition, Pageable pageable) {
     return errandRepository.search(condition, pageable);
+  }
+
+  /**
+   * 의뢰 마감
+   * @param errandId
+   */
+  @Transactional
+  public void finishErrand(Long errandId) {
+    Errand errand = getErrand(errandId);
+    validateErrander(errand.getId());
+
+    errand.finish();
   }
 }

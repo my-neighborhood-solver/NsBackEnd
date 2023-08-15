@@ -134,6 +134,13 @@ public class Errand extends BaseTimeEntity {
     viewCount += 1;
   }
 
+  /**
+   * 의뢰 완료
+   */
+  public void finish() {
+    status = ErrandStatus.FINISH;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

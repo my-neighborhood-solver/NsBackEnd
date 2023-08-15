@@ -41,6 +41,7 @@ public enum ErrorCode {
   ERRAND_NOT_FOUND("3000", "의뢰를 찾지 못했습니다."),
   DONT_HAVE_AUTHORITY_TO_EDIT("3001", "수정할 권한이 없습니다."),
   DONT_HAVE_AUTHORITY_TO_DELETE("3002", "삭제할 권한이 없습니다."),
+  DONT_HAVE_AUTHORITY("3003", "권한이 없습니다."),
   /**
    * 채팅 도메인 에러 메세지
    * 규칙 : 4000 ~ 4999

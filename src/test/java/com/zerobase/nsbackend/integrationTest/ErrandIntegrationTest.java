@@ -422,6 +422,25 @@ class ErrandIntegrationTest extends IntegrationTest {
     assertThat(result.getErrandCount()).isEqualTo(1);
   }
 
+  @Test
+  @DisplayName("의뢰를 완료처리합니다.")
+  void finishErrand_success() throws Exception {
+    // given
+    Long errandId = createErrandForGiven(createRequest1);
+
+    // when
+    mvc.perform(
+            put("/errands/{id}/finish", errandId)
+        )
+        .andDo(print())
+        .andReturn();
+
+    // then
+    Errand errand = errandRepository.findById(errandId)
+        .orElseThrow(() -> new RuntimeException("test fail"));
+    assertThat(errand.getStatus()).isEqualTo(ErrandStatus.FINISH);
+  }
+
   private ResultActions requestCreateErrand(ErrandCreateRequest request)
       throws Exception {
 

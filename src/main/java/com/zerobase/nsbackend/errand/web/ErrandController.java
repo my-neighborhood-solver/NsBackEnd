@@ -103,6 +103,9 @@ public class ErrandController {
    * 의뢰를 검색합니다.
    * @param condition
    * @param
+   *    - errandTitle ; 의뢰 제목 검색어
+   *    - pageable 페이징 정보
+   *       - page : 페이지 번호
    * @return
    */
   @GetMapping("/search")
@@ -110,5 +113,16 @@ public class ErrandController {
       @RequestBody ErrandSearchCondition condition,
       Pageable pageable) {
     return ResponseEntity.ok(errandService.searchErrand(condition, pageable));
+  }
+
+  /**
+   * 의뢰를 완료합니다.
+   * @param id  의뢰 ID
+   * @return
+   */
+  @PutMapping("/{id}/finish")
+  public ResponseEntity<Void> finishErrand(@PathVariable Long id) {
+    errandService.finishErrand(id);
+    return ResponseEntity.ok().build();
   }
 }
