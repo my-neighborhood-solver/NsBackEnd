@@ -49,4 +49,10 @@ public class ChattingRoomController {
     return ResponseEntity.ok().body(chattingRoomService
         .getChattingRoomByIdAndMemberId(roomId, memberId));
   }
+
+  // 채팅방전체 읽음 개수 조회
+  @GetMapping("/unread")
+  public ResponseEntity<Integer> getUnReadAllCount(@RequestParam Long memberId) {
+    return ResponseEntity.ok().body(chattingRoomService.chattingRoomUnReadNotAllCount(memberId));
+  }
 }

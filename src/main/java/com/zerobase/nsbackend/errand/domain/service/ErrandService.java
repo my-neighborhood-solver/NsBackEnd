@@ -1,4 +1,4 @@
-package com.zerobase.nsbackend.errand.domain;
+package com.zerobase.nsbackend.errand.domain.service;
 
 import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY_TO_DELETE;
 import static com.zerobase.nsbackend.global.exceptionHandle.ErrorCode.DONT_HAVE_AUTHORITY_TO_EDIT;
@@ -11,7 +11,10 @@ import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
 import com.zerobase.nsbackend.errand.dto.ErrandDto;
+import com.zerobase.nsbackend.errand.dto.ErrandSearchCondition;
+import com.zerobase.nsbackend.errand.dto.search.ErrandSearchResult;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
+import com.zerobase.nsbackend.errand.dto.ErranderDto;
 import com.zerobase.nsbackend.global.auth.AuthManager;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import com.zerobase.nsbackend.global.fileUpload.StoreFile;
@@ -26,6 +29,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,14 +81,18 @@ public class ErrandService {
   }
 
   public Errand getErrand(Long id) {
-    return errandRepository.findErrandWithImagesAndHashTagById(id)
-        .orElseThrow(() -> new IllegalArgumentException(ErrorCode.ERRAND_NOT_FOUND.getDescription()));
+    Errand errand = errandRepository.findWithFetchById(id)
+        .orElseThrow(
+            () -> new IllegalArgumentException(ErrorCode.ERRAND_NOT_FOUND.getDescription()));
+    errand.increaseViewCount();
+    return errand;
   }
 
   @Transactional
   public ErrandDto getErrandDto(Long id) {
     Errand errand = getErrand(id);
     Member memberFromAuth = getMemberFromAuth();
+
     boolean isLiked = errand.checkLiked(memberFromAuth);
     return ErrandDto.from(errand, isLiked);
   }
@@ -133,8 +142,9 @@ public class ErrandService {
   @Transactional
   public List<ErrandDto> getAllErrands() {
     Member member = getMemberFromAuth();
-    return errandRepository.findErrandAllWithImagesAndHashTag()
-        .stream().map(errand -> ErrandDto.from(errand, errand.checkLiked(member))).collect(Collectors.toList());
+    return errandRepository.findWithFetchAll()
+        .stream().map(errand -> ErrandDto.from(errand, errand.checkLiked(member)))
+        .collect(Collectors.toList());
   }
 
   @Transactional
@@ -155,5 +165,19 @@ public class ErrandService {
     errand.like(member);
 
     return errand.checkLiked(member);
+  }
+
+  public ErranderDto findErrander(Long errandId) {
+    Errand errand = getErrand(errandId);
+    Member errander = memberRepository.findById(errand.getErrander().getId())
+        .orElseThrow(() -> new IllegalStateException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
+
+    Integer errandCount = errandRepository.countByErranderId(errander.getId());
+    return ErranderDto.of(errander, errandCount);
+  }
+
+  @Transactional
+  public Slice<ErrandSearchResult> searchErrand(ErrandSearchCondition condition, Pageable pageable) {
+    return errandRepository.search(condition, pageable);
   }
 }

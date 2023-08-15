@@ -1,9 +1,12 @@
 package com.zerobase.nsbackend.global.fileUpload;
 
 import com.zerobase.nsbackend.errand.domain.entity.ErrandImage;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UploadFile {
   private String uploadFileName;
   private String storeFileName;

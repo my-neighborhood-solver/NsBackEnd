@@ -82,7 +82,7 @@ public class Errand extends BaseTimeEntity {
   }
 
   public List<String> getImagesAsStringList() {
-    return images.stream().map(ErrandImage::getImageUrl).collect(Collectors.toList());
+    return images.stream().map(ErrandImage::getFullImageUrl).collect(Collectors.toList());
   }
 
   public void changeStatus(ErrandStatus status) {
@@ -125,6 +125,13 @@ public class Errand extends BaseTimeEntity {
 
   public Integer getLikedCount() {
     return likedMembers.size();
+  }
+
+  /**
+   * 조회 수 1 증가
+   */
+  public void increaseViewCount() {
+    viewCount += 1;
   }
 
   @Override

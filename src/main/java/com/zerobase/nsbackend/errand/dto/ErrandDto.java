@@ -1,6 +1,7 @@
 package com.zerobase.nsbackend.errand.dto;
 
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
+import com.zerobase.nsbackend.errand.domain.vo.ErrandStatus;
 import com.zerobase.nsbackend.errand.domain.vo.PayDivision;
 import com.zerobase.nsbackend.global.dto.AddressDto;
 import java.time.LocalDate;
@@ -28,6 +29,8 @@ public class ErrandDto {
   private AddressDto address;
   private boolean isLiked;
   private Integer likedCount;
+  private ErrandStatus status;
+  private Integer viewCount;
   private LocalDateTime createdAt;
 
   public static ErrandDto from(Errand errand) {
@@ -42,6 +45,9 @@ public class ErrandDto {
         .hashtags(errand.getHashtagsAsStringList())
         .address(AddressDto.from(errand.getAddress()))
         .likedCount(errand.getLikedCount())
+        .status(errand.getStatus())
+        .viewCount(errand.getViewCount())
+        .createdAt(errand.getCreatedAt())
         .build();
   }
 

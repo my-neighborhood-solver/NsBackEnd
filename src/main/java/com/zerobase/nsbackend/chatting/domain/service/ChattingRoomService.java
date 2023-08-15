@@ -97,8 +97,7 @@ public class ChattingRoomService {
       int readNotCount;
 
       // 읽지 않은 갯수
-      readNotCount = chattingContentRepository
-          .countBySenderNotAndIsReadAndChattingRoom(sender, false, chattingRoom);
+      readNotCount = chattingRoomUnReadNotCount(sender, chattingRoom);
 
       if (!chattingContent.isEmpty()) {
         content = chattingContent.get(chattingContent.size() - 1).getContent();
@@ -112,7 +111,6 @@ public class ChattingRoomService {
     return chattingRoomResponses;
   }
 
-
   // 채팅방 단건조회
   @Transactional
   public ChatContentAllResponse getChattingRoomByIdAndMemberId(Long roomId, Long memberId) {
@@ -123,6 +121,9 @@ public class ChattingRoomService {
       //채팅방 안에 멤버가 존재하지않는다.
       throw new IllegalArgumentException(ErrorCode.CHATTING_NOT_FOUND_MEMBER.getDescription());
     }
+
+    markUnreadChattingContentAsRead(roomId, memberId);
+
     List<ChattingContent> chattingContents = chattingContentRepository
         .findByChattingRoom_IdOrderByCreatedAtDesc(roomId);
 
@@ -132,9 +133,44 @@ public class ChattingRoomService {
       chatContentResponses.add(ChatContentResponse.from(chattingContent));
     }
 
-
-    return ChatContentAllResponse.from(roomId,errand.getTitle(), chatContentResponses);
+    return ChatContentAllResponse.from(roomId, errand.getTitle(), chatContentResponses);
   }
+
+  //채팅방 읽음처리
+  @Transactional
+  public void markUnreadChattingContentAsRead(Long roomId, Long memberId) {
+
+    List<ChattingContent> contentIsReadTrue = chattingContentRepository
+        .findBySender_IdNotAndIsReadFalseAndChattingRoom_Id(memberId, roomId);
+
+    contentIsReadTrue.forEach(chattingContent -> chattingContent.setRead(true));
+
+    chattingContentRepository.saveAll(contentIsReadTrue);
+  }
+
+  @Transactional
+  public Integer chattingRoomUnReadNotAllCount(Long memberId) {
+    Member sender = memberFindById(memberId);
+
+    List<ChattingRoom> chattingRooms = chattingRoomRepository
+        .findByErrand_Errander_IdOrSenderId(memberId, memberId);
+    Integer readNotCount = 0;
+    if (chattingRooms.isEmpty()) {
+      return readNotCount;
+    }
+
+    for (ChattingRoom chattingRoom : chattingRooms) {
+      readNotCount += chattingRoomUnReadNotCount(sender, chattingRoom);
+    }
+
+    return readNotCount;
+  }
+
+  public Integer chattingRoomUnReadNotCount(Member sender, ChattingRoom chattingRoom) {
+    return chattingContentRepository
+        .countBySenderNotAndIsReadAndChattingRoom(sender, false, chattingRoom);
+  }
+
 
   // member가 있는지 유효성 검사
   public Member memberFindById(Long memberId) {

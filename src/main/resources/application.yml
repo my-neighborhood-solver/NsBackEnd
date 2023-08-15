@@ -7,6 +7,11 @@ spring:
   batch:
     jdbc:
       initialize-schema: always
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        max-page-size: 2000
   jpa:
     show-sql: true
     database: mysql
@@ -15,7 +20,7 @@ spring:
         format_sql: true
         show_sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     open-in-view: false
   jwt:
     secret: cc40a3791cf94e649344be45eb1292a2

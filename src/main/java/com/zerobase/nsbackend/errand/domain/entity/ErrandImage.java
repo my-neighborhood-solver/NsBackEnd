@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class ErrandImage {
+  private static final String S3_URL = "https://my-neighbor-solver.s3.ap-northeast-2.amazonaws.com/";
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -27,5 +28,9 @@ public class ErrandImage {
 
   public String getImageUrl() {
     return imageUrl;
+  }
+
+  public String getFullImageUrl() {
+    return S3_URL + imageUrl;
   }
 }

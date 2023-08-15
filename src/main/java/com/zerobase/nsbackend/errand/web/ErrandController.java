@@ -1,16 +1,20 @@
 package com.zerobase.nsbackend.errand.web;
 
 import com.zerobase.nsbackend.errand.domain.entity.Errand;
-import com.zerobase.nsbackend.errand.domain.ErrandService;
+import com.zerobase.nsbackend.errand.domain.service.ErrandService;
 import com.zerobase.nsbackend.errand.dto.ErrandChangAddressRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandCreateRequest;
 import com.zerobase.nsbackend.errand.dto.ErrandDto;
+import com.zerobase.nsbackend.errand.dto.ErrandSearchCondition;
+import com.zerobase.nsbackend.errand.dto.search.ErrandSearchResult;
 import com.zerobase.nsbackend.errand.dto.ErrandUpdateRequest;
+import com.zerobase.nsbackend.errand.dto.ErranderDto;
 import com.zerobase.nsbackend.errand.dto.LikeErrandResponse;
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -88,5 +92,23 @@ public class ErrandController {
   @PostMapping("/{id}/like")
   public ResponseEntity<LikeErrandResponse> likeErrand(@PathVariable Long id) {
     return ResponseEntity.ok(LikeErrandResponse.of(errandService.likeErrand(id)));
+  }
+
+  @GetMapping("/{id}/errander")
+  public ResponseEntity<ErranderDto> readErrander(@PathVariable Long id) {
+    return ResponseEntity.ok(errandService.findErrander(id));
+  }
+
+  /**
+   * 의뢰를 검색합니다.
+   * @param condition
+   * @param
+   * @return
+   */
+  @GetMapping("/search")
+  public ResponseEntity<Slice<ErrandSearchResult>> searchErrand(
+      @RequestBody ErrandSearchCondition condition,
+      Pageable pageable) {
+    return ResponseEntity.ok(errandService.searchErrand(condition, pageable));
   }
 }
