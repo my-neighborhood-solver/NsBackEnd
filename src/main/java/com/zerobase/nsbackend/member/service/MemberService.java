@@ -1,10 +1,13 @@
 package com.zerobase.nsbackend.member.service;
 
+import com.zerobase.nsbackend.errand.domain.entity.Review;
+import com.zerobase.nsbackend.errand.domain.repository.ReviewRepository;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import com.zerobase.nsbackend.global.fileUpload.StoreFileToAWS;
 import com.zerobase.nsbackend.global.fileUpload.UploadFile;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.domain.MemberAddress;
+import com.zerobase.nsbackend.member.dto.GetReviewResponse;
 import com.zerobase.nsbackend.member.dto.GetUserResponse;
 import com.zerobase.nsbackend.member.dto.HashtagResponse;
 import com.zerobase.nsbackend.member.dto.PutUserAddressRequest;
@@ -22,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final StoreFileToAWS storeFileToAWS;
+    private final ReviewRepository reviewRepository;
 
     public GetUserResponse getUserInfo(String email){
         Member member = memberRepository.findByEmail(email)
@@ -99,6 +103,15 @@ public class MemberService {
         }
         member.deleteHashtag(content);
         return HashtagResponse.of(member.getHashtags());
+    }
+
+    public GetReviewResponse getMyReview(String email){
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new IllegalArgumentException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
+        Review review = reviewRepository.findAllByReviewee(member);
+        return GetReviewResponse.builder()
+            .grade(review.getGrade().getDescription())
+            .comment(review.getComment()).build();
     }
 
 }
