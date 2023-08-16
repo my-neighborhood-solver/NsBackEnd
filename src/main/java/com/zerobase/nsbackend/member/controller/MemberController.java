@@ -111,8 +111,8 @@ public class MemberController {
         return ResponseEntity.ok(hashtags);
     }
     @GetMapping("/reviews")
-    public ResponseEntity<GetReviewResponse> getMyReview(@AuthenticationPrincipal Member member){
-        GetReviewResponse myReview = memberService.getMyReview(member.getEmail());
+    public ResponseEntity<List<GetReviewResponse>> getMyReview(@AuthenticationPrincipal Member member){
+        List<GetReviewResponse> myReview = memberService.getMyReview(member.getEmail());
         return ResponseEntity.ok(myReview);
     }
 

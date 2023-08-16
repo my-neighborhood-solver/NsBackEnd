@@ -13,6 +13,8 @@ import com.zerobase.nsbackend.member.dto.HashtagResponse;
 import com.zerobase.nsbackend.member.dto.PutUserAddressRequest;
 import com.zerobase.nsbackend.member.dto.PutUserNicknameRequest;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -105,13 +107,21 @@ public class MemberService {
         return HashtagResponse.of(member.getHashtags());
     }
 
-    public GetReviewResponse getMyReview(String email){
+    @Transactional
+    public List<GetReviewResponse> getMyReview(String email){
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new IllegalArgumentException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
-        Review review = reviewRepository.findAllByReviewee(member);
-        return GetReviewResponse.builder()
-            .grade(review.getGrade().getDescription())
-            .comment(review.getComment()).build();
+        List<Review> reviews = reviewRepository.findAllByReviewee(member);
+        List<GetReviewResponse> responseList = new ArrayList<>();
+        for(Review review : reviews){
+            GetReviewResponse build = GetReviewResponse.builder()
+                .errandId(review.getErrand().getId())
+                .errandTitle(review.getErrand().getTitle())
+                .grade(review.getGrade().getDescription())
+                .comment(review.getComment()).build();
+            responseList.add(build);
+        }
+        return responseList;
     }
 
 }
