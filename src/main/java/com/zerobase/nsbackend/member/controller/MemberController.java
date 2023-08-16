@@ -1,6 +1,7 @@
 package com.zerobase.nsbackend.member.controller;
 
 import com.zerobase.nsbackend.member.domain.Member;
+import com.zerobase.nsbackend.member.dto.GetReviewResponse;
 import com.zerobase.nsbackend.member.dto.GetUserResponse;
 import com.zerobase.nsbackend.member.dto.HashtagResponse;
 import com.zerobase.nsbackend.member.dto.InterestBoardResponse;
@@ -108,6 +109,11 @@ public class MemberController {
     , @AuthenticationPrincipal Member member){
         HashtagResponse hashtags = memberService.deleteHashtag(member.getEmail(), tag);
         return ResponseEntity.ok(hashtags);
+    }
+    @GetMapping("/reviews")
+    public ResponseEntity<List<GetReviewResponse>> getMyReview(@AuthenticationPrincipal Member member){
+        List<GetReviewResponse> myReview = memberService.getMyReview(member.getEmail());
+        return ResponseEntity.ok(myReview);
     }
 
 

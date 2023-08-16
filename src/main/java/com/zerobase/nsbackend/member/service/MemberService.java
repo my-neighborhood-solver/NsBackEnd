@@ -1,15 +1,20 @@
 package com.zerobase.nsbackend.member.service;
 
+import com.zerobase.nsbackend.errand.domain.entity.Review;
+import com.zerobase.nsbackend.errand.domain.repository.ReviewRepository;
 import com.zerobase.nsbackend.global.exceptionHandle.ErrorCode;
 import com.zerobase.nsbackend.global.fileUpload.StoreFileToAWS;
 import com.zerobase.nsbackend.global.fileUpload.UploadFile;
 import com.zerobase.nsbackend.member.domain.Member;
 import com.zerobase.nsbackend.member.domain.MemberAddress;
+import com.zerobase.nsbackend.member.dto.GetReviewResponse;
 import com.zerobase.nsbackend.member.dto.GetUserResponse;
 import com.zerobase.nsbackend.member.dto.HashtagResponse;
 import com.zerobase.nsbackend.member.dto.PutUserAddressRequest;
 import com.zerobase.nsbackend.member.dto.PutUserNicknameRequest;
 import com.zerobase.nsbackend.member.repository.MemberRepository;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final StoreFileToAWS storeFileToAWS;
+    private final ReviewRepository reviewRepository;
 
     public GetUserResponse getUserInfo(String email){
         Member member = memberRepository.findByEmail(email)
@@ -99,6 +105,23 @@ public class MemberService {
         }
         member.deleteHashtag(content);
         return HashtagResponse.of(member.getHashtags());
+    }
+
+    @Transactional
+    public List<GetReviewResponse> getMyReview(String email){
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new IllegalArgumentException(ErrorCode.MEMBER_NOT_FOUND.getDescription()));
+        List<Review> reviews = reviewRepository.findAllByReviewee(member);
+        List<GetReviewResponse> responseList = new ArrayList<>();
+        for(Review review : reviews){
+            GetReviewResponse build = GetReviewResponse.builder()
+                .errandId(review.getErrand().getId())
+                .errandTitle(review.getErrand().getTitle())
+                .grade(review.getGrade().getDescription())
+                .comment(review.getComment()).build();
+            responseList.add(build);
+        }
+        return responseList;
     }
 
 }
