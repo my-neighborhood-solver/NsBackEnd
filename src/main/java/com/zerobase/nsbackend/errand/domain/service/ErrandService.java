@@ -134,10 +134,10 @@ public class ErrandService {
    * @param erranderId
    */
   private void validateIsErrander(Long erranderId) {
-    Member member = getMemberFromAuth();
-    if(!Objects.equals(erranderId, member.getId())) {
-      throw new IllegalStateException(DONT_HAVE_AUTHORITY.getDescription());
-    }
+//    Member member = getMemberFromAuth();
+//    if(!Objects.equals(erranderId, member.getId())) {
+//      throw new IllegalStateException(DONT_HAVE_AUTHORITY.getDescription());
+//    }
   }
 
   private Member getMemberFromAuth() {
