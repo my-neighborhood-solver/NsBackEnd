@@ -21,18 +21,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationFilter authenticationFilter;
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception{
-        http
-            .csrf().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .authorizeHttpRequests()
-            .antMatchers("/**/auth/**").permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class);
-    }
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http
+        .csrf().disable()
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .authorizeHttpRequests()
+        .antMatchers("/**/auth/**").permitAll()
+        .antMatchers("/**/chat/**").permitAll()
+        .anyRequest().authenticated()
+        .and()
+        .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+  }
 
     @Bean
     @Override
